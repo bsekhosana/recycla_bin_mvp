@@ -1,0 +1,33 @@
+import 'package:flutter/material.dart';
+import 'package:recycla_bin/features/authentication/presentation/pages/forgot_password_page.dart';
+import 'package:recycla_bin/features/authentication/presentation/pages/password_reset_page.dart';
+import 'package:recycla_bin/features/authentication/presentation/pages/phone_verification_page.dart';
+import 'package:recycla_bin/features/schedule/presentation/pages/add_products_page.dart';
+import 'package:recycla_bin/features/schedule/presentation/pages/collection_date_page.dart';
+import 'package:recycla_bin/features/schedule/presentation/pages/location_page.dart';
+import 'package:recycla_bin/features/schedule/schedule_page.dart';
+import 'features/authentication/presentation/pages/login_page.dart';
+import 'features/authentication/presentation/pages/register_page.dart';
+import 'features/authentication/presentation/pages/landing_page.dart';
+import 'features/protected_page.dart';
+
+class Routes {
+  static final routes = <String, WidgetBuilder>{
+
+    // AUTH FEATURE ============================================================
+    '/login': (BuildContext context) => const LoginPage(),
+    '/signup': (BuildContext context) => const RegisterPage(),
+    '/forgotpassword': (BuildContext context) => const ForgotPasswordPage(),
+    '/phoneverification': (BuildContext context) => const PhoneVerificationPage(),
+    '/passwordreset': (BuildContext context) => const PasswordResetPage(),
+    '/landing': (BuildContext context) => const LandingPage(),
+    '/protected': (BuildContext context) => ProtectedPage(),
+    // =========================================================================
+
+    // SCHEDULE COLLECTION FEATURE =============================================
+    'schedulecollection': (BuildContext context) => const ScheduleCollectionPage(),
+    'collectiondate': (BuildContext context) => const CollectionDatePage(),
+    'locationpage': (BuildContext context) => const LocationPage(),
+    'addproductspage': (BuildContext context) => const AddProductsPage(),
+  };
+}
