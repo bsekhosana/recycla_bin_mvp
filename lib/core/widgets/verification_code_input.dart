@@ -62,8 +62,18 @@ class _VerificationCodeInputState extends State<VerificationCodeInput> {
             focusNode: _focusNodes[index],
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width*0.048,
+                color: Colors.black,
+              fontWeight: FontWeight.bold
+            ),
             maxLength: 1,
             decoration: InputDecoration(
+              hintText: "0",
+              hintStyle: TextStyle(
+                fontSize: MediaQuery.of(context).size.width*0.048,
+                color: Colors.grey.shade400
+              ),
               counterText: "",
               border: const UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey),
@@ -71,11 +81,13 @@ class _VerificationCodeInputState extends State<VerificationCodeInput> {
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
                   color: _isFilled[index] ? Colors.green : Colors.grey,
+                  width: _isFilled[index] ? 2 : 1,
                 ),
               ),
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
                   color: _isFilled[index] ? Colors.green : Colors.grey,
+                  width: _isFilled[index] ? 2 : 1,
                 ),
               ),
             ),

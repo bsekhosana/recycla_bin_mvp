@@ -66,7 +66,8 @@ class LandingPage extends StatelessWidget {
               ),
             ),
             SizedBox(
-              width: width,
+              width: double.infinity,
+              // height: height*0.3,
               child: Image.asset('assets/images/landing_footer.png'),
             ),
           ],

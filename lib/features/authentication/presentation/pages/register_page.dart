@@ -55,7 +55,7 @@ class _RegisterPageState extends State<RegisterPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Padding(
-              padding: EdgeInsets.only(top: height*0.05),
+              padding: EdgeInsets.only(top: height*0.04, bottom: height*0.014),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -86,53 +86,56 @@ class _RegisterPageState extends State<RegisterPage> {
                   children: [
                     Form(
                       key: _formKey,
-                      child: Column(
-                        children: [
-                          CustomTextField(
-                            controller: phoneNumberController,
-                            leadingIcon: Icons.phone,
-                            trailingIcon: null,
-                            hintText: 'Enter Phone Number',
-                            labelText: 'Phone Number',
-                            inputType: TextInputType.phone,
-                            obscureText: false,
-                            validationMessage: 'Phone number cannot be empty',
-                          ),
-                          const SizedBox(height: 20),
-                          CustomTextField(
-                            controller: emailController,
-                            leadingIcon: Icons.email,
-                            trailingIcon: null,
-                            hintText: 'Enter Email',
-                            labelText: 'Email',
-                            inputType: TextInputType.emailAddress,
-                            obscureText: false,
-                            validationMessage: 'Email cannot be empty',
-                          ),
-                          const SizedBox(height: 20),
-                          CustomTextField(
-                            controller: usernameController,
-                            leadingIcon: Icons.person,
-                            trailingIcon: null,
-                            hintText: 'Enter Username',
-                            labelText: 'Username',
-                            inputType: TextInputType.text,
-                            obscureText: false,
-                            validationMessage: 'Username cannot be empty',
-                          ),
-                          const SizedBox(height: 20),
-                          CustomTextField(
-                            controller: passwordController,
-                            leadingIcon: Icons.lock,
-                            hintText: 'Enter your password',
-                            labelText: 'Password',
-                            inputType: TextInputType.visiblePassword,
-                            obscureText: true,
-                            validationMessage: 'Password cannot be empty',
-                          ),
-                          const SizedBox(height: 20),
+                      child: Container(
+                        width: width*0.845,
+                        child: Column(
+                          children: [
+                            CustomTextField(
+                              controller: phoneNumberController,
+                              leadingIcon: Icons.phone_iphone_outlined,
+                              trailingIcon: null,
+                              hintText: 'Enter Phone Number',
+                              labelText: 'Phone Number',
+                              inputType: TextInputType.phone,
+                              obscureText: false,
+                              validationMessage: 'Phone number cannot be empty',
+                            ),
+                            const SizedBox(height: 20),
+                            CustomTextField(
+                              controller: emailController,
+                              leadingIcon: Icons.email_outlined,
+                              trailingIcon: null,
+                              hintText: 'Enter Email',
+                              labelText: 'Email',
+                              inputType: TextInputType.emailAddress,
+                              obscureText: false,
+                              validationMessage: 'Email cannot be empty',
+                            ),
+                            const SizedBox(height: 20),
+                            CustomTextField(
+                              controller: usernameController,
+                              leadingIcon: Icons.person_outline,
+                              trailingIcon: null,
+                              hintText: 'Enter Username',
+                              labelText: 'Username',
+                              inputType: TextInputType.text,
+                              obscureText: false,
+                              validationMessage: 'Username cannot be empty',
+                            ),
+                            const SizedBox(height: 20),
+                            CustomTextField(
+                              controller: passwordController,
+                              leadingIcon: Icons.lock_outlined,
+                              hintText: 'Enter your password',
+                              labelText: 'Password',
+                              inputType: TextInputType.visiblePassword,
+                              obscureText: true,
+                              validationMessage: 'Password cannot be empty',
+                            ),
+                            // const SizedBox(height: 20),
 
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     Stack(
@@ -140,7 +143,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           Transform.translate(
                             offset: const Offset(-30, 0),
                             child: ListTile(
-                              title: const Text('Remember me'),
+                              title:  Text('Accept terms and conditions',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: width*0.03,
+                                ),
+                              ),
                               leading: Radio<bool>(
                                 value: true,
                                 groupValue: _isSelected ? true : null,
@@ -153,26 +161,26 @@ class _RegisterPageState extends State<RegisterPage> {
                               },
                             ),
                           ),
-                          Transform.translate(
-                            offset: Offset(width*0.55, height*0.003),
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.pushNamed(context, '/forgotpassword');
-                              },
-                              child: const Text('Forgot Password?'),
-                            ),
-                          )
+                          // Transform.translate(
+                          //   offset: Offset(width*0.55, height*0.003),
+                          //   child: TextButton(
+                          //     onPressed: () {
+                          //       Navigator.pushNamed(context, '/forgotpassword');
+                          //     },
+                          //     child: const Text('Forgot Password?'),
+                          //   ),
+                          // )
                         ]
                     ),
                     SizedBox(
-                      height: height*0.03,
+                      height: height*0.015,
                     ),
                     CustomElevatedButton(
                         text: 'Create Account',
                         onPressed: () => {},
                         primaryButton: true),
                     SizedBox(
-                      height: height*0.04,
+                      height: height*0.02,
                     ),
                     Column(
                       children: [
@@ -183,24 +191,24 @@ class _RegisterPageState extends State<RegisterPage> {
                             Expanded(
                               child: Divider(
                                 color: Colors.black12,
-                                thickness: 2,
-                                indent: width*0.2,
+                                thickness: 1,
+                                indent: width*0.24,
                                 endIndent: 10,
                               ),
                             ),
                             Text(
                               'or Sign up with',
                               style: TextStyle(
-                                fontSize: width*0.04,
+                                fontSize: width*0.03,
                                 color: Colors.black54,
                               ),
                             ),
                             Expanded(
                               child: Divider(
                                 color: Colors.black12,
-                                thickness: 2,
+                                thickness: 1,
                                 indent: 10,
-                                endIndent: width*0.2,
+                                endIndent: width*0.24,
                               ),
                             ),
                           ],
@@ -220,12 +228,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                 foregroundColor: Colors.white,
                                 backgroundColor: Colors.white,// button background color
                                 shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(20),
+                                padding:  EdgeInsets.all(width*0.04),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 FontAwesomeIcons.facebookF,
                                 color: Colors.blue,
-                                size: 30,
+                                size: width*0.05,
                               ),
                             ),
                             SizedBox(
@@ -239,12 +247,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                 foregroundColor: Colors.white,
                                 backgroundColor: Colors.white,//// button background color
                                 shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(20),
+                                padding: EdgeInsets.all(width*0.04),
                               ),
-                              child: const Icon(
+                              child:  Icon(
                                 FontAwesomeIcons.googlePlusG,
                                 color: Colors.red,
-                                size: 30,
+                                size: width*0.05,
                               ),
                             ),
                           ],

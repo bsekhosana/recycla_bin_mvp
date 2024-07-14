@@ -87,7 +87,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                   decoration: InputDecoration(
                     prefixIcon: const Padding(
                       padding: EdgeInsetsDirectional.only(start: 0.0, end: 15),
-                      child: Icon(Icons.lock, color: Colors.grey), // Prefix icon padding for alignment
+                      child: Icon(Icons.lock_outline, color: Colors.grey), // Prefix icon padding for alignment
                     ),
                     prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
                     suffixIcon: IconButton(
@@ -130,7 +130,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                   decoration: InputDecoration(
                     prefixIcon: const Padding(
                       padding: EdgeInsetsDirectional.only(start: 0.0, end: 15),
-                      child: Icon(Icons.lock, color: Colors.grey), // Prefix icon padding for alignment
+                      child: Icon(Icons.lock_outline, color: Colors.grey), // Prefix icon padding for alignment
                     ),
                     prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
                     suffixIcon: IconButton(

@@ -13,7 +13,7 @@ class CustomElevatedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.width * 0.15,
+      height: MediaQuery.of(context).size.height * 0.067,
       width: MediaQuery.of(context).size.width * 0.9,
       decoration: BoxDecoration(
         gradient:  !primaryButton
@@ -24,7 +24,7 @@ class CustomElevatedButton extends StatelessWidget {
           end: Alignment.bottomCenter,
         ),
         borderRadius: BorderRadius.circular(8), // Rounded corners
-        border: Border.all(color: Utils.hexToColor(AppStrings.kRBPrimaryColor), width: 1), // Green border
+        border: Border.all(color: Utils.hexToColor(primaryButton ? AppStrings.kRBPrimaryColor : AppStrings.kRBSecondaryColor), width: 1), // Green border
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(

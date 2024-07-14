@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Padding(
-              padding: EdgeInsets.only(top: height*0.02),
+              padding: EdgeInsets.only(top: height*0.01, bottom: height*0.014),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -79,31 +79,34 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Form(
                     key: _formKey,
-                    child: Column(
-                      children: [
-                        CustomTextField(
-                          controller: usernameController,
-                          leadingIcon: Icons.person,
-                          trailingIcon: null,
-                          hintText: 'Enter Username',
-                          labelText: 'Username',
-                          inputType: TextInputType.text,
-                          obscureText: false,
-                          validationMessage: 'Username cannot be empty',
-                        ),
-                        const SizedBox(height: 20),
-                        CustomTextField(
-                          controller: passwordController,
-                          leadingIcon: Icons.lock,
-                          hintText: 'Enter your password',
-                          labelText: 'Password',
-                          inputType: TextInputType.visiblePassword,
-                          obscureText: true,
-                          validationMessage: 'Password cannot be empty',
-                        ),
-                        const SizedBox(height: 20),
+                    child: Container(
+                      width: width*0.845,
+                      child: Column(
+                        children: [
+                          CustomTextField(
+                            controller: usernameController,
+                            leadingIcon: Icons.person_outline,
+                            trailingIcon: null,
+                            hintText: 'Enter Username',
+                            labelText: 'Username',
+                            inputType: TextInputType.text,
+                            obscureText: false,
+                            validationMessage: 'Username cannot be empty',
+                          ),
+                          SizedBox(height: height*0.05),
+                          CustomTextField(
+                            controller: passwordController,
+                            leadingIcon: Icons.lock_outline,
+                            hintText: 'Enter your password',
+                            labelText: 'Password',
+                            inputType: TextInputType.visiblePassword,
+                            obscureText: true,
+                            validationMessage: 'Password cannot be empty',
+                          ),
+                          // SizedBox(height: height*0.02),
 
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   Stack(
@@ -125,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       Transform.translate(
-                        offset: Offset(width*0.55, height*0.003),
+                        offset: Offset(width*0.54, height*0.003),
                         child: TextButton(
                           onPressed: () {
                             Navigator.pushNamed(context, '/forgotpassword');
@@ -136,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
                     ]
                   ),
                   SizedBox(
-                    height: height*0.03,
+                    height: height*0.05,
                   ),
                   CustomElevatedButton(
                       text: 'Login',
@@ -162,24 +165,24 @@ class _LoginPageState extends State<LoginPage> {
                           Expanded(
                             child: Divider(
                               color: Colors.black12,
-                              thickness: 2,
-                              indent: width*0.2,
+                              thickness: 1,
+                              indent: width*0.24,
                               endIndent: 10,
                             ),
                           ),
                           Text(
                             'or Sign in with',
                             style: TextStyle(
-                                fontSize: width*0.04,
+                                fontSize: width*0.03,
                               color: Colors.black54,
                             ),
                           ),
                           Expanded(
                             child: Divider(
                               color: Colors.black12,
-                              thickness: 2,
+                              thickness: 1,
                               indent: 10,
-                              endIndent: width*0.2,
+                              endIndent: width*0.24,
                             ),
                           ),
                         ],
@@ -199,12 +202,12 @@ class _LoginPageState extends State<LoginPage> {
                               foregroundColor: Colors.white,
                               backgroundColor: Colors.white,// button background color
                               shape: const CircleBorder(),
-                              padding: const EdgeInsets.all(20),
+                              padding:  EdgeInsets.all(width*0.04),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               FontAwesomeIcons.facebookF,
                               color: Colors.blue,
-                              size: 30,
+                              size: width*0.05,
                             ),
                           ),
                           SizedBox(
@@ -218,12 +221,12 @@ class _LoginPageState extends State<LoginPage> {
                               foregroundColor: Colors.white,
                               backgroundColor: Colors.white,//// button background color
                               shape: const CircleBorder(),
-                              padding: const EdgeInsets.all(20),
+                              padding: EdgeInsets.all(width*0.04),
                             ),
-                            child: const Icon(
+                            child:  Icon(
                               FontAwesomeIcons.googlePlusG,
                               color: Colors.red,
-                              size: 30,
+                              size: width*0.05,
                             ),
                           ),
                         ],

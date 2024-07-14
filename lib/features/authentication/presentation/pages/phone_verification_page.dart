@@ -62,7 +62,7 @@ class _PhoneVerificationPageState extends State<PhoneVerificationPage> {
               VerificationCodeInput(onInputChanged: _onInputChanged),
               SizedBox(height: height*0.05),
               Container(
-                height: MediaQuery.of(context).size.width * 0.15,
+                height: MediaQuery.of(context).size.height * 0.067,
                 width: MediaQuery.of(context).size.width * 0.9,
                 decoration: _isButtonEnabled ? BoxDecoration(
                   gradient:  LinearGradient(
