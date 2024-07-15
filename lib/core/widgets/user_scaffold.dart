@@ -21,19 +21,19 @@ class UserScaffold extends StatelessWidget {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: Utils.hexToColor(AppStrings.kRBPrimaryColor),
+      backgroundColor: Utils.hexToColor(AppStrings.kRBThirdColor),
       body: Column(
         children: [
           CustomAppBar(title: title, showMenuIcon: showMenu,height: height*0.14, isDateCollectionPage: isDateCollectionPage,),
           Container(
               width: width,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Utils.hexToColor(AppStrings.kRBPrimaryColor), Utils.hexToColor(AppStrings.kRBSecondaryColor)], // Gradient colors
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-                color: Colors.transparent,
+                // gradient: LinearGradient(
+                //   colors: [Utils.hexToColor(AppStrings.kRBPrimaryColor), Utils.hexToColor(AppStrings.kRBSecondaryColor)], // Gradient colors
+                //   begin: Alignment.topCenter,
+                //   end: Alignment.bottomCenter,
+                // ),
+                color: Utils.hexToColor(AppStrings.kRBThirdColor),
               ),
               child: SingleChildScrollView(
                 child: Padding(

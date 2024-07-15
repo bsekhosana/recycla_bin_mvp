@@ -26,4 +26,5 @@ class AppStrings {
 
   static const String kRBPrimaryColor = '#8ec53f';
   static const String kRBSecondaryColor = '#099444';
+  static const String kRBThirdColor = '#7cad26';
 }
