@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
 import 'package:recycla_bin/core/widgets/user_scaffold.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 // import 'package:flutter_google_places/flutter_google_places.dart';
@@ -7,6 +8,10 @@ import 'package:recycla_bin/core/widgets/user_scaffold.dart';
 
 import '../../../../core/services/location_manager.dart';
 
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
+
+import '../../../../core/utilities/utils.dart';
 
 class LocationPage extends StatefulWidget {
   const LocationPage({super.key});
@@ -16,35 +21,96 @@ class LocationPage extends StatefulWidget {
 }
 
 class _LocationPageState extends State<LocationPage> {
+  GoogleMapController? _mapController;
+  LatLng _currentPosition = LatLng(37.7749, -122.4194); // Default to San Francisco
+  Location location = Location();
 
-  // GoogleMapController? mapController;
-  // LatLng? _currentPosition;
-  // final String googleApiKey = 'AIzaSyD3P8y3QEASTe_TfRfdS-7QtW3-enAeEfY';
-  // final LocationManager locationManager = LocationManager();
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _getCurrentLocation();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
 
-  // Future<void> _getCurrentLocation() async {
-  //   LatLng? currentLocation = await locationManager.getCurrentLocation();
-  //   if (currentLocation != null) {
-  //     setState(() {
-  //       _currentPosition = currentLocation;
-  //       Provider.of<LocationProvider>(context, listen: false).updateLocation(_currentPosition!);
-  //     });
-  //   }
-  // }
+  void _onMapCreated(GoogleMapController controller) {
+    setState(() {
+      _mapController = controller;
+    });
+  }
 
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    PermissionStatus permissionGranted;
+    LocationData locationData;
+
+    serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        return;
+      }
+    }
+
+    permissionGranted = await location.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    locationData = await location.getLocation();
+    setState(() {
+      _currentPosition = LatLng(locationData.latitude!, locationData.longitude!);
+    });
+
+    if (_mapController != null) {
+      _mapController!.animateCamera(CameraUpdate.newLatLng(_currentPosition));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return UserScaffold(
-      body: Text('test'),
+      showMenu: false,
+      body: Column(
+        children: [
+          SizedBox(
+            height: height*0.013,
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: height * 0.57,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+              child: GoogleMap(
+                onMapCreated: _onMapCreated,
+                initialCameraPosition: CameraPosition(
+                  target: _currentPosition,
+                  zoom: 10.0,
+                ),
+                myLocationEnabled: true,
+              ),
+            ),
+          ),
+
+          SizedBox(
+            height: height*0.04,
+          ),
+
+          CustomElevatedButton(
+              text: 'Pick up from here',
+              onPressed: (){
+
+              },
+              primaryButton: true
+          ),
+        ],
+      ),
       title: 'Add Location',
       // body: ChangeNotifierProvider(
       //   create: (_) => LocationProvider(googleApiKey),
