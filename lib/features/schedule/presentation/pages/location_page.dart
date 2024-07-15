@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:recycla_bin/core/widgets/user_scaffold.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
-import 'package:google_maps_webservice/places.dart';
-import 'package:provider/provider.dart';
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:flutter_google_places/flutter_google_places.dart';
+// import 'package:google_maps_webservice/places.dart';
+// import 'package:provider/provider.dart';
 
 import '../../../../core/services/location_manager.dart';
 
@@ -137,17 +137,17 @@ class _LocationPageState extends State<LocationPage> {
   }
 }
 
-class LocationProvider with ChangeNotifier {
-  final GoogleMapsPlaces places;
-  TextEditingController searchController = TextEditingController();
-  LatLng? _selectedLocation;
-
-  LocationProvider(String apiKey) : places = GoogleMapsPlaces(apiKey: apiKey);
-
-  LatLng? get selectedLocation => _selectedLocation;
-
-  void updateLocation(LatLng location) {
-    _selectedLocation = location;
-    notifyListeners();
-  }
-}
+// class LocationProvider with ChangeNotifier {
+//   final GoogleMapsPlaces places;
+//   TextEditingController searchController = TextEditingController();
+//   LatLng? _selectedLocation;
+//
+//   LocationProvider(String apiKey) : places = GoogleMapsPlaces(apiKey: apiKey);
+//
+//   LatLng? get selectedLocation => _selectedLocation;
+//
+//   void updateLocation(LatLng location) {
+//     _selectedLocation = location;
+//     notifyListeners();
+//   }
+// }

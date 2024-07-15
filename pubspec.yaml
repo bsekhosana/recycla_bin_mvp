@@ -47,9 +47,10 @@ dependencies:
 
   table_calendar: ^3.0.0
 
-  flutter_google_places: ^0.3.0
-  google_maps_webservice: ^0.0.19
-  geolocator: ^9.0.2
+#  flutter_google_places: ^0.3.0
+#  google_maps_webservice: ^0.0.19
+#  geolocator: ^9.0.2
+#  geolocator_android: 4.5.5
 
   icons_plus: ^5.0.0
 

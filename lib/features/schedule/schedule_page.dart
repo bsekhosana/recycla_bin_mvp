@@ -22,7 +22,7 @@ class _ScheduleCollectionPageState extends State<ScheduleCollectionPage> {
           children: [
             Column(
               children: [
-                
+
                 schedule_collection_list_item(
                   title: 'Date of Collection',
                   callback: () {
@@ -105,13 +105,13 @@ class schedule_collection_list_item extends StatelessWidget {
     double height = MediaQuery.of(context).size.height;
     return Container(
       width: double.infinity,
-      height: height*0.09,
+      height: height*0.087,
       // color: Colors.white,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.04),
+            color: Colors.grey.withOpacity(0.07),
             blurRadius: 20.0,
             spreadRadius: 4.0,
             offset: const Offset(-1, 6)
@@ -127,8 +127,8 @@ class schedule_collection_list_item extends StatelessWidget {
           ),
 
           SizedBox(
-            width: width*0.12,
-            height: height*0.055,
+            width: width*0.095,
+            height: height*0.04,
             child: CustomIconButton(
               icon: iconData,
               onPressed: callback,
@@ -174,7 +174,7 @@ class CustomIconButton extends StatelessWidget {
         child: Icon(
           icon,
           color: Colors.white,
-          size: MediaQuery.of(context).size.width*0.07,
+          size: MediaQuery.of(context).size.width*0.056,
         ),
       ),
     );

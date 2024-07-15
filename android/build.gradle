@@ -1,5 +1,5 @@
 allprojects {
-    ext.kotlin_version = '1.7.10'  // Ensure this version is consistent
+//    ext.kotlin_version = '1.7.10'  // Ensure this version is consistent
     repositories {
         google()
         mavenCentral()

@@ -137,7 +137,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                       child: Image.asset(
                         showMenuIcon ? 'assets/images/icon/burger.png' : 'assets/images/icon/back.png',
-                        width: width * 0.06, // Set the width of the image
+                        width: width * 0.05, // Set the width of the image
                       ),
                     ),
                     SizedBox(
@@ -146,7 +146,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
                     Text(title,
                       style: TextStyle(
-                        fontSize: width*0.06,
+                        fontSize: width*0.055,
                         color: Colors.white
                       ),
                     )

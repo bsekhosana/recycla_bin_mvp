@@ -53,7 +53,7 @@ class UserScaffold extends StatelessWidget {
                           child: SizedBox(
                               height: height*0.77,
                               child: Padding(
-                                padding: EdgeInsets.only(left: 5, top: height*0.05),
+                                padding: EdgeInsets.only(left: 5, top: height*0.035),
                                 child: SingleChildScrollView(child: body),
                               )
                           ),
