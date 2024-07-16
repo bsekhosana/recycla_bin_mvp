@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:recycla_bin/core/utilities/utils.dart';
+import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
 import 'package:recycla_bin/core/widgets/user_scaffold.dart';
 
 import '../../core/constants/strings.dart';
+import '../../core/widgets/custom_icon_button.dart';
 
 class ScheduleCollectionPage extends StatefulWidget {
   const ScheduleCollectionPage({super.key});
@@ -80,7 +82,23 @@ class _ScheduleCollectionPageState extends State<ScheduleCollectionPage> {
                 height: height*0.4,
                 child: Image.asset('assets/images/recycl.png'),
               ),
-            )
+            ),
+
+            SizedBox(
+              height: height*0.023,
+            ),
+
+            CustomElevatedButton(
+                text: 'Schedule Collection',
+                onPressed: (){
+                    Navigator.pushNamed(context, 'collectionsummary');
+                },
+                primaryButton: true
+            ),
+
+            SizedBox(
+              height: height*0.045,
+            ),
           ],
         )
     );
@@ -151,32 +169,4 @@ class schedule_collection_list_item extends StatelessWidget {
   }
 }
 
-class CustomIconButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onPressed;
 
-  const CustomIconButton({super.key, required this.icon, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        // padding: EdgeInsets.all(16.0), // Adjust padding as needed
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Utils.hexToColor(AppStrings.kRBPrimaryColor), Utils.hexToColor(AppStrings.kRBSecondaryColor)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        child: Icon(
-          icon,
-          color: Colors.white,
-          size: MediaQuery.of(context).size.width*0.056,
-        ),
-      ),
-    );
-  }
-}

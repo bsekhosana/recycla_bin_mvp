@@ -25,6 +25,8 @@ class AppStrings {
   static const String failedToLogin = 'Failed to login';
 
   static const String kRBPrimaryColor = '#8ec53f';
+  static const String kRBLightPrimaryColor = '#f3ffdc';
   static const String kRBSecondaryColor = '#099444';
   static const String kRBThirdColor = '#7cad26';
+
 }

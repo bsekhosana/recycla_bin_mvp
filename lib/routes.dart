@@ -4,7 +4,10 @@ import 'package:recycla_bin/features/authentication/presentation/pages/password_
 import 'package:recycla_bin/features/authentication/presentation/pages/phone_verification_page.dart';
 import 'package:recycla_bin/features/schedule/presentation/pages/add_products_page.dart';
 import 'package:recycla_bin/features/schedule/presentation/pages/collection_date_page.dart';
+import 'package:recycla_bin/features/schedule/presentation/pages/collection_details_page.dart';
+import 'package:recycla_bin/features/schedule/presentation/pages/collection_summary_page.dart';
 import 'package:recycla_bin/features/schedule/presentation/pages/location_page.dart';
+import 'package:recycla_bin/features/schedule/presentation/pages/scan_page.dart';
 import 'package:recycla_bin/features/schedule/schedule_page.dart';
 import 'features/authentication/presentation/pages/login_page.dart';
 import 'features/authentication/presentation/pages/register_page.dart';
@@ -29,5 +32,8 @@ class Routes {
     'collectiondate': (BuildContext context) => const CollectionDatePage(),
     'locationpage': (BuildContext context) => const LocationPage(),
     'addproductspage': (BuildContext context) => const AddProductsPage(),
+    'scanpage': (BuildContext context) => ScanPage(),
+    'collectionsummary': (BuildContext context) => CollectionSummaryPage(),
+    'collectiondetails': (BuildContext context) => CollectionDetailsPage(),
   };
 }

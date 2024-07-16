@@ -48,6 +48,8 @@ dependencies:
 
   table_calendar: ^3.0.0
 
+  qr_code_scanner: ^1.0.0
+
 #  flutter_google_places: ^0.3.0
 #  google_maps_webservice: ^0.0.19
 #  geolocator: ^9.0.2

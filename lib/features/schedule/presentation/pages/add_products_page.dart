@@ -113,7 +113,7 @@ class _AddProductsPageState extends State<AddProductsPage> {
                 CustomElevatedButton(
                     text: 'Scan Product',
                     onPressed: (){
-
+                      Navigator.pushNamed(context, 'scanpage');
                     },
                     primaryButton: true
                 ),
