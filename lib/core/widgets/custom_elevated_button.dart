@@ -38,10 +38,12 @@ class CustomElevatedButton extends StatelessWidget {
         onPressed: onPressed,
         child: Text(
           text,
+          textAlign: TextAlign.center,
           style: TextStyle(color: !primaryButton
                ?Colors.black : Colors.white,
           fontSize: MediaQuery.of(context).size.width * 0.04,
-            fontWeight: FontWeight.bold
+            fontWeight: FontWeight.bold,
+
           ) // Text color
         ),
       ),

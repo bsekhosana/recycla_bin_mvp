@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:recycla_bin/features/authentication/presentation/pages/forgot_password_page.dart';
 import 'package:recycla_bin/features/authentication/presentation/pages/password_reset_page.dart';
 import 'package:recycla_bin/features/authentication/presentation/pages/phone_verification_page.dart';
+import 'package:recycla_bin/features/profile/profile_page.dart';
 import 'package:recycla_bin/features/schedule/presentation/pages/add_products_page.dart';
 import 'package:recycla_bin/features/schedule/presentation/pages/collection_date_page.dart';
 import 'package:recycla_bin/features/schedule/presentation/pages/collection_details_page.dart';
 import 'package:recycla_bin/features/schedule/presentation/pages/collection_summary_page.dart';
+import 'package:recycla_bin/features/schedule/presentation/pages/confirm_payment_page.dart';
 import 'package:recycla_bin/features/schedule/presentation/pages/location_page.dart';
+import 'package:recycla_bin/features/schedule/presentation/pages/payment_complete_page.dart';
 import 'package:recycla_bin/features/schedule/presentation/pages/scan_page.dart';
+import 'package:recycla_bin/features/schedule/presentation/pages/track_collection_page.dart';
 import 'package:recycla_bin/features/schedule/schedule_page.dart';
 import 'features/authentication/presentation/pages/login_page.dart';
 import 'features/authentication/presentation/pages/register_page.dart';
@@ -35,5 +39,12 @@ class Routes {
     'scanpage': (BuildContext context) => ScanPage(),
     'collectionsummary': (BuildContext context) => CollectionSummaryPage(),
     'collectiondetails': (BuildContext context) => CollectionDetailsPage(),
+    'confirmpayment': (BuildContext context) => ConfirmPaymentPage(),
+    'paymentcomplete': (BuildContext context) => PaymentCompletePage(),
+    'trackcollection': (BuildContext context) => TrackCollectionPage(),
+
+
+    // PROFILE FEATURE
+    'profile': (BuildContext context) => ProfilePage(),
   };
 }

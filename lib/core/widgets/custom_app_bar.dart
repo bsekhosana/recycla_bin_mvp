@@ -126,6 +126,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         // Handle button press
                         if(!showMenuIcon) {
                           Navigator.pop(context);
+                        }else{
+                          Scaffold.of(context).openDrawer();
                         }
                       },
                       style: TextButton.styleFrom(

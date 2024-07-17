@@ -154,7 +154,13 @@ class _CollectionDetailsPageState extends State<CollectionDetailsPage> {
                   ),
                 ],
               ),
-              CustomElevatedButton(text: 'Confirm Payment', onPressed: (){}, primaryButton: true),
+              CustomElevatedButton(
+                  text: 'Confirm Payment',
+                  onPressed: (){
+                    Navigator.pushNamed(context, 'confirmpayment');
+                  },
+                  primaryButton: true
+              ),
             ],
           ),
         ),
