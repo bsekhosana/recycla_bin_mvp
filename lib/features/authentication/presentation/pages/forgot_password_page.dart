@@ -17,7 +17,7 @@ class ForgotPasswordPage extends StatefulWidget {
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController phoneNumberController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final PhoneNumberInput phoneNumberInput = PhoneNumberInput();
   final GlobalKey<PhoneNumberInputState> phoneNumberInputKey = GlobalKey<PhoneNumberInputState>();
 
@@ -87,9 +87,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       showLoadingDialog(context);
                       final String formattedPhoneNumber =
                       PhoneNumberInput.getFormattedPhoneNumber(phoneNumberInputKey);
-                      await context
-                          .read<ForgotPasswordProvider>()
-                          .sendCode(formattedPhoneNumber);
                       await context
                           .read<ForgotPasswordProvider>()
                           .sendCode(formattedPhoneNumber);

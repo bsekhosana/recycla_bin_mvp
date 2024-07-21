@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import '../data/repositories/auth_repository.dart';
 import '../data/repositories/forgot_password_repository.dart';
 
 class ForgotPasswordProvider with ChangeNotifier {
   final ForgotPasswordRepository _repository = ForgotPasswordRepository();
+  final AuthRepository _authRepository = AuthRepository();
+
+  Future<String?> getUserByPhoneNumber(String phoneNumber) async {
+    return await _authRepository.getUserByPhoneNumber(phoneNumber);
+  }
 
   Future<void> sendCode(String phoneNumber) async {
     try {
@@ -18,5 +24,13 @@ class ForgotPasswordProvider with ChangeNotifier {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<bool> verifyPin(String userId, String pin) async {
+    return await _repository.verifyPin(userId, pin);
+  }
+
+  Future<void> resetPassword(String newPassword) async {
+    await _repository.resetPassword(newPassword);
   }
 }

@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:recycla_bin/features/authentication/presentation/pages/landing_page.dart';
 import 'package:recycla_bin/routes.dart';
 
 import 'core/constants/strings.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       routes: Routes.routes,
       initialRoute: '/landing',
+      home: LandingPage(),  //this is the calling screen
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

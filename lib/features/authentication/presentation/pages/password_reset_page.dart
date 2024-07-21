@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:recycla_bin/core/widgets/auth_scaffold.dart';
 import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
-
+import '../../../../core/utilities/dialogs_utils.dart';
 import '../../../../core/widgets/custom_snackbar.dart';
+import '../../provider/auth_provider.dart';
+import '../../provider/forgot_password_provider.dart';
 
 class PasswordResetPage extends StatefulWidget {
   const PasswordResetPage({super.key});
@@ -12,16 +15,11 @@ class PasswordResetPage extends StatefulWidget {
 }
 
 class _PasswordResetPageState extends State<PasswordResetPage> {
-
   final TextEditingController passwordController = TextEditingController();
-
   final TextEditingController passwordConfirmController = TextEditingController();
-
   late bool _obscureText = true;
-
   late bool _obscureText1 = true;
-
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   void _toggleObscureText() {
     setState(() {
@@ -36,50 +34,58 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
   }
 
   @override
+  void dispose() {
+    passwordController.dispose();
+    passwordConfirmController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+
     return AuthScaffold(
-      body:SizedBox(
-        height: height*0.8,
+      body: SizedBox(
+        height: height * 0.8,
         child: Padding(
           padding: const EdgeInsets.only(left: 5),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: height*0.05),
+                  padding: EdgeInsets.only(top: height * 0.05),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text('Reset Password', style: TextStyle(
-                          fontSize: width*0.065,
-                          fontWeight: FontWeight.w700
-                      ),
-                      ),
-                      SizedBox(height: height*0.02,),
-                      Text('Please enter your new password and confirm the password.',
+                      Text(
+                        'Reset Password',
                         style: TextStyle(
-                          fontSize: width*0.04,
+                          fontSize: width * 0.065,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: height * 0.02),
+                      Text(
+                        'Please enter your new password and confirm the password.',
+                        style: TextStyle(
+                          fontSize: width * 0.04,
                           color: Colors.black54,
                         ),
                       ),
                     ],
                   ),
                 ),
-
-                SizedBox(height: height*0.05,),
-
+                SizedBox(height: height * 0.05),
                 TextFormField(
                   controller: passwordController,
                   keyboardType: TextInputType.text,
                   obscureText: _obscureText,
                   validator: (value) {
-                    if(value == null || value.isEmpty){
+                    if (value == null || value.isEmpty) {
                       return 'New password cannot be empty';
                     }
                     return null;
@@ -108,21 +114,18 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                     focusedBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
                     ),
-                    // errorText: 'Please enter new password',
                   ),
                 ),
-
-                SizedBox(height: height*0.05,),
-
+                SizedBox(height: height * 0.05),
                 TextFormField(
                   controller: passwordConfirmController,
                   keyboardType: TextInputType.text,
                   obscureText: _obscureText1,
                   validator: (value) {
-                    if(value == null || value.isEmpty){
+                    if (value == null || value.isEmpty) {
                       return 'New password confirmation cannot be empty';
                     }
-                    if(value != passwordController.text){
+                    if (value != passwordController.text) {
                       return 'Passwords do not match';
                     }
                     return null;
@@ -151,23 +154,32 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                     focusedBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
                     ),
-                    // errorText: 'Please enter new password',
                   ),
                 ),
-
-                SizedBox(height: height*0.05,),
-
+                SizedBox(height: height * 0.05),
                 CustomElevatedButton(
-                    text: 'Update',
-                    onPressed: ()=> {
-                      if(passwordController.text != passwordConfirmController.text){
-                        showCustomSnackbar(context, 'Passwords do not match, please try again', backgroundColor: Colors.red)
-                      }else{
-                        Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false,)
+                  text: 'Update',
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      try {
+                        showLoadingDialog(context);
+                        await context.read<ForgotPasswordProvider>().resetPassword(passwordController.text);
+                        hideLoadingDialog(context);
+                        showCustomSnackbar(context, 'Password reset successfully', backgroundColor: Colors.green);
+                        // Login user and navigate to the home page
+                        await context.read<AuthProvider>().login(
+                          email: context.read<AuthProvider>().currentUser!.email!,
+                          password: passwordController.text,
+                        );
+                        Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false);
+                      } catch (e) {
+                        hideLoadingDialog(context);
+                        showCustomSnackbar(context, e.toString(), backgroundColor: Colors.red);
                       }
-                    },
-                    primaryButton: true
-                )
+                    }
+                  },
+                  primaryButton: true,
+                ),
               ],
             ),
           ),

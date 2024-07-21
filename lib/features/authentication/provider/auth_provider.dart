@@ -5,9 +5,19 @@ import 'package:recycla_bin/core/services/connectivity_service.dart';
 import '../../../core/utilities/error_handler.dart';
 import '../data/repositories/auth_repository.dart';
 
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+
 class AuthProvider extends ChangeNotifier {
   final AuthRepository _authRepository = AuthRepository();
   final ConnectivityService _connectivityService = ConnectivityService();
+  firebase_auth.User? currentUser;
+
+  AuthProvider() {
+    _authRepository.authStateChanges.listen((firebase_auth.User? user) {
+      currentUser = user;
+      notifyListeners();
+    });
+  }
 
   Future<void> register({
     required String username,
@@ -32,6 +42,7 @@ class AuthProvider extends ChangeNotifier {
   Future<void> login({required String email, required String password}) async {
     if (await _connectivityService.checkConnectivity()) {
       await _authRepository.login(email: email, password: password);
+      currentUser = _authRepository.currentUser;
       notifyListeners();
     } else {
       // Handle no internet connection
@@ -39,8 +50,10 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> signOut() async {
+  Future<void> logout() async {
     await _authRepository.signOut();
+    currentUser = null;
+    notifyListeners();
   }
 
   Future<void> signInWithGoogle() async {

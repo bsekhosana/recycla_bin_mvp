@@ -6,9 +6,29 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../../../core/utilities/error_handler.dart';
 
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+
 class AuthRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  firebase_auth.User? get currentUser => _firebaseAuth.currentUser;
+
+  Stream<firebase_auth.User?> get authStateChanges => _firebaseAuth.authStateChanges();
+
+  // FirebaseAuth get firebaseAuth => _firebaseAuth;
+
+  Future<String?> getUserByPhoneNumber(String phoneNumber) async {
+    final querySnapshot = await _firestore
+        .collection('users')
+        .where('phoneNumber', isEqualTo: phoneNumber)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.id;
+    }
+    return null;
+  }
 
   Future<void> register({
     required String username,
@@ -37,12 +57,13 @@ class AuthRepository {
     }
   }
 
-  Future<void> login({required String email, required String password}) async {
+  Future<User?> login({required String email, required String password}) async {
     try {
-      await _firebaseAuth.signInWithEmailAndPassword(
+      UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+      return userCredential.user;
     } on FirebaseAuthException catch (e) {
       throw getFirebaseAuthErrorMessage(e);
     } catch (e) {

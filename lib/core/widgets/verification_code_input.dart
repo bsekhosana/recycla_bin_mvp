@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class VerificationCodeInput extends StatefulWidget {
-  final Function(bool) onInputChanged;
+  final Function(String) onInputChanged;
 
   const VerificationCodeInput({super.key, required this.onInputChanged});
 
@@ -39,15 +39,15 @@ class _VerificationCodeInputState extends State<VerificationCodeInput> {
   void _onChanged(int index, String value) {
     setState(() {
       _isFilled[index] = value.isNotEmpty;
-      widget.onInputChanged(_allInputsFilled());
+      widget.onInputChanged(_getCode());
       if (value.isNotEmpty && index < _numSlots - 1) {
         _focusNodes[index + 1].requestFocus();
       }
     });
   }
 
-  bool _allInputsFilled() {
-    return _isFilled.every((isFilled) => isFilled);
+  String _getCode() {
+    return _controllers.map((controller) => controller.text).join();
   }
 
   @override
@@ -63,17 +63,15 @@ class _VerificationCodeInputState extends State<VerificationCodeInput> {
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
             style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width*0.048,
+                fontSize: MediaQuery.of(context).size.width * 0.048,
                 color: Colors.black,
-              fontWeight: FontWeight.bold
-            ),
+                fontWeight: FontWeight.bold),
             maxLength: 1,
             decoration: InputDecoration(
               hintText: "0",
               hintStyle: TextStyle(
-                fontSize: MediaQuery.of(context).size.width*0.048,
-                color: Colors.grey.shade400
-              ),
+                  fontSize: MediaQuery.of(context).size.width * 0.048,
+                  color: Colors.grey.shade400),
               counterText: "",
               border: const UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey),

@@ -96,7 +96,7 @@ class _CustomUserDrawerState extends State<CustomUserDrawer> {
             selected: _selectedIndex == 4,
             onTap: () async {
               try {
-                await context.read<AuthProvider>().signOut();
+                await context.read<AuthProvider>().logout();
                 // Navigate to the login page after signing out
                 Navigator.pushNamedAndRemoveUntil(context, '/landing', (Route<dynamic> route) => false);
                 showCustomSnackbar(context, 'Logged out success', backgroundColor: Colors.green);

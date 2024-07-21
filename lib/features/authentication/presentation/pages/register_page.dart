@@ -25,10 +25,10 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  final _formKey = GlobalKey<FormState>();
-  bool _isSelected = false;
+  // final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  bool _isRegistering = false;
+  bool _isSelected = false;
 
   void _handleRadioValueChange(bool? value) {
     setState(() {

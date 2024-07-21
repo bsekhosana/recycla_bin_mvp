@@ -14,7 +14,6 @@ class UserScaffold extends StatefulWidget {
 
   final bool isDateCollectionPage;
 
-
   const UserScaffold({super.key, required this.body, required this.title, this.showMenu = true, this.isDateCollectionPage = false});
 
   @override
