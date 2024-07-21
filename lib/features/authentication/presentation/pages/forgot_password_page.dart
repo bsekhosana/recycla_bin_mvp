@@ -18,6 +18,8 @@ class ForgotPasswordPage extends StatefulWidget {
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController phoneNumberController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final PhoneNumberInput phoneNumberInput = PhoneNumberInput();
+  final GlobalKey<PhoneNumberInputState> phoneNumberInputKey = GlobalKey<PhoneNumberInputState>();
 
   @override
   void dispose() {
@@ -65,6 +67,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 child: SizedBox(
                   width: width * 0.85,
                   child: PhoneNumberInput(
+                    key: phoneNumberInputKey,
                     controller: phoneNumberController,
                     // validator: (value) {
                     //   if (value == null || value.isEmpty) {
@@ -82,12 +85,21 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   if (_formKey.currentState!.validate()) {
                     try {
                       showLoadingDialog(context);
+                      final String formattedPhoneNumber =
+                      PhoneNumberInput.getFormattedPhoneNumber(phoneNumberInputKey);
                       await context
                           .read<ForgotPasswordProvider>()
-                          .sendCode(phoneNumberController.text);
+                          .sendCode(formattedPhoneNumber);
+                      await context
+                          .read<ForgotPasswordProvider>()
+                          .sendCode(formattedPhoneNumber);
                       hideLoadingDialog(context);
-                      Navigator.pushNamed(context, '/phoneverification');
-                      showCustomSnackbar(context, 'Code sent to: ${phoneNumberController.text}', backgroundColor: Colors.green);
+                      Navigator.pushNamed(
+                        context,
+                        '/phoneverification',
+                        arguments: {'phoneNumber': formattedPhoneNumber},
+                      );
+                      showCustomSnackbar(context, 'Code sent to: ${formattedPhoneNumber}', backgroundColor: Colors.green);
                     } catch (e) {
                       hideLoadingDialog(context);
                       showCustomSnackbar(context, e.toString(), backgroundColor: Colors.red);

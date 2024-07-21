@@ -6,6 +6,7 @@ import 'package:recycla_bin/routes.dart';
 
 import 'core/constants/strings.dart';
 import 'core/provider/app_provider.dart';
+import 'features/authentication/presentation/pages/phone_verification_page.dart';
 import 'features/authentication/provider/auth_provider.dart';
 import 'features/authentication/provider/forgot_password_provider.dart';
 
@@ -40,6 +41,21 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+
+      onGenerateRoute: (settings) {
+        if (settings.name == '/phoneverification') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (context) {
+              return PhoneVerificationPage(
+                phoneNumber: args['phoneNumber'],
+              );
+            },
+          );
+        }
+        assert(false, 'Need to implement ${settings.name}');
+        return null;
+      },
       // home: LandingPage(),
     );
   }

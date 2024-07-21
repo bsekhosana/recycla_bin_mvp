@@ -8,10 +8,14 @@ class PhoneNumberInput extends StatefulWidget {
   const PhoneNumberInput({super.key, this.controller});
 
   @override
-  _PhoneNumberInputState createState() => _PhoneNumberInputState();
+  PhoneNumberInputState createState() => PhoneNumberInputState();
+
+  static String getFormattedPhoneNumber(GlobalKey<PhoneNumberInputState> key) {
+    return key.currentState?.getFormattedPhoneNumber() ?? '';
+  }
 }
 
-class _PhoneNumberInputState extends State<PhoneNumberInput> {
+class PhoneNumberInputState extends State<PhoneNumberInput> {
   final TextEditingController _internalController = TextEditingController();
   late TextEditingController _controller;
   String _initialCountry = 'ZA';
@@ -33,6 +37,10 @@ class _PhoneNumberInputState extends State<PhoneNumberInput> {
     setState(() {
       _isValid = value;
     });
+  }
+
+  String getFormattedPhoneNumber() {
+    return _number.phoneNumber ?? '';
   }
 
   @override

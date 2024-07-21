@@ -5,7 +5,9 @@ import 'package:recycla_bin/core/widgets/auth_scaffold.dart';
 import 'package:recycla_bin/core/widgets/verification_code_input.dart';
 
 class PhoneVerificationPage extends StatefulWidget {
-  const PhoneVerificationPage({super.key});
+  final String phoneNumber;
+
+  const PhoneVerificationPage({super.key,required this.phoneNumber});
 
 
   @override
@@ -47,10 +49,22 @@ class _PhoneVerificationPageState extends State<PhoneVerificationPage> {
                     ),
                     ),
                     SizedBox(height: height*0.02,),
-                    Text('Please enter the 6 digit code sent to you at +27 887 8675.',
-                      style: TextStyle(
-                        fontSize: width*0.04,
-                        color: Colors.black54,
+                    Text.rich(
+                      TextSpan(
+                        text: 'Please enter the 6 digit code sent to you at ',
+                        style: TextStyle(
+                          fontSize: width * 0.04,
+                          color: Colors.black54,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: widget.phoneNumber,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextSpan(text: '.'),
+                        ],
                       ),
                     ),
                   ],

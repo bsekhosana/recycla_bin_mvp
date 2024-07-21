@@ -25,7 +25,7 @@ class Routes {
     '/login': (BuildContext context) => const LoginPage(),
     '/signup': (BuildContext context) => const RegisterPage(),
     '/forgotpassword': (BuildContext context) => const ForgotPasswordPage(),
-    '/phoneverification': (BuildContext context) => const PhoneVerificationPage(),
+    // '/phoneverification': (BuildContext context) => const PhoneVerificationPage(),
     '/passwordreset': (BuildContext context) => const PasswordResetPage(),
     '/landing': (BuildContext context) => const LandingPage(),
     '/protected': (BuildContext context) => ProtectedPage(),
