@@ -1,54 +1,49 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../models/user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../../../../core/utilities/error_handler.dart';
 
 class AuthRepository {
-  final String apiUrl = 'http://10.0.2.2:5000/api/auth'; // 'http://localhost:5000/api/auth';
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<User> register(Map<String, String> userData) async {
-    final response = await http.post(
-      Uri.parse('$apiUrl/register'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(userData),
-    );
-    print(response);
-    if (response.statusCode == 201) {
-      return User.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to register user');
+  Future<void> register({
+    required String username,
+    required String email,
+    required String phoneNumber,
+    required String password,
+  }) async {
+    try {
+      UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      User? user = userCredential.user;
+      if (user != null) {
+        await _firestore.collection('users').doc(user.uid).set({
+          'username': username,
+          'email': email,
+          'phoneNumber': phoneNumber,
+        });
+      }
+    } on FirebaseAuthException catch (e) {
+      throw getFirebaseAuthErrorMessage(e);
     }
   }
 
-  Future<User> login(Map<String, String> userData) async {
-    final response = await http.post(
-      Uri.parse('$apiUrl/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(userData),
-    );
-
-    if (response.statusCode == 200) {
-      final responseData = jsonDecode(response.body);
-      final user = User.fromJson(responseData['user']);
-      final token = responseData['token'];
-
-      // Store token in shared preferences
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', token);
-
-      return user;
-    } else {
-      throw Exception('Failed to login');
+  Future<void> login({required String email, required String password}) async {
+    try {
+      await _firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } on FirebaseAuthException catch (e) {
+      throw getFirebaseAuthErrorMessage(e);
     }
   }
 
-  Future<String?> getToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('token');
-  }
-
-  Future<void> logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token');
+  Future<void> signOut() async {
+    await _firebaseAuth.signOut();
   }
 }

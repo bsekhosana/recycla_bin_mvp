@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:recycla_bin/core/constants/strings.dart';
+import 'package:recycla_bin/core/widgets/custom_user_drawer.dart';
 import 'package:recycla_bin/core/widgets/user_scaffold.dart';
+
+import '../../core/utilities/utils.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -9,6 +13,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage>  with SingleTickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   TabController? _tabController;
   bool isEditing = false;
@@ -27,100 +32,116 @@ class _ProfilePageState extends State<ProfilePage>  with SingleTickerProviderSta
 
   @override
   Widget build(BuildContext context) {
+
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return UserScaffold(
-        body: Column(
-          children: [
-            Container(
-              height: height*0.2,
-              width: width,
-              color: Colors.green,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    Hero(
-                      tag: 'profile-pic',
-                      child: CircleAvatar(
-                        radius: 40,
-                        backgroundImage: AssetImage('assets/images/profile_pic.jpg'),
-                        child: Align(
-                          alignment: Alignment.bottomRight,
-                          child: CircleAvatar(
-                            radius: 12,
-                            backgroundColor: Colors.white,
-                            child: Icon(
-                              Icons.edit,
-                              size: 15,
-                              color: Colors.green,
+    return Scaffold(
+      key: _scaffoldKey,
+      extendBodyBehindAppBar: true,
+      backgroundColor: Utils.hexToColor(AppStrings.kRBThirdColor),
+      drawer: CustomUserDrawer(),
+      body: Column(
+        children: [
+          PreferredSize(
+            preferredSize: Size.fromHeight(height),
+            child: AppBar(
+              backgroundColor: Colors.transparent,
+              automaticallyImplyLeading:  false,
+              title: Transform.translate(
+                offset: Offset(0, height*0.03),
+                // child: title
+              ),
+              centerTitle: true,
+              flexibleSpace: Container(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: height*0.1),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: width*0.08,
+                        ),
+
+                        TextButton(
+                          onPressed: () {
+                            _scaffoldKey.currentState?.openDrawer();
+                          },
+                          style: TextButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
                             ),
+                            padding: const EdgeInsets.all(20.0), // Adjust padding as needed
+                            backgroundColor: Colors.white.withAlpha(30), // Set background color with opacity
+                          ),
+                          child: Image.asset('assets/images/icon/burger.png',
+                            width: width * 0.05, // Set the width of the image
                           ),
                         ),
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '1.208',
-                          style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                        SizedBox(
+                          width: width*0.05,
                         ),
-                        Text(
-                          'Green Credit',
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          '20',
-                          style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'Reward',
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                        ),
+
+                        Text("Profile",
+                          style: TextStyle(
+                              fontSize: width*0.055,
+                              color: Colors.white
+                          ),
+                        )
                       ],
                     ),
-                    // Spacer(),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          isEditing = !isEditing;
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.green, backgroundColor: Colors.white,
+                  )
+              ),
+            ),
+          ),
+
+          Container(
+              width: width,
+              decoration: BoxDecoration(
+                color: Utils.hexToColor(AppStrings.kRBThirdColor),
+              ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.only(top: height*0.2),
+                  child: Container(
+                      decoration: BoxDecoration(
+                          color: Utils.hexToColor('#fcfcfc'),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(width*0.1),
+                            topRight: Radius.circular(width*0.1),
+                          )
                       ),
-                      child: Text(isEditing ? 'Done Editing' : 'Edit Profile'),
-                    ),
-                  ],
+                      // color: Colors.white,
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+
+                            ],
+                          ),
+
+                          Container(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 30, right: 30, top: 0),
+                              child: SizedBox(
+                                  height: height*0.632,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 5, top: height*0.035),
+                                    child: SingleChildScrollView(
+                                        child: Text('test')
+                                    ),
+                                  )
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                  ),
                 ),
-              ),
-            ),
-            TabBar(
-              controller: _tabController,
-              indicatorColor: Colors.white,
-              tabs: [
-                Tab(text: 'Details'),
-                Tab(text: 'Bank'),
-                Tab(text: 'Password'),
-              ],
-            ),
-            SizedBox(
-              height: height*0.6,
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  DetailsTab(isEditing: isEditing),
-                  BankTab(isEditing: isEditing),
-                  PasswordTab(isEditing: isEditing),
-                ],
-              ),
-            ),
-          ],
-        ),
-        title: 'Profile'
+              )
+          )
+        ],
+      ),
     );
   }
 }

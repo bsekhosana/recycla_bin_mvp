@@ -9,8 +9,10 @@ class CustomTextField extends StatefulWidget {
   final TextInputType inputType;
   final bool obscureText;
   final String? validationMessage;
+  final String? Function(String?)? validator;
 
-  const CustomTextField({super.key, 
+  const CustomTextField({
+    super.key,
     required this.controller,
     required this.leadingIcon,
     this.trailingIcon,
@@ -19,6 +21,7 @@ class CustomTextField extends StatefulWidget {
     this.inputType = TextInputType.text,
     required this.obscureText,
     this.validationMessage,
+    this.validator,
   });
 
   @override
@@ -37,11 +40,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   void _validate() {
     setState(() {
-      if (widget.controller.text.isEmpty) {
-        _errorMessage = widget.validationMessage ?? 'This field cannot be empty';
-      } else {
-        _errorMessage = null;
-      }
+      _errorMessage = widget.validator?.call(widget.controller.text);
     });
   }
 
@@ -88,7 +87,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             focusedBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.grey),
             ),
-            errorText: _errorMessage,
+            // errorText: _errorMessage,
           ),
           onChanged: (text) {
             _validate();

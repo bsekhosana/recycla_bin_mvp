@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "784050790815",
+    "project_id": "recycla-bin-mvp",
+    "storage_bucket": "recycla-bin-mvp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:784050790815:android:e1309b885da5c22f121daa",
+        "android_client_info": {
+          "package_name": "lean.recyclea.bin.recyclaBin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsOc81bqeaakgJwM6PLkh9LOFUKU3MnTo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

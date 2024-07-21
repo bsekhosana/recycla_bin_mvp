@@ -14,9 +14,9 @@ class ProtectedPage extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () async {
-            await authRepository.logout();
-            Navigator.pushNamedAndRemoveUntil(
-                context, '/login', (route) => false);
+            // await authRepository.logout();
+            // Navigator.pushNamedAndRemoveUntil(
+            //     context, '/login', (route) => false);
           },
           child: const Text(AppStrings.logout),
         ),

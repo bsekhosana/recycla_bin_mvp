@@ -1,10 +1,26 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:recycla_bin/routes.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+import 'core/provider/app_provider.dart';
+import 'features/authentication/provider/auth_provider.dart';
 
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AppProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        // Add more providers here as needed
+      ],
+      child: MyApp(),
+    ),
+  );
+}
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

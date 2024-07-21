@@ -61,6 +61,7 @@ dependencies {
 //    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.7.10"
 //    implementation 'com.android.support:multidex:2.0.1'
     implementation 'com.google.android.gms:play-services-location:21.3.0'
+    implementation 'com.google.gms:google-services:4.4.2'
 }
 
 flutter {
