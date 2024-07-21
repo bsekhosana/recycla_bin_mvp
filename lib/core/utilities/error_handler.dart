@@ -16,6 +16,9 @@ String getFirebaseAuthErrorMessage(FirebaseAuthException e) {
       return 'Email/password accounts are not enabled. Enable email/password accounts in the Firebase Console, under the Auth tab.';
     case 'weak-password':
       return 'The password is too weak. Passwords must be at least 6 characters long, and should include a mix of upper and lower case letters, numbers, and special characters.';
+    case 'invalid-credential':
+    case 'credential-too-old':
+      return 'The supplied login credentials are incorrect, malformed, or have expired.';
     default:
       return 'An unknown error occurred. Please try again later. (Error code: ${e.code})';
   }

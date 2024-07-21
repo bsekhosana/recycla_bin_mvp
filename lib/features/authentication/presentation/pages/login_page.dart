@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:recycla_bin/core/widgets/auth_scaffold.dart';
 import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
 import 'package:recycla_bin/core/widgets/custom_snackbar.dart';
 import 'package:recycla_bin/core/widgets/custom_textfield.dart';
+import '../../../../core/utilities/dialogs_utils.dart';
+import '../../../../core/utilities/validators.dart';
 import '../../data/repositories/auth_repository.dart';
+import '../../provider/auth_provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,7 +20,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final AuthRepository authRepository = AuthRepository();
 
-  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
 
   final TextEditingController passwordController = TextEditingController();
 
@@ -32,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    usernameController.dispose();
+    emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
@@ -84,26 +88,26 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         children: [
                           CustomTextField(
-                            controller: usernameController,
-                            leadingIcon: Icons.person_outline,
+                            controller: emailController,
+                            leadingIcon: Icons.email_outlined,
                             trailingIcon: null,
-                            hintText: 'Enter Username',
-                            labelText: 'Username',
-                            inputType: TextInputType.text,
+                            hintText: 'Enter Email',
+                            labelText: 'Email',
+                            inputType: TextInputType.emailAddress,
                             obscureText: false,
-                            validationMessage: 'Username cannot be empty',
+                            validator: Validators.validateEmail,
                           ),
-                          SizedBox(height: height*0.05),
+                          SizedBox(height: height*0.04),
                           CustomTextField(
                             controller: passwordController,
-                            leadingIcon: Icons.lock_outline,
+                            leadingIcon: Icons.lock_outlined,
                             hintText: 'Enter your password',
                             labelText: 'Password',
                             inputType: TextInputType.visiblePassword,
                             obscureText: true,
-                            validationMessage: 'Password cannot be empty',
+                            validator: Validators.validatePassword,
                           ),
-                          // SizedBox(height: height*0.02),
+                          SizedBox(height: height*0.02),
 
                         ],
                       ),
@@ -143,14 +147,30 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   CustomElevatedButton(
                       text: 'Login',
-                      onPressed: () => {
-                        if(usernameController.text.isEmpty){
-                          showCustomSnackbar(context, 'Username cannot be empty', backgroundColor: Colors.red)
-                        }else if(passwordController.text.isEmpty){
-                          showCustomSnackbar(context, 'Password cannot be empty', backgroundColor: Colors.red)
-                        }else{
-                          Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false,)
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          try{
+                            showLoadingDialog(context);
+                            await context.read<AuthProvider>().login(
+                              email: emailController.text,
+                              password: passwordController.text,
+                            );
+                            hideLoadingDialog(context); // Hide loading indicator
+                            Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false);
+                            showCustomSnackbar(context, 'Login successful', backgroundColor: Colors.green);
+                          }catch (e) {
+                            hideLoadingDialog(context); // Hide loading indicator
+                            showCustomSnackbar(context, e.toString(), backgroundColor: Colors.red);
+                          }
                         }
+
+                        // if(usernameController.text.isEmpty){
+                        //   showCustomSnackbar(context, 'Username cannot be empty', backgroundColor: Colors.red)
+                        // }else if(passwordController.text.isEmpty){
+                        //   showCustomSnackbar(context, 'Password cannot be empty', backgroundColor: Colors.red)
+                        // }else{
+                        //   Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false,)
+                        // }
                       },
                       primaryButton: true),
                   SizedBox(
