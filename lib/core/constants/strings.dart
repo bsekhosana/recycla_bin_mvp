@@ -23,6 +23,8 @@ class AppStrings {
   static const String invalidCredentials = 'Invalid credentials';
   static const String failedToRegisterUser = 'Failed to register user';
   static const String failedToLogin = 'Failed to login';
+  static const String facebookAppID = '1000248511411475';
+  static const String facebookAppVersion = 'v10.0';
 
   static const String kRBPrimaryColor = '#8ec53f';
   static const String kRBLightPrimaryColor = '#f3ffdc';

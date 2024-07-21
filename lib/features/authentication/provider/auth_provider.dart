@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:recycla_bin/core/services/connectivity_service.dart';
 
+import '../../../core/utilities/error_handler.dart';
 import '../data/repositories/auth_repository.dart';
 
 class AuthProvider extends ChangeNotifier {
@@ -39,5 +41,50 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> signOut() async {
     await _authRepository.signOut();
+  }
+
+  Future<void> signInWithGoogle() async {
+    if (await _connectivityService.checkConnectivity()) {
+      try {
+        await _authRepository.signInWithGoogle();
+      } on FirebaseAuthException catch (e) {
+        throw getFirebaseAuthErrorMessage(e);
+      } catch (e) {
+        print('An error occurred during Google sign-in. Error: ${e.toString()}');
+        throw 'An error occurred during Google sign-in. Error: ${e.toString()}';
+      }
+    } else {
+      throw 'No internet connection';
+    }
+  }
+
+  Future<void> signInWithFacebook() async {
+    if (await _connectivityService.checkConnectivity()) {
+      try {
+        await _authRepository.signInWithFacebook();
+      } on FirebaseAuthException catch (e) {
+        throw getFirebaseAuthErrorMessage(e);
+      } catch (e) {
+        print('An error occurred during Facebook sign-in. Error: ${e.toString()}');
+        throw 'An error occurred during Facebook sign-in. Error: ${e.toString()}';
+      }
+    } else {
+      throw 'No internet connection';
+    }
+  }
+
+  Future<void> signInWithApple() async {
+    if (await _connectivityService.checkConnectivity()) {
+      try {
+        await _authRepository.signInWithApple();
+      } on FirebaseAuthException catch (e) {
+        throw getFirebaseAuthErrorMessage(e);
+      } catch (e) {
+        print('An error occurred during Apple sign-in. Error: ${e.toString()}');
+        throw 'An error occurred during Apple sign-in. Error: ${e.toString()}';
+      }
+    } else {
+      throw 'No internet connection';
+    }
   }
 }

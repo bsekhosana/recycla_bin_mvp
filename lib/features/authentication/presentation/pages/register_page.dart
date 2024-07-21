@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -238,8 +240,16 @@ class _RegisterPageState extends State<RegisterPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             ElevatedButton(
-                              onPressed: () {
-                                // Handle Facebook login
+                              onPressed: () async {
+                                try {
+                                  showLoadingDialog(context); // Show loading indicator
+                                  await context.read<AuthProvider>().signInWithFacebook();
+                                  hideLoadingDialog(context); // Hide loading indicator
+                                  Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false);
+                                } catch (e) {
+                                  hideLoadingDialog(context); // Hide loading indicator
+                                  showCustomSnackbar(context, e.toString(), backgroundColor: Colors.red);
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
@@ -257,8 +267,16 @@ class _RegisterPageState extends State<RegisterPage> {
                               width: width * 0.1,
                             ),
                             ElevatedButton(
-                              onPressed: () {
-                                // Handle Google login
+                              onPressed: () async {
+                                try {
+                                  showLoadingDialog(context); // Show loading indicator
+                                  await context.read<AuthProvider>().signInWithGoogle();
+                                  hideLoadingDialog(context); // Hide loading indicator
+                                  Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false);
+                                } catch (e) {
+                                  hideLoadingDialog(context); // Hide loading indicator
+                                  showCustomSnackbar(context, e.toString(), backgroundColor: Colors.red);
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
@@ -272,6 +290,35 @@ class _RegisterPageState extends State<RegisterPage> {
                                 size: width * 0.05,
                               ),
                             ),
+                            if (Platform.isIOS)
+                              SizedBox(
+                                width: width * 0.1,
+                              ),
+                            if (Platform.isIOS)
+                              ElevatedButton(
+                                onPressed: () async {
+                                  try {
+                                    showLoadingDialog(context); // Show loading indicator
+                                    await context.read<AuthProvider>().signInWithApple();
+                                    hideLoadingDialog(context); // Hide loading indicator
+                                    Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false);
+                                  } catch (e) {
+                                    hideLoadingDialog(context); // Hide loading indicator
+                                    showCustomSnackbar(context, e.toString(), backgroundColor: Colors.red);
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.white,
+                                  shape: const CircleBorder(),
+                                  padding: EdgeInsets.all(width * 0.04),
+                                ),
+                                child: Icon(
+                                  FontAwesomeIcons.apple,
+                                  color: Colors.black,
+                                  size: width * 0.05,
+                                ),
+                              ),
                           ],
                         ),
                         SizedBox(

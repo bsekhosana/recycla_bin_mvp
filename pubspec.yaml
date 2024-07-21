@@ -52,6 +52,12 @@ dependencies:
 
   connectivity_plus:
 
+  google_sign_in:
+
+  flutter_facebook_auth:
+
+  sign_in_with_apple:
+
 #  flutter_google_places: ^0.3.0
 #  google_maps_webservice: ^0.0.19
 #  geolocator: ^9.0.2
