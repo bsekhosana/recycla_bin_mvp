@@ -7,6 +7,7 @@ import 'package:recycla_bin/routes.dart';
 import 'core/constants/strings.dart';
 import 'core/provider/app_provider.dart';
 import 'features/authentication/provider/auth_provider.dart';
+import 'features/authentication/provider/forgot_password_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +17,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AppProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => ForgotPasswordProvider()),
         // Add more providers here as needed
       ],
       child: MyApp(),

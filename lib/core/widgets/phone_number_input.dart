@@ -3,16 +3,19 @@ import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 
 class PhoneNumberInput extends StatefulWidget {
-  const PhoneNumberInput({super.key});
+  final TextEditingController? controller;
+
+  const PhoneNumberInput({super.key, this.controller});
 
   @override
   _PhoneNumberInputState createState() => _PhoneNumberInputState();
 }
 
 class _PhoneNumberInputState extends State<PhoneNumberInput> {
-  final TextEditingController _controller = TextEditingController();
-  String _initialCountry = 'US';
-  PhoneNumber _number = PhoneNumber(isoCode: 'US');
+  final TextEditingController _internalController = TextEditingController();
+  late TextEditingController _controller;
+  String _initialCountry = 'ZA';
+  PhoneNumber _number = PhoneNumber(isoCode: 'ZA');
   bool _isValid = false;
 
   void _onCountryChange(CountryCode countryCode) {
@@ -30,6 +33,12 @@ class _PhoneNumberInputState extends State<PhoneNumberInput> {
     setState(() {
       _isValid = value;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = widget.controller ?? _internalController;
   }
 
   @override
