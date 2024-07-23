@@ -10,6 +10,7 @@ import 'package:recycla_bin/core/widgets/custom_textfield.dart';
 
 import '../../../../core/utilities/dialogs_utils.dart';
 import '../../../../core/utilities/validators.dart';
+import '../../../../core/widgets/phone_number_input.dart';
 import '../../provider/auth_provider.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -24,6 +25,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  final GlobalKey<PhoneNumberInputState> phoneNumberInputKey = GlobalKey<PhoneNumberInputState>();
 
   // final _formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -92,15 +95,25 @@ class _RegisterPageState extends State<RegisterPage> {
                         width: width * 0.845,
                         child: Column(
                           children: [
-                            CustomTextField(
+                            // CustomTextField(
+                            //   controller: phoneNumberController,
+                            //   leadingIcon: Icons.phone_iphone_outlined,
+                            //   trailingIcon: null,
+                            //   hintText: 'Enter Phone Number',
+                            //   labelText: 'Phone Number',
+                            //   inputType: TextInputType.phone,
+                            //   obscureText: false,
+                            //   validator: Validators.validatePhoneNumber,
+                            // ),
+                            PhoneNumberInput(
+                              key: phoneNumberInputKey,
                               controller: phoneNumberController,
-                              leadingIcon: Icons.phone_iphone_outlined,
-                              trailingIcon: null,
-                              hintText: 'Enter Phone Number',
-                              labelText: 'Phone Number',
-                              inputType: TextInputType.phone,
-                              obscureText: false,
-                              validator: Validators.validatePhoneNumber,
+                              // validator: (value) {
+                              //   if (value == null || value.isEmpty) {
+                              //     return 'Phone number cannot be empty';
+                              //   }
+                              //   return null;
+                              // },
                             ),
                             const SizedBox(height: 20),
                             CustomTextField(
@@ -177,10 +190,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           }else{
                             try {
                               showLoadingDialog(context); // Show loading indicator
+                              final String formattedPhoneNumber =
+                              PhoneNumberInput.getFormattedPhoneNumber(phoneNumberInputKey);
                               await context.read<AuthProvider>().register(
                                 username: usernameController.text,
                                 email: emailController.text,
-                                phoneNumber: phoneNumberController.text,
+                                phoneNumber: formattedPhoneNumber,
                                 password: passwordController.text,
                               );
                               hideLoadingDialog(context); // Hide loading indicator

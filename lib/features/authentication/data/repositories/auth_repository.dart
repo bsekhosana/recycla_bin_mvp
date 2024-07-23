@@ -8,17 +8,43 @@ import '../../../../core/utilities/error_handler.dart';
 
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
+import '../../data/models/user.dart' as custom_user;
+
 class AuthRepository {
+
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  FirebaseAuth get firebaseAuth => _firebaseAuth;
 
   firebase_auth.User? get currentUser => _firebaseAuth.currentUser;
 
   Stream<firebase_auth.User?> get authStateChanges => _firebaseAuth.authStateChanges();
 
-  // FirebaseAuth get firebaseAuth => _firebaseAuth;
+  Future<custom_user.User?> getUserByPhoneNumber(String phoneNumber) async {
+    final querySnapshot = await _firestore
+        .collection('users')
+        .where('phoneNumber', isEqualTo: phoneNumber)
+        .get();
 
-  Future<String?> getUserByPhoneNumber(String phoneNumber) async {
+    if (querySnapshot.docs.isNotEmpty) {
+      final userData = querySnapshot.docs.first.data();
+      return custom_user.User.fromMap(userData, querySnapshot.docs.first.id);
+    }
+    return null;
+  }
+
+  Future<custom_user.User?> getUserByUid(String uid) async {
+    final docSnapshot = await _firestore.collection('users').doc(uid).get();
+    if (docSnapshot.exists) {
+      final userData = docSnapshot.data();
+      return custom_user.User.fromMap(userData!, docSnapshot.id);
+    }
+    return null;
+  }
+
+  Future<String?> getUserIdByPhoneNumber(String phoneNumber) async {
     final querySnapshot = await _firestore
         .collection('users')
         .where('phoneNumber', isEqualTo: phoneNumber)

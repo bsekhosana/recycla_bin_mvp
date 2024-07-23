@@ -87,9 +87,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       showLoadingDialog(context);
                       final String formattedPhoneNumber =
                       PhoneNumberInput.getFormattedPhoneNumber(phoneNumberInputKey);
-                      await context
-                          .read<ForgotPasswordProvider>()
-                          .sendCode(formattedPhoneNumber);
+                      await context.read<ForgotPasswordProvider>().sendCode(formattedPhoneNumber, context);
                       hideLoadingDialog(context);
                       Navigator.pushNamed(
                         context,

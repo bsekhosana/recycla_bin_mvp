@@ -6,15 +6,26 @@ import 'package:http/http.dart' as http;
 import '../models/user.dart';
 import 'auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import '../../data/models/user.dart' as custom_user;
 
 class ForgotPasswordRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final AuthRepository _authRepository = AuthRepository();
 
-  Future<String?> getUserByPhoneNumber(String phoneNumber) async {
+  // Future<String?> getUserByPhoneNumber(String phoneNumber) async {
+  //   return await _authRepository.getUserByPhoneNumber(phoneNumber);
+  // }
+
+
+  // Future<firebase_auth.User?> getUserByPhoneNumber(String phoneNumber) async {
+  //   return await _authRepository.getUserByPhoneNumber(phoneNumber);
+  // }
+
+  Future<custom_user.User?> getUserByPhoneNumber(String phoneNumber) async {
     return await _authRepository.getUserByPhoneNumber(phoneNumber);
   }
+
 
   // Future<String?> getUserByPhoneNumber(String phoneNumber) async {
   //   final querySnapshot = await _firestore
@@ -33,16 +44,6 @@ class ForgotPasswordRepository {
   }
 
   Future<void> sendSMS(String phoneNumber, String pin) async {
-    // Use a free SMS service API, example using Textbelt
-    // final response = await http.post(
-    //   Uri.parse('https://textbelt.com/text'),
-    //   body: {
-    //     'phone': phoneNumber,
-    //     'message': 'Your verification code is: $pin',
-    //     'key': 'textbelt'
-    //   },
-    // );
-
     final response = await http.post(
       Uri.parse('https://rest.nexmo.com/sms/json'),
       headers: {
@@ -81,14 +82,22 @@ class ForgotPasswordRepository {
     }
   }
 
-  Future<void> resetPassword(String newPassword) async {
+  Future<void> resetPassword(String newPassword, String userId) async {
     try {
-      firebase_auth.User? user = _firebaseAuth.currentUser;
-      if (user != null) {
-        await user.updatePassword(newPassword);
-      }
+      await _firestore.collection('users').doc(userId).update({
+        'password': newPassword, // Ensure to hash the password if needed
+      });
+      print('password updated successfully');
+      // firebase_auth.User? user = _firebaseAuth.currentUser;
+      // if (user != null) {
+      //   await user.updatePassword(newPassword);
+      // } else {
+      //   // Update password in Firestore for the custom user using the provided userId
+      //
+      // }
     } catch (e) {
       print('Error resetting password: $e');
+      rethrow;
     }
   }
 }

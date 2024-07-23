@@ -121,7 +121,7 @@ class _PhoneVerificationPageState extends State<PhoneVerificationPage> {
                       try {
                         final userId = await context
                             .read<ForgotPasswordProvider>()
-                            .getUserByPhoneNumber(widget.phoneNumber);
+                            .getUserIdByPhoneNumber(widget.phoneNumber);
                         if (userId != null) {
                           final isValid = await context
                               .read<ForgotPasswordProvider>()

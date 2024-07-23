@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:recycla_bin/core/constants/shared_preferences_keys.dart';
 import 'package:recycla_bin/core/widgets/auth_scaffold.dart';
 import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
 import '../../../../core/utilities/dialogs_utils.dart';
+import '../../../../core/utilities/shared_pref_util.dart';
 import '../../../../core/widgets/custom_snackbar.dart';
 import '../../provider/auth_provider.dart';
 import '../../provider/forgot_password_provider.dart';
@@ -20,6 +22,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
   late bool _obscureText = true;
   late bool _obscureText1 = true;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final SharedPrefUtil _sharedPrefUtil = SharedPrefUtil();
 
   void _toggleObscureText() {
     setState(() {
@@ -44,6 +47,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+
 
     return AuthScaffold(
       body: SizedBox(
@@ -163,14 +167,19 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                     if (_formKey.currentState!.validate()) {
                       try {
                         showLoadingDialog(context);
-                        await context.read<ForgotPasswordProvider>().resetPassword(passwordController.text);
-                        hideLoadingDialog(context);
+                        final userId = await _sharedPrefUtil.get<String>(AppSharedKeys.userIdKey);
+                        print('current user id before password reset ${userId}');
+                        await context.read<ForgotPasswordProvider>().resetPassword(passwordController.text, userId ?? '');
                         showCustomSnackbar(context, 'Password reset successfully', backgroundColor: Colors.green);
                         // Login user and navigate to the home page
+                        // showCustomSnackbar(context, 'Password reset successfully', backgroundColor: Colors.green);
+                        final userEmail = await _sharedPrefUtil.get<String>(AppSharedKeys.userEmailKey);
+                        print('logging in with email: ${userEmail} and password: ${passwordController.text}');
                         await context.read<AuthProvider>().login(
-                          email: context.read<AuthProvider>().currentUser!.email!,
+                          email: userEmail!,
                           password: passwordController.text,
                         );
+                        hideLoadingDialog(context);
                         Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false);
                       } catch (e) {
                         hideLoadingDialog(context);
