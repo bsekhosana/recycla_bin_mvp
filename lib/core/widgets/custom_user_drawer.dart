@@ -32,9 +32,9 @@ class _CustomUserDrawerState extends State<CustomUserDrawer> {
       case 0:
         Navigator.pushNamed(context, 'schedulecollection');
       case 1:
-        Navigator.pushNamed(context, 'schedulecollection');
+        Navigator.pushNamed(context, 'collections');
       case 2:
-        Navigator.pushNamed(context, 'profile');
+        Navigator.pushNamed(context, 'notifications');
       case 3:
         Navigator.pushNamed(context, 'profile');
       case 4:
@@ -42,7 +42,7 @@ class _CustomUserDrawerState extends State<CustomUserDrawer> {
           await context.read<AuthProvider>().logout();
           // Navigate to the login page after signing out
           Navigator.pushNamedAndRemoveUntil(context, '/landing', (Route<dynamic> route) => false);
-          showCustomSnackbar(context, 'Logged out success', backgroundColor: Colors.green);
+          showCustomSnackbar(context, 'Logged out successfully', backgroundColor: Colors.orange);
         } catch (e) {
           showCustomSnackbar(context, 'Failed to logout with error: ${e.toString()}', backgroundColor: Colors.red);
         }

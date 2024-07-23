@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:recycla_bin/features/authentication/presentation/pages/forgot_password_page.dart';
 import 'package:recycla_bin/features/authentication/presentation/pages/password_reset_page.dart';
 import 'package:recycla_bin/features/authentication/presentation/pages/phone_verification_page.dart';
+import 'package:recycla_bin/features/notifications/notifications_page.dart';
 import 'package:recycla_bin/features/profile/profile_page.dart';
 import 'package:recycla_bin/features/schedule/presentation/pages/add_products_page.dart';
 import 'package:recycla_bin/features/schedule/presentation/pages/collection_date_page.dart';
@@ -16,6 +17,7 @@ import 'package:recycla_bin/features/schedule/schedule_page.dart';
 import 'features/authentication/presentation/pages/login_page.dart';
 import 'features/authentication/presentation/pages/register_page.dart';
 import 'features/authentication/presentation/pages/landing_page.dart';
+import 'features/collections/collections_page.dart';
 import 'features/protected_page.dart';
 
 class Routes {
@@ -47,5 +49,11 @@ class Routes {
 
     // PROFILE FEATURE
     'profile': (BuildContext context) => ProfilePage(),
+
+    // NOTIFICATIONS FEATURE
+    'notifications': (BuildContext context) => NotificationsPage(),
+
+    // COLLECTIONS FEATURE
+    'collections': (BuildContext context) => CollectionsPage(),
   };
 }
