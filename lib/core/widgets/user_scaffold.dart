@@ -14,7 +14,14 @@ class UserScaffold extends StatefulWidget {
 
   final bool isDateCollectionPage;
 
-  const UserScaffold({super.key, required this.body, required this.title, this.showMenu = true, this.isDateCollectionPage = false});
+  final int selectedIndex;
+
+  const UserScaffold({super.key,
+    required this.body,
+    required this.title,
+    this.selectedIndex = 0,
+    this.showMenu = true,
+    this.isDateCollectionPage = false});
 
   @override
   State<UserScaffold> createState() => _UserScaffoldState();
@@ -22,14 +29,6 @@ class UserScaffold extends StatefulWidget {
 
 class _UserScaffoldState extends State<UserScaffold> with SingleTickerProviderStateMixin  {
 
-  int _selectedIndex = 0;
-
-  void _onDrawerItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    Navigator.pop(context);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +76,7 @@ class _UserScaffoldState extends State<UserScaffold> with SingleTickerProviderSt
           )
         ],
       ),
-      drawer: CustomUserDrawer(),
+      drawer: CustomUserDrawer(selectedIndex: widget.selectedIndex,),
     );
   }
 }

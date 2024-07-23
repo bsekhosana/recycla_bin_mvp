@@ -19,6 +19,7 @@ class _ScheduleCollectionPageState extends State<ScheduleCollectionPage> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return UserScaffold(
+      selectedIndex: 0,
       title: 'Schedule Collection',
         body: Column(
           children: [

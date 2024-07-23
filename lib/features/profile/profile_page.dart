@@ -39,7 +39,7 @@ class _ProfilePageState extends State<ProfilePage>  with SingleTickerProviderSta
       key: _scaffoldKey,
       extendBodyBehindAppBar: true,
       backgroundColor: Utils.hexToColor(AppStrings.kRBThirdColor),
-      drawer: CustomUserDrawer(),
+      drawer: CustomUserDrawer(selectedIndex: 3,),
       body: Column(
         children: [
           PreferredSize(

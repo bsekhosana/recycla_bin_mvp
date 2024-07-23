@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:recycla_bin/features/authentication/presentation/pages/landing_page.dart';
+import 'package:recycla_bin/features/profile/provider/user_provider.dart';
 import 'package:recycla_bin/routes.dart';
 
 import 'core/constants/strings.dart';
@@ -20,6 +21,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AppProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => ForgotPasswordProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
         // Add more providers here as needed
       ],
       child: MyApp(),
