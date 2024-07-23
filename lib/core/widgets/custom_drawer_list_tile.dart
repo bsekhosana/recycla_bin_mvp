@@ -30,7 +30,8 @@ class CustomDrawerListTile extends StatelessWidget {
           title: Text(title,
               style: TextStyle(
                   color: isSelected ? Colors.green : null,
-                fontSize: width*0.05
+                fontSize: width*0.05,
+                fontWeight: FontWeight.bold
               ),
           ),
           selected: isSelected,

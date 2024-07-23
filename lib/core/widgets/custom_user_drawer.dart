@@ -100,14 +100,18 @@ class _CustomUserDrawerState extends State<CustomUserDrawer> {
                       user != null ? user.username : 'Test User',
                       style: TextStyle(
                           color: Utils.hexToColor(AppStrings.kRBSecondaryColor),
-                          fontSize: 18),
+                          fontSize: width*0.05,
+                          fontWeight: FontWeight.bold
+                      ),
                     ),
                     SizedBox(height: height * 0.002),
                     Text(
                       user != null ? user.email : 'test@email.com',
                       style: TextStyle(
                           color: Utils.hexToColor(AppStrings.kRBSecondaryColor),
-                          fontSize: 18),
+                          fontSize: width*0.05,
+                          fontWeight: FontWeight.bold
+                      ),
                     ),
                   ],
                 ),
