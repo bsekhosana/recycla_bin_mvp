@@ -11,10 +11,17 @@ import 'core/provider/app_provider.dart';
 import 'features/authentication/presentation/pages/phone_verification_page.dart';
 import 'features/authentication/provider/auth_provider.dart';
 import 'features/authentication/provider/forgot_password_provider.dart';
+import 'features/schedule/data/data_provider/shared_pref_provider.dart';
+import 'features/schedule/domain/repositories/rb_collection_repository.dart';
+import 'features/schedule/presentation/providers/rb_collection_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  final sharedPrefProvider = SharedPrefProvider();
+  final rbCollectionRepository = RBCollectionRepository(sharedPrefProvider: sharedPrefProvider);
+
   runApp(
     MultiProvider(
       providers: [
@@ -22,6 +29,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => ForgotPasswordProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => RBCollectionProvider(repository: rbCollectionRepository)),
         // Add more providers here as needed
       ],
       child: MyApp(),

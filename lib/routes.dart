@@ -14,6 +14,7 @@ import 'package:recycla_bin/features/schedule/presentation/pages/payment_complet
 import 'package:recycla_bin/features/schedule/presentation/pages/scan_page.dart';
 import 'package:recycla_bin/features/schedule/presentation/pages/track_collection_page.dart';
 import 'package:recycla_bin/features/schedule/schedule_page.dart';
+import 'package:recycla_bin/features/settings/settings_page.dart';
 import 'features/authentication/presentation/pages/login_page.dart';
 import 'features/authentication/presentation/pages/register_page.dart';
 import 'features/authentication/presentation/pages/landing_page.dart';
@@ -55,5 +56,8 @@ class Routes {
 
     // COLLECTIONS FEATURE
     'collections': (BuildContext context) => CollectionsPage(),
+
+    // SETTINGS FEATURE
+    'settings': (BuildContext context) => SettingsPage(),
   };
 }

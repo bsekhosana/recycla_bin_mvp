@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
+import 'package:recycla_bin/core/widgets/custom_snackbar.dart';
 import 'package:recycla_bin/core/widgets/user_scaffold.dart';
+import 'package:recycla_bin/features/schedule/data/models/rb_collection.dart';
 
 import '../../../../core/constants/strings.dart';
 import '../../../../core/utilities/utils.dart';
 import '../../../../core/widgets/time_selectior_dropdown.dart';
 
 import 'package:table_calendar/table_calendar.dart';
+
+import '../providers/rb_collection_provider.dart';
 
 class CollectionDatePage extends StatefulWidget {
   const CollectionDatePage({super.key});
@@ -42,6 +47,7 @@ class _CollectionDatePageState extends State<CollectionDatePage> {
     double height = MediaQuery.of(context).size.height;
     DateTime firstDay = DateTime.now().subtract(const Duration(days: 365));
     DateTime lastDay = DateTime.now().add(const Duration(days: 365));
+    final provider = Provider.of<RBCollectionProvider>(context);
     return UserScaffold(
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,9 +251,27 @@ class _CollectionDatePageState extends State<CollectionDatePage> {
                   height: height*0.06,
                   child: CustomElevatedButton(
                       text: 'Done',
-                      onPressed: (){
-
-                        Navigator.pop(context);
+                      onPressed: () async {
+                        if(_selectedDay == null){
+                          showCustomSnackbar(
+                              context, 'Please select a date for collection',
+                              backgroundColor: Colors.orange,
+                          );
+                        }else{
+                          if(provider.collection != null){
+                            provider.collection?.date = _selectedDay?.toIso8601String();
+                            provider.collection?.time = '01:00AM - 05:00AM';
+                            showCustomSnackbar(context, 'Collection updated', backgroundColor: Colors.green);
+                          }else{
+                            RBCollection collection = RBCollection(
+                              date: _selectedDay?.toIso8601String(),
+                              time:'12:00AM - 01:00AM',
+                            );
+                            await provider.saveCollection(collection);
+                            showCustomSnackbar(context, 'New collection created', backgroundColor: Colors.green);
+                          }
+                          Navigator.pop(context);
+                        }
                       },
                       primaryButton: true
                   ),

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefUtil {
@@ -22,11 +23,13 @@ class SharedPrefUtil {
     } else if (value is List<String>) {
       await prefs.setStringList(key, value);
     } else {
-      throw Exception("Unsupported type");
+      // Convert custom objects to JSON string
+      String jsonString = jsonEncode(value);
+      await prefs.setString(key, jsonString);
     }
   }
 
-  Future<T?> get<T>(String key) async {
+  Future<T?> get<T>(String key, {T Function(Map<String, dynamic>)? fromJson}) async {
     final prefs = await SharedPreferences.getInstance();
     if (T == String) {
       return prefs.getString(key) as T?;
@@ -39,6 +42,12 @@ class SharedPrefUtil {
     } else if (T == List<String>) {
       return prefs.getStringList(key) as T?;
     } else {
+      // Parse JSON string to custom object
+      String? jsonString = prefs.getString(key);
+      if (jsonString != null && fromJson != null) {
+        Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+        return fromJson(jsonMap);
+      }
       throw Exception("Unsupported type");
     }
   }

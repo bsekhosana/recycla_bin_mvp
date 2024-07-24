@@ -23,6 +23,24 @@ class User {
   // Override toString to print user object
   @override
   String toString() {
-    return 'User{id: $id, phoneNumber: $phoneNumber, email: $email, name: $username}';
+    return 'User{id: $id, phoneNumber: $phoneNumber, email: $email, username: $username}';
+  }
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'],
+      username: json['username'],
+      email: json['email'],
+      phoneNumber: json['phoneNumber'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'username': username,
+      'email': email,
+      'phoneNumber': phoneNumber,
+    };
   }
 }

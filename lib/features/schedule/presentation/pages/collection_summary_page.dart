@@ -5,7 +5,7 @@ import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
 import 'package:recycla_bin/core/widgets/custom_icon_button.dart';
 
 import '../../../../core/widgets/user_scaffold.dart';
-import '../../data/models/product.dart';
+import '../../data/models/rb_product.dart';
 
 class CollectionSummaryPage extends StatefulWidget {
   const CollectionSummaryPage({super.key});
@@ -15,10 +15,10 @@ class CollectionSummaryPage extends StatefulWidget {
 }
 
 class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
-  List<Product> products = [
-    Product(name: "Coke", size: "500ml", quantity: 10),
-    Product(name: "Milk", size: "2L", quantity: 2),
-    Product(name: "Coke", size: "2L", quantity: 10),
+  List<RBProduct> products = [
+    RBProduct(name: "Coke", size: "500ml", quantity: 10),
+    RBProduct(name: "Milk", size: "2L", quantity: 2),
+    RBProduct(name: "Coke", size: "2L", quantity: 10),
   ];
 
   int totalQuantity = 22;
@@ -28,19 +28,36 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
 
   void incrementQuantity(int index) {
     setState(() {
-      products[index].quantity++;
-      totalQuantity++;
+      // Ensure quantity is not null before incrementing
+      if (products[index].quantity != null) {
+        products[index].quantity = products[index].quantity! + 1;
+      } else {
+        products[index].quantity = 1;
+      }
+
+      // Ensure totalQuantity is not null before incrementing
+      if (totalQuantity != null) {
+        totalQuantity = totalQuantity! + 1;
+      } else {
+        totalQuantity = 1;
+      }
     });
   }
 
   void decrementQuantity(int index) {
-    if (products[index].quantity > 0) {
+    // Ensure the quantity is not null and greater than 0 before decrementing
+    if (products[index].quantity != null && products[index].quantity! > 0) {
       setState(() {
-        products[index].quantity--;
-        totalQuantity--;
+        products[index].quantity = products[index].quantity! - 1;
+
+        // Ensure totalQuantity is not null before decrementing
+        if (totalQuantity != null && totalQuantity! > 0) {
+          totalQuantity = totalQuantity! - 1;
+        }
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +94,7 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
                                       Icon(Icons.circle, color: Utils.hexToColor(AppStrings.kRBSecondaryColor), size: 10),
                                       // SizedBox(width: width*0.015),
                                       Spacer(),
-                                      Text(product.name, style: TextStyle(fontSize: width*0.04)),
+                                      Text(product.name!, style: TextStyle(fontSize: width*0.04)),
                                     ],
                                   ),
                                 ),
@@ -85,7 +102,7 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
                                 SizedBox(width: width*0.13),
 
                                 // SizedBox(width: width*0.1),
-                                Text(product.size, style: TextStyle(fontSize: width*0.04)),
+                                Text(product.size!, style: TextStyle(fontSize: width*0.04)),
                               ],
                             ),
                           ),

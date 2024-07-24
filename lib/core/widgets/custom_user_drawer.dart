@@ -38,6 +38,8 @@ class _CustomUserDrawerState extends State<CustomUserDrawer> {
       case 3:
         Navigator.pushNamed(context, 'profile');
       case 4:
+        Navigator.pushNamed(context, 'settings');
+      case 5:
         try {
           await context.read<AuthProvider>().logout();
           // Navigate to the login page after signing out
@@ -144,10 +146,16 @@ class _CustomUserDrawerState extends State<CustomUserDrawer> {
                 onTap: () => _onItemTapped(3),
               ),
               CustomDrawerListTile(
-                icon: Icons.logout,
-                title: 'Logout',
+                icon: Icons.settings,
+                title: 'Settings',
                 isSelected: _selectedIndex == 4,
                 onTap: () => _onItemTapped(4),
+              ),
+              CustomDrawerListTile(
+                icon: Icons.logout,
+                title: 'Logout',
+                isSelected: _selectedIndex == 5,
+                onTap: () => _onItemTapped(5),
               ),
             ],
           ),
