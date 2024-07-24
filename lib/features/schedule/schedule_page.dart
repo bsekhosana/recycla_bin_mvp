@@ -75,7 +75,7 @@ class _ScheduleCollectionPageState extends State<ScheduleCollectionPage> {
                         SizedBox(height: height * 0.023),
                         schedule_collection_list_item(
                           title: 'Add Location',
-                          value: provider.collection?.location ?? '',
+                          value: provider.collection?.address ?? '',
                           callback: () {
                             // Handle button press
                             Navigator.pushNamed(context, 'locationpage');
@@ -153,58 +153,80 @@ class schedule_collection_list_item extends StatelessWidget {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return Container(
-      width: double.infinity,
-      height: height * 0.087,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.07),
-            blurRadius: 20.0,
-            spreadRadius: 4.0,
-            offset: const Offset(-1, 6),
-          ),
-        ],
-        color: Colors.white,
-      ),
-      child: Row(
-        children: [
-          SizedBox(width: width * 0.05),
-          SizedBox(
-            width: width * 0.095,
-            height: height * 0.04,
-            child: CustomIconButton(
-              icon: iconData,
-              onPressed: callback,
+    return InkWell(
+      onTap: callback,
+      child: Container(
+        width: double.infinity,
+        height: height * 0.087,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.07),
+              blurRadius: 20.0,
+              spreadRadius: 4.0,
+              offset: const Offset(-1, 6),
             ),
-          ),
-          SizedBox(width: width * 0.08),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                textAlign: TextAlign.start,
-                title,
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: width * 0.043,
-                ),
+          ],
+          color: Colors.white,
+        ),
+        child: Row(
+          children: [
+            SizedBox(width: width * 0.05),
+            SizedBox(
+              width: width * 0.095,
+              height: height * 0.04,
+              child: CustomIconButton(
+                icon: iconData,
+                onPressed: callback,
               ),
-              value != ''
-                  ? Text(
-                textAlign: TextAlign.start,
-                value,
-                style: TextStyle(
-                  color: Colors.green,
-                  fontSize: width * 0.03,
-                ),
-              )
-                  : SizedBox(),
-            ],
-          ),
-        ],
+            ),
+            SizedBox(width: width * 0.08),
+            Container(
+              width: width*0.48,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    textAlign: TextAlign.start,
+                    title,
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: width * 0.043,
+                    ),
+                  ),
+                  value != ''
+                      ? Text(
+                                      value,
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                      color: Colors.green,
+                      fontSize: MediaQuery.of(context).size.width * 0.03,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: false,
+                                    )
+                      : SizedBox(),
+                ],
+              ),
+            ),
+
+            value == '' ?
+                SizedBox() :
+
+                Container(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: width*0.015),
+                    child: Icon(
+                        Icons.check,
+                      color: Colors.green,
+                    ),
+                  ),
+                )
+          ],
+        ),
       ),
     );
   }

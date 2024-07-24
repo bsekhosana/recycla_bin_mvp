@@ -10,6 +10,7 @@ class CustomTextField extends StatefulWidget {
   final bool obscureText;
   final String? validationMessage;
   final String? Function(String?)? validator;
+  final Function(String)? onChanged;
 
   const CustomTextField({
     super.key,
@@ -22,6 +23,7 @@ class CustomTextField extends StatefulWidget {
     required this.obscureText,
     this.validationMessage,
     this.validator,
+    this.onChanged,
   });
 
   @override
@@ -89,7 +91,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             ),
             // errorText: _errorMessage,
           ),
-          onChanged: (text) {
+          onChanged: widget.onChanged ?? (text) {
             _validate();
           },
         ),

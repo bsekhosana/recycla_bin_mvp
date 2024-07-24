@@ -4,10 +4,12 @@ class RBCollection {
   String? id;
   String? date;
   String? time;
-  String? location;
+  String? address;
+  String? lat;
+  String? lon;
   List<RBProduct>? products;
 
-  RBCollection({this.id, this.date, this.time, this.location, this.products});
+  RBCollection({this.id, this.date, this.time, this.address, this.products, this.lat, this.lon});
 
   factory RBCollection.fromJson(Map<String, dynamic> json) {
     var productList = json['products'] as List?;
@@ -19,7 +21,9 @@ class RBCollection {
       id: json['id'],
       date: json['date'],
       time: json['time'],
-      location: json['location'],
+      address: json['address'],
+      lat: json['lat'],
+      lon: json['lon'],
       products: products,
     );
   }
@@ -29,7 +33,9 @@ class RBCollection {
       'id': id,
       'date': date,
       'time': time,
-      'location': location,
+      'address': address,
+      'lat': lat,
+      'lon': lon,
       'products': products?.map((product) => product.toJson()).toList(),
     };
   }
@@ -38,14 +44,18 @@ class RBCollection {
     String? id,
     String? date,
     String? time,
-    String? location,
+    String? address,
+    String? lat,
+    String? lon,
     List<RBProduct>? products,
   }) {
     return RBCollection(
       id: id ?? this.id,
       date: date ?? this.date,
       time: time ?? this.time,
-      location: location ?? this.location,
+      address: address ?? this.address,
+      lat: lat ?? this.lat,
+      lon: lon ?? this.lon,
       products: products ?? this.products,
     );
   }
