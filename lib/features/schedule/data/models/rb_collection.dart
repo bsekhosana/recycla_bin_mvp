@@ -33,4 +33,20 @@ class RBCollection {
       'products': products?.map((product) => product.toJson()).toList(),
     };
   }
+
+  RBCollection copyWith({
+    String? id,
+    String? date,
+    String? time,
+    String? location,
+    List<RBProduct>? products,
+  }) {
+    return RBCollection(
+      id: id ?? this.id,
+      date: date ?? this.date,
+      time: time ?? this.time,
+      location: location ?? this.location,
+      products: products ?? this.products,
+    );
+  }
 }

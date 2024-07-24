@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class TimeSelectorDropdown extends StatefulWidget {
-  const TimeSelectorDropdown({super.key});
+  final void Function(String) onTimeSelected;
+  final String? initialTime;
+
+  const TimeSelectorDropdown({Key? key, required this.onTimeSelected, this.initialTime}) : super(key: key);
 
   @override
   _TimeSelectorDropdownState createState() => _TimeSelectorDropdownState();
@@ -13,7 +16,7 @@ class _TimeSelectorDropdownState extends State<TimeSelectorDropdown> {
   @override
   void initState() {
     super.initState();
-    selectedTime = timeIntervals.first;
+    selectedTime = widget.initialTime ?? timeIntervals.first;
   }
 
   List<String> get timeIntervals {
@@ -39,6 +42,7 @@ class _TimeSelectorDropdownState extends State<TimeSelectorDropdown> {
       onChanged: (String? newValue) {
         setState(() {
           selectedTime = newValue;
+          widget.onTimeSelected(newValue!);
         });
       },
       items: timeIntervals.map<DropdownMenuItem<String>>((String value) {
@@ -50,12 +54,12 @@ class _TimeSelectorDropdownState extends State<TimeSelectorDropdown> {
       icon: Icon(
         Icons.keyboard_arrow_down_rounded,
         color: Colors.grey.shade400,
-        size: MediaQuery.of(context).size.width*0.08,
-      ), // Arrow icon on the right
-      isExpanded: true, // Make the dropdown take full width
-      underline: Container(), // Remove the underline
+        size: MediaQuery.of(context).size.width * 0.08,
+      ),
+      isExpanded: true,
+      underline: Container(),
       style: TextStyle(
-        fontSize: MediaQuery.of(context).size.width*0.041,
+        fontSize: MediaQuery.of(context).size.width * 0.041,
         color: Colors.grey,
       ),
       dropdownColor: Colors.white,
