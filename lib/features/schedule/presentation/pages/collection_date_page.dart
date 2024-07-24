@@ -50,13 +50,19 @@ class _CollectionDatePageState extends State<CollectionDatePage> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    DateTime firstDay = DateTime.now().subtract(const Duration(days: 365));
+    DateTime firstDay = DateTime.now();// DateTime.now().subtract(const Duration(days: 365));
     DateTime lastDay = DateTime.now().add(const Duration(days: 365));
     final provider = Provider.of<RBCollectionProvider>(context);
 
     print('current selected time: ${_selectedTime}');
 
     return UserScaffold(
+      onCalendarTodayButtonPressed: (){
+        print('onCalendarTodayButtonPressed');
+        setState(() {
+          _focusedDay = DateTime.now();
+        });
+      },
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -128,6 +134,9 @@ class _CollectionDatePageState extends State<CollectionDatePage> {
             focusedDay: _focusedDay,
             selectedDayPredicate: (day) {
               return isSameDay(_selectedDay, day);
+            },
+            enabledDayPredicate: (day) {
+              return !day.isBefore(DateTime.now());
             },
             onDaySelected: (selectedDay, focusedDay) {
               setState(() {

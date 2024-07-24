@@ -16,12 +16,16 @@ class UserScaffold extends StatefulWidget {
 
   final int selectedIndex;
 
+  final VoidCallback? onCalendarTodayButtonPressed;
+
   const UserScaffold({super.key,
     required this.body,
     required this.title,
     this.selectedIndex = 0,
     this.showMenu = true,
-    this.isDateCollectionPage = false});
+    this.isDateCollectionPage = false,
+    this.onCalendarTodayButtonPressed
+  });
 
   @override
   State<UserScaffold> createState() => _UserScaffoldState();
@@ -40,7 +44,13 @@ class _UserScaffoldState extends State<UserScaffold> with SingleTickerProviderSt
       backgroundColor: Utils.hexToColor(AppStrings.kRBThirdColor),
       body: Column(
         children: [
-          CustomAppBar(title: widget.title, showMenuIcon: widget.showMenu,height: height*0.14, isDateCollectionPage: widget.isDateCollectionPage,),
+          CustomAppBar(
+            title: widget.title,
+            showMenuIcon: widget.showMenu,
+            height: height*0.14,
+            isDateCollectionPage: widget.isDateCollectionPage,
+            onCalendarTodayButtonPressed: widget.onCalendarTodayButtonPressed,
+          ),
           Container(
               width: width,
               decoration: BoxDecoration(

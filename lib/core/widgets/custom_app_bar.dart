@@ -7,8 +7,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double height;
   final bool showMenuIcon;
   final bool isDateCollectionPage;
+  final VoidCallback? onCalendarTodayButtonPressed;
 
-  const CustomAppBar({super.key, required this.title, this.height = kToolbarHeight, required this.showMenuIcon, this.isDateCollectionPage = false});
+  const CustomAppBar({
+    super.key,
+    required this.title,
+    this.height = kToolbarHeight,
+    required this.showMenuIcon,
+    this.isDateCollectionPage = false,
+    this.onCalendarTodayButtonPressed
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -93,9 +101,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                           height: height * 0.06,
                           width: width * 0.25,
                           child: TextButton(
-                            onPressed: () {
-                              // Handle button press
-                            },
+                            onPressed: onCalendarTodayButtonPressed,
                             style: TextButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(9.0),
