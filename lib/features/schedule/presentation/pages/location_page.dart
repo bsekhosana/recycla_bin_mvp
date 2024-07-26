@@ -42,6 +42,15 @@ class _LocationPageState extends State<LocationPage> {
   void initState() {
     super.initState();
     _getCurrentLocation();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = Provider.of<RBCollectionProvider>(context, listen: false);
+      if (provider.collection != null && provider.collection?.lat != null) {
+        setState(() {
+          _currentPosition = LatLng(provider.collection?.lat as double, provider.collection?.lon as double);
+          _locationAddressEditingController.text = provider.collection!.address!;
+        });
+      }
+    });
   }
 
   void _onMapCreated(GoogleMapController controller) {

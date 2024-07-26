@@ -31,4 +31,7 @@ class AppStrings {
   static const String kRBSecondaryColor = '#099444';
   static const String kRBThirdColor = '#7cad26';
 
+  static const String openFoodAPIClientUsername = 'bsekhosana';
+  static const String openFoodAPIClientPassword = 'NBG96NXFvj4t2Gg';
+
 }

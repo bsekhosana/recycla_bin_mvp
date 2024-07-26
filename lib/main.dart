@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:provider/provider.dart';
 import 'package:recycla_bin/features/authentication/presentation/pages/landing_page.dart';
 import 'package:recycla_bin/features/profile/provider/user_provider.dart';
@@ -22,6 +23,9 @@ void main() async {
   final sharedPrefProvider = SharedPrefProvider();
   final rbCollectionRepository = RBCollectionRepository(sharedPrefProvider: sharedPrefProvider);
 
+  OpenFoodAPIConfiguration.userAgent = UserAgent(
+    name: 'recycla_bin_app',
+  );
   runApp(
     MultiProvider(
       providers: [

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:recycla_bin/core/widgets/custom_icon_button.dart';
+import 'package:recycla_bin/core/widgets/custom_snackbar.dart';
 
 import '../../../../core/constants/strings.dart';
 import '../../../../core/utilities/utils.dart';
+
+import 'package:openfoodfacts/openfoodfacts.dart';
 
 class ScanPage extends StatefulWidget {
   @override
@@ -57,7 +60,7 @@ class _ScanPageState extends State<ScanPage> {
                   onTap: () async {
                     var scanData = await controller?.scannedDataStream.first;
                     if (scanData != null) {
-                      Navigator.pop(context, scanData.code);
+                      _searchProduct(scanData.code!);
                     }
                   },
                   child: Container(
@@ -113,8 +116,26 @@ class _ScanPageState extends State<ScanPage> {
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
-      Navigator.pop(context, scanData.code); // Return the scanned data to the previous screen
+      _searchProduct(scanData.code!);
     });
+  }
+
+  void _searchProduct(String barcode) async {
+    try {
+      ProductQueryConfiguration configuration = ProductQueryConfiguration(
+        barcode,
+        fields: [ProductField.ALL], version: ProductQueryVersion.v3,
+      );
+      ProductResultV3 result = await OpenFoodAPIClient.getProductV3(configuration);
+
+      if (result.status == 1) {
+        Navigator.pop(context, result.product);
+      } else {
+        showCustomSnackbar(context, 'Product not found', backgroundColor: Colors.red);
+      }
+    } catch (error) {
+      showCustomSnackbar(context, 'An error occurred while searching for the product', backgroundColor: Colors.red);
+    }
   }
 
   @override
