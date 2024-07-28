@@ -1,30 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:recycla_bin/core/utilities/utils.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-
-import 'package:crypto/crypto.dart';
-
-import 'dart:convert';
 
 import '../../../../core/utilities/error_handler.dart';
 
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import '../models/rb_user_model.dart';
 
 class RBAuthRepository {
-
-  // final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   RBUserModel? _currentUser;
 
   RBUserModel? get currentUser => _currentUser;
-
-  // Stream<firebase_auth.User?> get authStateChanges => _firebaseAuth.authStateChanges();
 
   Future<RBUserModel?> getUserByPhoneNumber(String phoneNumber) async {
     final querySnapshot = await _firestore
@@ -60,18 +49,57 @@ class RBAuthRepository {
     return null;
   }
 
+  Future<String?> getUserIdByEmail(String email) async {
+    final querySnapshot = await _firestore
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.id;
+    }
+    return null;
+  }
+
+  Future<String?> getUserIdByUsername(String username) async {
+    final querySnapshot = await _firestore
+        .collection('users')
+        .where('username', isEqualTo: username)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.id;
+    }
+    return null;
+  }
+
   Future<void> registerUser({required String username, required String email,required String password,required String phoneNumber, }) async {
-    final String hashedPassword = Utils.hashString(password);
+    try{
+      // validate username, email and phone number to make sure they are unique
+      if(await getUserIdByPhoneNumber(phoneNumber) != null){
+          throw getCustomAuthErrorMessage('phone-number-already-in-use');
+      }else if(await  getUserIdByEmail(email) != null){
+        throw getCustomAuthErrorMessage('email-already-in-use');
+      }else if(await  getUserIdByUsername(username) != null){
+        throw getCustomAuthErrorMessage('username-already-in-use');
+      }else if(!isPasswordValid(password)){
+        throw getCustomAuthErrorMessage('weak-password');
+      }else{
 
-    final user = RBUserModel(
-      id: _firestore.collection('users').doc().id,
-      email: email,
-      username: username,
-      phoneNumber: phoneNumber,
-      hashedPassword: hashedPassword,
-    );
+        final String hashedPassword = Utils.hashString(password);
+        final user = RBUserModel(
+          id: _firestore.collection('users').doc().id,
+          email: email,
+          username: username,
+          phoneNumber: phoneNumber,
+          hashedPassword: hashedPassword,
+        );
+        await _firestore.collection('users').doc(user.id).set(user.toJson());
 
-    await _firestore.collection('users').doc(user.id).set(user.toJson());
+      }
+    }catch(e){
+      throw e;
+    }
   }
 
   Future<RBUserModel?> loginUser({required String email, required String password}) async {

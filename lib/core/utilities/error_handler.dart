@@ -36,6 +36,10 @@ String getCustomAuthErrorMessage(String code){
       return 'The password is invalid for the given email, or the account does not have a password.';
     case 'email-already-in-use':
       return 'The email address is already in use by another account.';
+    case 'username-already-in-use':
+      return 'The username is already in use by another account.';
+    case 'phone-number-already-in-use':
+      return 'The phone number is already in use by another account.';
     case 'operation-not-allowed':
       return 'Email/password accounts are not enabled. Enable email/password accounts in the Firebase Console, under the Auth tab.';
     case 'weak-password':
@@ -46,4 +50,16 @@ String getCustomAuthErrorMessage(String code){
     default:
       return 'An unknown error occurred. Please try again later. (Error code: ${code})';
   }
+}
+
+bool isPasswordValid(String password) {
+  // Regular expression to validate the password
+  final passwordRegex = RegExp(
+    r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$',
+  );
+
+  if (!passwordRegex.hasMatch(password)) {
+    return false;
+  }
+  return true;
 }
