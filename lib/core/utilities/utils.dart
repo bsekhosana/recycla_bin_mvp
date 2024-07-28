@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
+
+import 'package:crypto/crypto.dart';
 
 class Utils{
 
@@ -42,5 +45,10 @@ class Utils{
       default:
         return false;
     }
+  }
+
+  static String hashString(String stringToHash) {
+    final bytes = utf8.encode(stringToHash);
+    return sha256.convert(bytes).toString();
   }
 }

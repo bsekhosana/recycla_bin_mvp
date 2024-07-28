@@ -11,7 +11,7 @@ import 'package:recycla_bin/core/widgets/custom_textfield.dart';
 import '../../../../core/utilities/dialogs_utils.dart';
 import '../../../../core/utilities/validators.dart';
 import '../../../../core/widgets/phone_number_input.dart';
-import '../../provider/auth_provider.dart';
+import '../../provider/rb_auth_provider.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -192,7 +192,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               showLoadingDialog(context); // Show loading indicator
                               final String formattedPhoneNumber =
                               PhoneNumberInput.getFormattedPhoneNumber(phoneNumberInputKey);
-                              await context.read<AuthProvider>().register(
+                              await context.read<RBAuthProvider>().register(
                                 username: usernameController.text,
                                 email: emailController.text,
                                 phoneNumber: formattedPhoneNumber,
@@ -256,15 +256,15 @@ class _RegisterPageState extends State<RegisterPage> {
                           children: [
                             ElevatedButton(
                               onPressed: () async {
-                                try {
-                                  showLoadingDialog(context); // Show loading indicator
-                                  await context.read<AuthProvider>().signInWithFacebook();
-                                  hideLoadingDialog(context); // Hide loading indicator
-                                  Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false);
-                                } catch (e) {
-                                  hideLoadingDialog(context); // Hide loading indicator
-                                  showCustomSnackbar(context, e.toString(), backgroundColor: Colors.red);
-                                }
+                                // try {
+                                //   showLoadingDialog(context); // Show loading indicator
+                                //   await context.read<RBAuthProvider>().signInWithFacebook();
+                                //   hideLoadingDialog(context); // Hide loading indicator
+                                //   Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false);
+                                // } catch (e) {
+                                //   hideLoadingDialog(context); // Hide loading indicator
+                                //   showCustomSnackbar(context, e.toString(), backgroundColor: Colors.red);
+                                // }
                               },
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
@@ -285,7 +285,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               onPressed: () async {
                                 try {
                                   showLoadingDialog(context); // Show loading indicator
-                                  await context.read<AuthProvider>().signInWithGoogle();
+                                  await context.read<RBAuthProvider>().signInWithGoogle();
                                   hideLoadingDialog(context); // Hide loading indicator
                                   Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false);
                                 } catch (e) {
@@ -312,15 +312,15 @@ class _RegisterPageState extends State<RegisterPage> {
                             if (Platform.isIOS)
                               ElevatedButton(
                                 onPressed: () async {
-                                  try {
-                                    showLoadingDialog(context); // Show loading indicator
-                                    await context.read<AuthProvider>().signInWithApple();
-                                    hideLoadingDialog(context); // Hide loading indicator
-                                    Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false);
-                                  } catch (e) {
-                                    hideLoadingDialog(context); // Hide loading indicator
-                                    showCustomSnackbar(context, e.toString(), backgroundColor: Colors.red);
-                                  }
+                                  // try {
+                                  //   showLoadingDialog(context); // Show loading indicator
+                                  //   await context.read<RBAuthProvider>().signInWithApple();
+                                  //   hideLoadingDialog(context); // Hide loading indicator
+                                  //   Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false);
+                                  // } catch (e) {
+                                  //   hideLoadingDialog(context); // Hide loading indicator
+                                  //   showCustomSnackbar(context, e.toString(), backgroundColor: Colors.red);
+                                  // }
                                 },
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,

@@ -7,8 +7,8 @@ import 'package:recycla_bin/core/widgets/custom_snackbar.dart';
 import 'package:recycla_bin/core/widgets/custom_textfield.dart';
 import '../../../../core/utilities/dialogs_utils.dart';
 import '../../../../core/utilities/validators.dart';
-import '../../data/repositories/auth_repository.dart';
-import '../../provider/auth_provider.dart';
+import '../../data/repositories/rb_auth_repository.dart';
+import '../../provider/rb_auth_provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -18,7 +18,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final AuthRepository authRepository = AuthRepository();
+  final RBAuthRepository authRepository = RBAuthRepository();
 
   final TextEditingController emailController = TextEditingController();
 
@@ -151,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                         if (_formKey.currentState!.validate()) {
                           try{
                             showLoadingDialog(context);
-                            await context.read<AuthProvider>().login(
+                            await context.read<RBAuthProvider>().login(
                               email: emailController.text,
                               password: passwordController.text,
                             );

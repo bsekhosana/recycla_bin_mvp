@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
+import 'package:provider/provider.dart';
 import 'package:recycla_bin/core/utilities/utils.dart';
 import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
 
 import '../../../../core/constants/strings.dart';
 import '../../../../core/widgets/user_scaffold.dart';
+import '../providers/rb_collection_provider.dart';
 import '../widgets/add_product_modal.dart';
 import '../widgets/search_product_modal.dart';
 
@@ -27,6 +29,9 @@ class _AddProductsPageState extends State<AddProductsPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final provider = Provider.of<RBCollectionProvider>(context);
+
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return UserScaffold(

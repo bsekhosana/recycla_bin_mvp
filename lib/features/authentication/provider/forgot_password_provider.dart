@@ -2,19 +2,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:recycla_bin/core/constants/shared_preferences_keys.dart';
-import 'package:recycla_bin/features/authentication/provider/auth_provider.dart';
+import 'package:recycla_bin/features/authentication/provider/rb_auth_provider.dart';
 import '../../../core/utilities/shared_pref_util.dart';
-import '../data/repositories/auth_repository.dart';
+import '../data/repositories/rb_auth_repository.dart';
 import '../data/repositories/forgot_password_repository.dart';
 
-import 'package:recycla_bin/features/authentication/provider/auth_provider.dart' as custom_provider;
+import 'package:recycla_bin/features/authentication/provider/rb_auth_provider.dart' as custom_provider;
 
-import '../data/models/user.dart' as custom_user;
+import '../data/models/rb_user_model.dart' as custom_user;
 
 class ForgotPasswordProvider with ChangeNotifier {
   final ForgotPasswordRepository _repository = ForgotPasswordRepository();
-  final AuthRepository _authRepository = AuthRepository();
-  final custom_provider.AuthProvider _authProvider = custom_provider.AuthProvider();
+  final RBAuthRepository _authRepository = RBAuthRepository();
+  final RBAuthProvider _authProvider = RBAuthProvider();
   final SharedPrefUtil _sharedPrefUtil = SharedPrefUtil();
 
   Future<String?> getUserIdByPhoneNumber(String phoneNumber) async {
@@ -27,7 +27,7 @@ class ForgotPasswordProvider with ChangeNotifier {
       final user = await _repository.getUserByPhoneNumber(phoneNumber);
       if (user != null) {
         final pin = await _repository.generatePin();
-        await _repository.savePinForUser(user.id, pin);
+        await _repository.savePinForUser(user.id!, pin);
         await _repository.sendSMS(phoneNumber, pin);
 
         _sharedPrefUtil.save(AppSharedKeys.userIdKey, user.id);

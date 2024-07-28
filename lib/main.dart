@@ -10,7 +10,7 @@ import 'package:recycla_bin/routes.dart';
 import 'core/constants/strings.dart';
 import 'core/provider/app_provider.dart';
 import 'features/authentication/presentation/pages/phone_verification_page.dart';
-import 'features/authentication/provider/auth_provider.dart';
+import 'features/authentication/provider/rb_auth_provider.dart';
 import 'features/authentication/provider/forgot_password_provider.dart';
 import 'features/schedule/data/data_provider/shared_pref_provider.dart';
 import 'features/schedule/domain/repositories/rb_collection_repository.dart';
@@ -30,7 +30,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AppProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => RBAuthProvider()),
         ChangeNotifierProvider(create: (_) => ForgotPasswordProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => RBCollectionProvider(repository: rbCollectionRepository)),

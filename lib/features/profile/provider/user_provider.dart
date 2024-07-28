@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../features/authentication/data/models/user.dart' as local_user;
+import '../../../features/authentication/data/models/rb_user_model.dart' as local_user;
+import '../../authentication/data/models/rb_user_model.dart';
 
 class UserProvider with ChangeNotifier {
   firebase_auth.User? _firebaseUser;
-  local_user.User? _user;
+  RBUserModel? _user;
   final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -14,7 +15,7 @@ class UserProvider with ChangeNotifier {
   }
 
   firebase_auth.User? get firebaseUser => _firebaseUser;
-  local_user.User? get user => _user;
+  RBUserModel? get user => _user;
 
   Future<void> _onAuthStateChanged(firebase_auth.User? firebaseUser) async {
     _firebaseUser = firebaseUser;
@@ -30,7 +31,7 @@ class UserProvider with ChangeNotifier {
     try {
       DocumentSnapshot userDoc = await _firestore.collection('users').doc(uid).get();
       if (userDoc.exists) {
-        _user = local_user.User.fromMap(userDoc.data() as Map<String, dynamic>, userDoc.id);
+        _user = RBUserModel.fromMap(userDoc.data() as Map<String, dynamic>);
       } else {
         _user = null;
       }

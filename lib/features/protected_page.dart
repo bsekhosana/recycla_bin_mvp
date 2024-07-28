@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../features/authentication/data/repositories/auth_repository.dart';
+import '../features/authentication/data/repositories/rb_auth_repository.dart';
 import '../../../../core/constants/strings.dart';
 
 class ProtectedPage extends StatelessWidget {
-  final AuthRepository authRepository = AuthRepository();
+  final RBAuthRepository authRepository = RBAuthRepository();
 
   ProtectedPage({super.key});
 

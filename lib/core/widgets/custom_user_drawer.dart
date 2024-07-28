@@ -5,10 +5,11 @@ import 'package:recycla_bin/core/utilities/utils.dart';
 import 'package:recycla_bin/core/widgets/custom_drawer_list_tile.dart';
 import 'package:recycla_bin/core/widgets/custom_snackbar.dart';
 
-import '../../features/authentication/provider/auth_provider.dart';
+import '../../features/authentication/data/models/rb_user_model.dart';
+import '../../features/authentication/provider/rb_auth_provider.dart';
 import '../../features/profile/provider/user_provider.dart';
 
-import '../../../features/authentication/data/models/user.dart' as local_user;
+import '../../../features/authentication/data/models/rb_user_model.dart' as local_user;
 
 class CustomUserDrawer extends StatefulWidget {
 
@@ -41,7 +42,7 @@ class _CustomUserDrawerState extends State<CustomUserDrawer> {
         Navigator.pushNamed(context, 'settings');
       case 5:
         try {
-          await context.read<AuthProvider>().logout();
+          await context.read<RBAuthProvider>().logout();
           // Navigate to the login page after signing out
           Navigator.pushNamedAndRemoveUntil(context, '/landing', (Route<dynamic> route) => false);
           showCustomSnackbar(context, 'Logged out successfully', backgroundColor: Colors.orange);
@@ -56,7 +57,7 @@ class _CustomUserDrawerState extends State<CustomUserDrawer> {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    final local_user.User? user = userProvider.user;
+    final RBUserModel? user = userProvider.user;
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 

@@ -6,7 +6,7 @@ import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
 import '../../../../core/utilities/dialogs_utils.dart';
 import '../../../../core/utilities/shared_pref_util.dart';
 import '../../../../core/widgets/custom_snackbar.dart';
-import '../../provider/auth_provider.dart';
+import '../../provider/rb_auth_provider.dart';
 import '../../provider/forgot_password_provider.dart';
 
 class PasswordResetPage extends StatefulWidget {
@@ -175,7 +175,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                         // showCustomSnackbar(context, 'Password reset successfully', backgroundColor: Colors.green);
                         final userEmail = await _sharedPrefUtil.get<String>(AppSharedKeys.userEmailKey);
                         print('logging in with email: ${userEmail} and password: ${passwordController.text}');
-                        await context.read<AuthProvider>().login(
+                        await context.read<RBAuthProvider>().login(
                           email: userEmail!,
                           password: passwordController.text,
                         );
