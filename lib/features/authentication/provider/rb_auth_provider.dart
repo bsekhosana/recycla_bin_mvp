@@ -1,12 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:recycla_bin/core/services/connectivity_service.dart';
 
 import '../../../core/utilities/error_handler.dart';
+import '../../profile/provider/user_provider.dart';
 import '../data/models/rb_user_model.dart';
 import '../data/repositories/rb_auth_repository.dart';
-
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 class RBAuthProvider extends ChangeNotifier {
   final RBAuthRepository _authRepository = RBAuthRepository();
@@ -21,34 +21,25 @@ class RBAuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // AuthProvider() {
-  //   _authRepository.authStateChanges.listen((firebase_auth.User? user) async {
-  //     print('_authRepository.authStateChanges : ${user}');
-  //     firebaseUser = user;
-  //     notifyListeners();
-  //   });
-  // }
-  //
-  // AuthProvider() {
-  //   _authRepository.authStateChanges.listen((firebase_auth.User? user) {
-  //     currentUser = user;
-  //     notifyListeners();
-  //   });
-  // }
-
   Future<void> register({
     required String username,
     required String email,
     required String phoneNumber,
     required String password,
+    required BuildContext context,
   }) async {
     if (await _connectivityService.checkConnectivity()) {
-      await _authRepository.registerUser(
+      _currentUser = await _authRepository.registerUser(
         username: username,
         email: email,
         phoneNumber: phoneNumber,
         password: password,
       );
+      // Fetch the newly registered user and update currentUser
+      print('register context.mounted: ${context.mounted}');
+      if(context.mounted){
+        Provider.of<UserProvider>(context, listen: false).setUser(_currentUser);
+      }
       notifyListeners();
     } else {
       // Handle no internet connection
@@ -56,10 +47,14 @@ class RBAuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> login({required String email, required String password}) async {
+  Future<void> login({required String email, required String password, required BuildContext context}) async {
     if (await _connectivityService.checkConnectivity()) {
-      await _authRepository.loginUser(email: email, password: password);
-      _currentUser = _authRepository.currentUser;
+      _currentUser = await _authRepository.loginUser(email: email, password: password);
+      print('login context.mounted: ${context.mounted}');
+      if(context.mounted){
+        Provider.of<UserProvider>(context, listen: false).setUser(_currentUser);
+        print('login _currentUser: $_currentUser');
+      }
       notifyListeners();
     } else {
       // Handle no internet connection
@@ -67,9 +62,12 @@ class RBAuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> logout() async {
+  Future<void> logout(BuildContext context) async {
     await _authRepository.signOut();
-    currentUser = null;
+    _currentUser = null;
+    if(context.mounted){
+      Provider.of<UserProvider>(context, listen: false).clearUser();
+    }
     notifyListeners();
   }
 

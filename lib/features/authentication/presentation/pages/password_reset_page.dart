@@ -177,7 +177,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                         print('logging in with email: ${userEmail} and password: ${passwordController.text}');
                         await context.read<RBAuthProvider>().login(
                           email: userEmail!,
-                          password: passwordController.text,
+                          password: passwordController.text, context: context
                         );
                         hideLoadingDialog(context);
                         Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false);

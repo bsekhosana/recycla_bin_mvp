@@ -42,7 +42,7 @@ class _CustomUserDrawerState extends State<CustomUserDrawer> {
         Navigator.pushNamed(context, 'settings');
       case 5:
         try {
-          await context.read<RBAuthProvider>().logout();
+          await context.read<RBAuthProvider>().logout(context);
           // Navigate to the login page after signing out
           Navigator.pushNamedAndRemoveUntil(context, '/landing', (Route<dynamic> route) => false);
           showCustomSnackbar(context, 'Logged out successfully', backgroundColor: Colors.orange);
@@ -58,6 +58,7 @@ class _CustomUserDrawerState extends State<CustomUserDrawer> {
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
     final RBUserModel? user = userProvider.user;
+    print('current user provider: ${user.toString()}');
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 

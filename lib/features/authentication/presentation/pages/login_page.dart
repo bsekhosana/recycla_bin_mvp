@@ -154,6 +154,7 @@ class _LoginPageState extends State<LoginPage> {
                             await context.read<RBAuthProvider>().login(
                               email: emailController.text,
                               password: passwordController.text,
+                              context: context
                             );
                             hideLoadingDialog(context); // Hide loading indicator
                             Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false);

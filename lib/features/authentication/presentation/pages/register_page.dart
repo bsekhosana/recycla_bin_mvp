@@ -196,7 +196,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 username: usernameController.text,
                                 email: emailController.text,
                                 phoneNumber: formattedPhoneNumber,
-                                password: passwordController.text,
+                                password: passwordController.text, context: context
                               );
                               hideLoadingDialog(context); // Hide loading indicator
                               Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false);

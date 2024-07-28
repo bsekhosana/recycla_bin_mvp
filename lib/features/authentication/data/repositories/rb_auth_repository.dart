@@ -73,7 +73,7 @@ class RBAuthRepository {
     return null;
   }
 
-  Future<void> registerUser({required String username, required String email,required String password,required String phoneNumber, }) async {
+  Future<RBUserModel> registerUser({required String username, required String email,required String password,required String phoneNumber, }) async {
     try{
       // validate username, email and phone number to make sure they are unique
       if(await getUserIdByPhoneNumber(phoneNumber) != null){
@@ -94,7 +94,9 @@ class RBAuthRepository {
           phoneNumber: phoneNumber,
           hashedPassword: hashedPassword,
         );
-        await _firestore.collection('users').doc(user.id).set(user.toJson());
+       await _firestore.collection('users').doc(user.id).set(user.toJson());
+
+       return user;
 
       }
     }catch(e){
