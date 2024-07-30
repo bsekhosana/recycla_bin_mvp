@@ -1,4 +1,9 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:recycla_bin/core/constants/strings.dart';
 import 'package:recycla_bin/core/utilities/dialogs_utils.dart';
@@ -11,6 +16,7 @@ import 'package:recycla_bin/features/profile/provider/user_provider.dart';
 import '../../core/utilities/error_handler.dart';
 import '../../core/utilities/utils.dart';
 
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -18,12 +24,12 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage>  with SingleTickerProviderStateMixin {
+class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   TabController? _tabController;
   bool isEditing = false;
   String editButtonLabel = 'Edit Profile';
+  File? _image;
 
   @override
   void initState() {
@@ -37,268 +43,312 @@ class _ProfilePageState extends State<ProfilePage>  with SingleTickerProviderSta
     super.dispose();
   }
 
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
+
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+      _uploadImageToFirebase();
+    }
+  }
+
+  Future<void> _uploadImageToFirebase() async {
+    if (_image == null) return;
+
+    try {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final userId = userProvider.user?.id;
+
+      if (userId == null) {
+        // Handle the case where user is not authenticated or user ID is null
+        return;
+      }
+
+      final storageRef = FirebaseStorage.instance.ref().child('profile_pictures').child('$userId.jpg');
+      await storageRef.putFile(_image!);
+
+      final imageUrl = await storageRef.getDownloadURL();
+      await userProvider.updateUserDetails(userId, userProvider.user!.copyWith(profilePicture: imageUrl));
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Profile picture updated successfully')));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to update profile picture')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+
+    final userProvider = Provider.of<UserProvider>(context);
+    final user = userProvider.user;
+
     return Scaffold(
       key: _scaffoldKey,
       extendBodyBehindAppBar: true,
       backgroundColor: Utils.hexToColor(AppStrings.kRBThirdColor),
-      drawer: CustomUserDrawer(selectedIndex: 3,),
+      drawer: CustomUserDrawer(selectedIndex: 3),
       body: Column(
         children: [
           PreferredSize(
-            preferredSize: Size.fromHeight(height*0.7),
+            preferredSize: Size.fromHeight(height * 0.7),
             child: AppBar(
               backgroundColor: Colors.transparent,
-              automaticallyImplyLeading:  false,
+              automaticallyImplyLeading: false,
               title: Transform.translate(
-                offset: Offset(0, height*0.03),
-                // child: title
+                offset: Offset(0, height * 0.03),
               ),
               centerTitle: true,
               flexibleSpace: Container(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: height*0.1),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                child: Padding(
+                  padding: EdgeInsets.only(top: height * 0.1),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: width * 0.08,
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              _scaffoldKey.currentState?.openDrawer();
+                            },
+                            style: TextButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                              ),
+                              padding: const EdgeInsets.all(20.0),
+                              backgroundColor: Colors.white.withAlpha(30),
+                            ),
+                            child: Image.asset(
+                              'assets/images/icon/burger.png',
+                              width: width * 0.05,
+                            ),
+                          ),
+                          SizedBox(
+                            width: width * 0.05,
+                          ),
+                          Text(
+                            "Profile",
+                            style: TextStyle(fontSize: width * 0.055, color: Colors.white),
+                          )
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: width * 0.08, top: width * 0.08, bottom: width * 0.08, right: width * 0.08),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            SizedBox(
-                              width: width*0.08,
-                            ),
-
-                            TextButton(
-                              onPressed: () {
-                                _scaffoldKey.currentState?.openDrawer();
-                              },
-                              style: TextButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0),
+                            Stack(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(2.0),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: Colors.white, width: 2.0),
+                                  ),
+                                  child: CircleAvatar(
+                                    radius: width * 0.065,
+                                    backgroundImage: user?.profilePicture != null
+                                        ? NetworkImage(user!.profilePicture!)
+                                        : AssetImage('assets/images/profile_pic.jpg') as ImageProvider,
+                                  ),
                                 ),
-                                padding: const EdgeInsets.all(20.0), // Adjust padding as needed
-                                backgroundColor: Colors.white.withAlpha(30), // Set background color with opacity
-                              ),
-                              child: Image.asset('assets/images/icon/burger.png',
-                                width: width * 0.05, // Set the width of the image
-                              ),
+                                if (isEditing)
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        final action = await _showImageSourceActionSheet(context);
+                                        if (action != null) {
+                                          _pickImage(action);
+                                        }
+                                      },
+                                      child: CircleAvatar(
+                                        radius: width * 0.03,
+                                        backgroundColor: Colors.grey.withOpacity(0.7),
+                                        child: Icon(
+                                          Icons.edit,
+                                          size: width * 0.04,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
-                            SizedBox(
-                              width: width*0.05,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '1.208',
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: width * 0.04, color: Colors.white),
+                                ),
+                                Text(
+                                  'Green Credit',
+                                  style: TextStyle(fontSize: width * 0.03, color: Colors.white),
+                                )
+                              ],
                             ),
-
-                            Text("Profile",
-                              style: TextStyle(
-                                  fontSize: width*0.055,
-                                  color: Colors.white
+                            Container(
+                              height: height * 0.06,
+                              color: Colors.white.withOpacity(0.2),
+                              width: 1,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '20',
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: width * 0.04, color: Colors.white),
+                                ),
+                                Text(
+                                  'Reward',
+                                  style: TextStyle(fontSize: width * 0.03, color: Colors.white),
+                                )
+                              ],
+                            ),
+                            Container(
+                              height: height * 0.055,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    isEditing = !isEditing;
+                                    editButtonLabel = isEditing ? 'Done Editing' : 'Edit Profile';
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.black,
+                                  backgroundColor: Colors.white,
+                                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    side: BorderSide(color: Colors.grey, width: 2.0),
+                                  ),
+                                ),
+                                child: Text(
+                                  editButtonLabel,
+                                  style: TextStyle(fontSize: width * 0.03, fontWeight: FontWeight.bold, color: Colors.black),
+                                ),
                               ),
                             )
                           ],
                         ),
-
-                        Padding(
-                          padding: EdgeInsets.only(left: width*0.08, top: width*0.08, bottom: width*0.08, right: width*0.08),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            // crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(2.0), // Space for the border
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                      color: Colors.white,
-                                      width: 2.0),
-                                ),
-                                child: CircleAvatar(
-                                  radius: width * 0.065,
-                                  backgroundImage: AssetImage('assets/images/profile_pic.jpg'),
-                                ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: width * 0.08, top: width * 0.02, right: width * 0.08),
+                        child: DefaultTabController(
+                          length: 3,
+                          child: Container(
+                            child: TabBar(
+                              controller: _tabController,
+                              indicator: BoxDecoration(
+                                color: Colors.white.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(6.0),
+                                border: null,
                               ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '1.208',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: width*0.04,
-                                      color: Colors.white
-                                    ),
-                                  ),
-                                  Text(
-                                    'Green Credit',
-                                    style: TextStyle(
-                                        // fontWeight: FontWeight.bold,
-                                        fontSize: width*0.03,
-                                        color: Colors.white
-                                    ),
-                                  )
-                                ],
-                              ),
-
-                              Container(
-                                height: height*0.06,
-                                color: Colors.white.withOpacity(0.2),
-                                width: 1,
-                              ),
-
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '20',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: width*0.04,
-                                        color: Colors.white
-                                    ),
-                                  ),
-                                  Text(
-                                    'Reward',
-                                    style: TextStyle(
-                                      // fontWeight: FontWeight.bold,
-                                        fontSize: width*0.03,
-                                        color: Colors.white
-                                    ),
-                                  )
-                                ],
-                              ),
-
-                              Container(
-                                height: height*0.055,
-                                child: ElevatedButton(
-                                  onPressed: () => {
-                                      setState(() {
-                                        isEditing = !isEditing;
-                                        editButtonLabel = isEditing ? 'Done Editing' : 'Edit Profile';
-                                      })
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.black, backgroundColor: Colors.white, // Text color
-                                    padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12.0), // Rounded corners
-                                      side: BorderSide(color: Colors.grey, width: 2.0), // Green border
-                                    ),
-                                  ),
-                                  child: Text(
-                                    editButtonLabel,
-                                    style: TextStyle(
-                                      fontSize: width*0.03,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black, // Text color
-                                    ),
+                              indicatorSize: TabBarIndicatorSize.tab,
+                              labelColor: Colors.white,
+                              unselectedLabelColor: Colors.white,
+                              tabs: [
+                                Tab(
+                                  child: Container(
+                                    child: Center(child: Text('Details')),
+                                    height: height * 0.03,
                                   ),
                                 ),
-                              )
-                            ],
-                          ),
-                        ),
-
-                        Padding(
-                          padding: EdgeInsets.only(left: width*0.08, top: width*0.02, right: width*0.08),
-                          child: DefaultTabController(
-                            length: 3,
-                            child: Container(
-                              // color: Colors.green,
-                              child: TabBar(
-                                controller: _tabController,
-                                indicator: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.3), // Semi-transparent background for selected tab
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  border: null,
+                                Tab(
+                                  child: Container(
+                                    child: Center(child: Text('Bank')),
+                                  ),
                                 ),
-                                indicatorSize: TabBarIndicatorSize.tab,
-                                labelColor: Colors.white,
-                                unselectedLabelColor: Colors.white,
-                                tabs: [
-                                  Tab(
-                                    child: Container(
-                                        child: Center(child: Text('Details')),
-                                        // width: width*0.4,
-                                        height: height*0.03,
-                                    ),
+                                Tab(
+                                  child: Container(
+                                    child: Center(child: Text('Password')),
                                   ),
-                                  Tab(
-                                    child: Container(
-                                      child: Center(child: Text('Bank')),
-                                      // width: double.infinity,
-                                    ),
-                                  ),
-                                  Tab(
-                                    child: Container(
-                                      child: Center(child: Text('Password')),
-                                      // width: double.infinity,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                ),
               ),
             ),
           ),
-
           Container(
-              width: width,
-
-              decoration: BoxDecoration(
-                color: Utils.hexToColor(AppStrings.kRBThirdColor),
-              ),
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.only(top: height*0.03),
-                  child: Container(
-                      decoration: BoxDecoration(
-                          color: Utils.hexToColor('#fcfcfc'),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(width*0.1),
-                            topRight: Radius.circular(width*0.1),
-                          )
-                      ),
-                      // color: Colors.white,
-                      child: Column(
-                        children: [
-                          // Row(
-                          //   children: [
-                          //
-                          //   ],
-                          // ),
-
-                          Container(
+            width: width,
+            decoration: BoxDecoration(
+              color: Utils.hexToColor(AppStrings.kRBThirdColor),
+            ),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.only(top: height * 0.03),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Utils.hexToColor('#fcfcfc'),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(width * 0.1),
+                      topRight: Radius.circular(width * 0.1),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 30, right: 30, top: 0),
+                          child: SizedBox(
+                            height: height * 0.59,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 30, right: 30, top: 0),
-                              child: SizedBox(
-                                  height: height*0.59,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 5, top: height*0.035),
-                                    child: TabBarView(
-                                      controller: _tabController,
-                                      children: [
-                                        Center(child:DetailsTab(isEditing: isEditing,)),
-                                        Center(child: BankTab(isEditing: isEditing,)),
-                                        Center(child: PasswordTab(isEditing: isEditing,)),
-                                      ],
-                                    ),
-                                  )
+                              padding: EdgeInsets.only(left: 5, top: height * 0.035),
+                              child: TabBarView(
+                                controller: _tabController,
+                                children: [
+                                  Center(child: DetailsTab(isEditing: isEditing)),
+                                  Center(child: BankTab(isEditing: isEditing)),
+                                  Center(child: PasswordTab(isEditing: isEditing)),
+                                ],
                               ),
                             ),
                           ),
-                        ],
-                      )
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              )
+              ),
+            ),
           )
+        ],
+      ),
+    );
+  }
+
+  Future<ImageSource?> _showImageSourceActionSheet(BuildContext context) async {
+    return showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: Icon(Icons.camera_alt),
+            title: Text('Take a photo'),
+            onTap: () => Navigator.of(context).pop(ImageSource.camera),
+          ),
+          ListTile(
+            leading: Icon(Icons.photo_library),
+            title: Text('Choose from gallery'),
+            onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+          ),
         ],
       ),
     );

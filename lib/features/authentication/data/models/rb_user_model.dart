@@ -6,6 +6,7 @@ class RBUserModel {
   final String phoneNumber;
   final String hashedPassword;
   final String? hashedPin;
+  final String? profilePicture;
 
   RBUserModel({
     this.id,
@@ -14,7 +15,8 @@ class RBUserModel {
     required this.phoneNumber,
     required this.hashedPassword,
     this.hashedPin,
-    required this.fullName
+    required this.fullName,
+    this.profilePicture
   });
 
   factory RBUserModel.fromMap(Map<String, dynamic> data) {
@@ -26,6 +28,7 @@ class RBUserModel {
       phoneNumber: data['phoneNumber'],
       hashedPassword: data['hashedPassword'],
       hashedPin: data['hashedPin'],
+      profilePicture: data['profilePicture'],
     );
   }
 
@@ -39,6 +42,7 @@ class RBUserModel {
         'username: $username '
         'hashedPin: $hashedPin '
         'hashedPassword: $hashedPassword '
+        'profilePicture: $profilePicture '
         '}';
   }
 
@@ -51,6 +55,7 @@ class RBUserModel {
       phoneNumber: json['phoneNumber'],
       hashedPassword: json['hashedPassword'],
       hashedPin: json['hashedPin'] ?? '',
+      profilePicture: json['profilePicture'],
     );
   }
 
@@ -63,6 +68,7 @@ class RBUserModel {
       'phoneNumber': phoneNumber,
       'hashedPassword': hashedPassword,
       'hashedPin': hashedPin,
+      'profilePicture': profilePicture,
     };
   }
 
@@ -74,6 +80,7 @@ class RBUserModel {
     String? phoneNumber,
     String? hashedPassword,
     String? hashedPin,
+    String? profilePicture,
   }) {
     return RBUserModel(
       id: id,
@@ -83,6 +90,7 @@ class RBUserModel {
       phoneNumber: phoneNumber ?? this.phoneNumber,
       hashedPassword: hashedPassword ?? this.hashedPassword,
       hashedPin: hashedPin ?? this.hashedPin,
+      profilePicture: profilePicture ?? this.profilePicture,
     );
   }
 }
