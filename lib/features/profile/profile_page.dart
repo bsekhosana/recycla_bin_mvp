@@ -491,19 +491,25 @@ class _BankTabState extends State<BankTab> {
             ],
           ),
           SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: widget.isEditing ? () {} : null,
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white, backgroundColor: Colors.green,
-              padding: EdgeInsets.symmetric(vertical: 16),
-            ),
-            child: Center(
-              child: Text(
-                'Update',
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
+          ProfilePageCustomElevatedButton(
+              text: 'Update Card',
+              onPressed: () {},
+              primaryButton: true,
+              isEditing: widget.isEditing,
           ),
+          // ElevatedButton(
+          //   onPressed: widget.isEditing ? () {} : null,
+          //   style: ElevatedButton.styleFrom(
+          //     foregroundColor: Colors.white, backgroundColor: Colors.green,
+          //     padding: EdgeInsets.symmetric(vertical: 16),
+          //   ),
+          //   child: Center(
+          //     child: Text(
+          //       'Update',
+          //       style: TextStyle(fontSize: 18),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -552,9 +558,10 @@ class _PasswordTabState extends State<PasswordTab> {
               controller: _confirmPasswordController,
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: widget.isEditing ? () async {
-                if(_passwordUpdateFormKey.currentState!.validate()){
+            ProfilePageCustomElevatedButton(
+                text: 'Change Password',
+                onPressed: () async {
+                  if(_passwordUpdateFormKey.currentState!.validate()){
                     if(_passwordController.text == _confirmPasswordController.text){
                       showLoadingDialog(context);
                       try{
@@ -568,19 +575,40 @@ class _PasswordTabState extends State<PasswordTab> {
                     }else{
                       showCustomSnackbar(context, 'Password and confirm password do not match, please try again', backgroundColor: Colors.orange);
                     }
-                }
-              } : null,
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Colors.green,
-                padding: EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: Center(
-                child: Text(
-                  'Change Password',
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
+                  }
+                },
+                primaryButton: true,
+                isEditing: widget.isEditing,
             ),
+            // ElevatedButton(
+            //   onPressed: widget.isEditing ? () async {
+            //     if(_passwordUpdateFormKey.currentState!.validate()){
+            //         if(_passwordController.text == _confirmPasswordController.text){
+            //           showLoadingDialog(context);
+            //           try{
+            //             await _userProvider.updateUserPassword(_userProvider.user!.id!, _passwordController.text, _userProvider.user!.hashedPassword);
+            //             showCustomSnackbar(context, 'Password updated successfully.', backgroundColor: Colors.green);
+            //             hideLoadingDialog(context);
+            //           }catch(e){
+            //             hideLoadingDialog(context);
+            //             showCustomSnackbar(context, e.toString(), backgroundColor: Colors.red);
+            //           }
+            //         }else{
+            //           showCustomSnackbar(context, 'Password and confirm password do not match, please try again', backgroundColor: Colors.orange);
+            //         }
+            //     }
+            //   } : null,
+            //   style: ElevatedButton.styleFrom(
+            //     foregroundColor: Colors.white, backgroundColor: Colors.green,
+            //     padding: EdgeInsets.symmetric(vertical: 16),
+            //   ),
+            //   child: Center(
+            //     child: Text(
+            //       'Change Password',
+            //       style: TextStyle(fontSize: 18),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

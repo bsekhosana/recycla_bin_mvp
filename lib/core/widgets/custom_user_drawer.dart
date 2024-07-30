@@ -101,7 +101,7 @@ class _CustomUserDrawerState extends State<CustomUserDrawer> {
                     ),
                     SizedBox(height: height * 0.02),
                     Text(
-                      user != null ? user.username : 'Test User',
+                      user != null ? user.fullName : 'Test User',
                       style: TextStyle(
                           color: Utils.hexToColor(AppStrings.kRBSecondaryColor),
                           fontSize: width*0.05,

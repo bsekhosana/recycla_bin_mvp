@@ -14,8 +14,12 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Widget build(BuildContext context) {
     return UserScaffold(
       selectedIndex: 2,
-      body: Text('Notifications bit'),
-      title: 'Notifications Page',
+      body: Column(
+        children: [
+          Text('Notifications here')
+        ],
+      ),
+      title: 'Notifications',
     );
   }
 }

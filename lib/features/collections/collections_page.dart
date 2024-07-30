@@ -13,8 +13,12 @@ class _CollectionsPageState extends State<CollectionsPage> {
   Widget build(BuildContext context) {
     return UserScaffold(
       selectedIndex: 1,
-        body: Text('Collections bit'),
-        title: 'Collections Page',
+        body:Column(
+          children: [
+            Text('Collections here')
+          ],
+        ),
+        title: 'Collections',
     );
   }
 }

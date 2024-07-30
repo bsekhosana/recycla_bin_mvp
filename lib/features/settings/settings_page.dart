@@ -38,23 +38,9 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return UserScaffold(
-      body: ListView(
+      body: Column(
         children: [
-          SwitchListTile(
-            title: Text('Enable Biometric Authentication'),
-            value: _biometricEnabled,
-            onChanged: (bool value) async {
-              bool canCheckBiometrics = await BiometricService().checkBiometrics();
-              if (canCheckBiometrics) {
-                _toggleBiometric(value);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Biometric authentication not available on this device')),
-                );
-              }
-            },
-          ),
-          // Add more settings here
+          Text('Settings here..')
         ],
       ),
       title: 'Settings',
