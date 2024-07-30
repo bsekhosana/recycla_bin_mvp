@@ -23,6 +23,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController fullNameController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -45,6 +46,7 @@ class _RegisterPageState extends State<RegisterPage> {
     emailController.dispose();
     phoneNumberController.dispose();
     passwordController.dispose();
+    fullNameController.dispose();
     super.dispose();
   }
 
@@ -117,12 +119,23 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                             const SizedBox(height: 20),
                             CustomTextField(
+                              controller: fullNameController,
+                              leadingIcon: Icons.person_2,
+                              trailingIcon: null,
+                              hintText: 'Enter Full Name',
+                              labelText: 'Full Name',
+                              inputType: TextInputType.text,
+                              obscureText: false,
+                              validator: Validators.validateFullName,
+                            ),
+                            const SizedBox(height: 20),
+                            CustomTextField(
                               controller: emailController,
                               leadingIcon: Icons.email_outlined,
                               trailingIcon: null,
                               hintText: 'Enter Email',
                               labelText: 'Email',
-                              inputType: TextInputType.emailAddress,
+                              inputType: TextInputType.text,
                               obscureText: false,
                               validator: Validators.validateEmail,
                             ),
@@ -193,6 +206,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               final String formattedPhoneNumber =
                               PhoneNumberInput.getFormattedPhoneNumber(phoneNumberInputKey);
                               await context.read<RBAuthProvider>().register(
+                                fullName: fullNameController.text,
                                 username: usernameController.text,
                                 email: emailController.text,
                                 phoneNumber: formattedPhoneNumber,

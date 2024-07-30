@@ -5,6 +5,7 @@ import 'package:recycla_bin/core/utilities/utils.dart';
 
 import '../../../../core/utilities/error_handler.dart';
 
+import '../../../../core/utilities/validators.dart';
 import '../models/rb_user_model.dart';
 
 class RBAuthRepository {
@@ -73,7 +74,7 @@ class RBAuthRepository {
     return null;
   }
 
-  Future<RBUserModel> registerUser({required String username, required String email,required String password,required String phoneNumber, }) async {
+  Future<RBUserModel> registerUser({required String username, required String email,required String password,required String phoneNumber, required String fullName, }) async {
     try{
       // validate username, email and phone number to make sure they are unique
       if(await getUserIdByPhoneNumber(phoneNumber) != null){
@@ -82,13 +83,14 @@ class RBAuthRepository {
         throw getCustomAuthErrorMessage('email-already-in-use');
       }else if(await  getUserIdByUsername(username) != null){
         throw getCustomAuthErrorMessage('username-already-in-use');
-      }else if(!isPasswordValid(password)){
+      }else if(!Validators.isPasswordValid(password)){
         throw getCustomAuthErrorMessage('weak-password');
       }else{
 
         final String hashedPassword = Utils.hashString(password);
         final user = RBUserModel(
           id: _firestore.collection('users').doc().id,
+          fullName: fullName,
           email: email,
           username: username,
           phoneNumber: phoneNumber,

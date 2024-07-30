@@ -37,4 +37,25 @@ class Validators {
     }
     return null;
   }
+
+  static String? validateFullName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Full name cannot be empty';
+    }
+    return null;
+  }
+
+  // The password is too weak. Passwords must be at least 6 characters long,
+  // and should include a mix of upper and lower case letters, numbers, and special characters.
+  static bool isPasswordValid(String password) {
+    // Regular expression to validate the password
+    final passwordRegex = RegExp(
+      r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$',
+    );
+
+    if (!passwordRegex.hasMatch(password)) {
+      return false;
+    }
+    return true;
+  }
 }

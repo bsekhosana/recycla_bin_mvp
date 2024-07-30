@@ -148,30 +148,38 @@ class _LoginPageState extends State<LoginPage> {
                   CustomElevatedButton(
                       text: 'Login',
                       onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          try{
-                            showLoadingDialog(context);
-                            await context.read<RBAuthProvider>().login(
-                              email: emailController.text,
-                              password: passwordController.text,
-                              context: context
-                            );
-                            hideLoadingDialog(context); // Hide loading indicator
-                            Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false);
-                            showCustomSnackbar(context, 'Login successful', backgroundColor: Colors.green);
-                          }catch (e) {
-                            hideLoadingDialog(context); // Hide loading indicator
-                            showCustomSnackbar(context, e.toString(), backgroundColor: Colors.red);
+                          if (_formKey.currentState!.validate()) {
+                            if (emailController.text.isEmpty) {
+                              showCustomSnackbar(
+                                  context, 'Email cannot be empty',
+                                  backgroundColor: Colors.red);
+                            } else if (passwordController.text.isEmpty) {
+                              showCustomSnackbar(
+                                  context, 'Password cannot be empty',
+                                  backgroundColor: Colors.red);
+                            } else {
+                              try {
+                                showLoadingDialog(context);
+                                await context.read<RBAuthProvider>().login(
+                                    email: emailController.text,
+                                    password: passwordController.text,
+                                    context: context
+                                );
+                                hideLoadingDialog(
+                                    context); // Hide loading indicator
+                                Navigator.pushNamedAndRemoveUntil(
+                                    context, 'schedulecollection', (
+                                    Route<dynamic> route) => false);
+                                showCustomSnackbar(context, 'Login successful',
+                                    backgroundColor: Colors.green);
+                              } catch (e) {
+                                hideLoadingDialog(
+                                    context); // Hide loading indicator
+                                showCustomSnackbar(context, e.toString(),
+                                    backgroundColor: Colors.red);
+                              }
+                            }
                           }
-                        }
-
-                        // if(usernameController.text.isEmpty){
-                        //   showCustomSnackbar(context, 'Username cannot be empty', backgroundColor: Colors.red)
-                        // }else if(passwordController.text.isEmpty){
-                        //   showCustomSnackbar(context, 'Password cannot be empty', backgroundColor: Colors.red)
-                        // }else{
-                        //   Navigator.pushNamedAndRemoveUntil(context, 'schedulecollection', (Route<dynamic> route) => false,)
-                        // }
                       },
                       primaryButton: true),
                   SizedBox(

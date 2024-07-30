@@ -22,6 +22,10 @@ class FirestoreRepository<T> {
     await _firestore.collection(collectionPath).doc(id).update(data);
   }
 
+  Future<void> updateDocumentField(String id, String name, String value) async {
+    await _firestore.collection(collectionPath).doc(id).update({name: value});
+  }
+
   Future<void> deleteDocument(String id) async {
     await _firestore.collection(collectionPath).doc(id).delete();
   }

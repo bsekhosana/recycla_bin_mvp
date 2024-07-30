@@ -26,10 +26,12 @@ class RBAuthProvider extends ChangeNotifier {
     required String email,
     required String phoneNumber,
     required String password,
+    required String fullName,
     required BuildContext context,
   }) async {
     if (await _connectivityService.checkConnectivity()) {
       _currentUser = await _authRepository.registerUser(
+        fullName: fullName,
         username: username,
         email: email,
         phoneNumber: phoneNumber,

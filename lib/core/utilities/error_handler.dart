@@ -44,22 +44,12 @@ String getCustomAuthErrorMessage(String code){
       return 'Email/password accounts are not enabled. Enable email/password accounts in the Firebase Console, under the Auth tab.';
     case 'weak-password':
       return 'The password is too weak. Passwords must be at least 6 characters long, and should include a mix of upper and lower case letters, numbers, and special characters.';
+    case 'same-password':
+      return 'Submitted password cannot be the same as current password, please enter different password.';
     case 'invalid-credential':
     case 'credential-too-old':
       return 'The supplied login credentials are incorrect, malformed, or have expired.';
     default:
       return 'An unknown error occurred. Please try again later. (Error code: ${code})';
   }
-}
-
-bool isPasswordValid(String password) {
-  // Regular expression to validate the password
-  final passwordRegex = RegExp(
-    r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$',
-  );
-
-  if (!passwordRegex.hasMatch(password)) {
-    return false;
-  }
-  return true;
 }
