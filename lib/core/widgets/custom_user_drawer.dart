@@ -96,7 +96,15 @@ class _CustomUserDrawerState extends State<CustomUserDrawer> {
                       ),
                       child: CircleAvatar(
                         radius: width * 0.15,
-                        backgroundImage: AssetImage('assets/images/profile_pic.jpg'),
+                        backgroundImage: user?.profilePicture != null
+                            ? NetworkImage(user!.profilePicture!)
+                            : null,
+                        child: user?.profilePicture == null
+                            ? Text(
+                          Utils.getInitials(user!.fullName),
+                          style: TextStyle(fontSize: width * 0.16, color: Colors.green),
+                        )
+                            : null,
                       ),
                     ),
                     SizedBox(height: height * 0.02),

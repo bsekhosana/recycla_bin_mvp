@@ -51,4 +51,16 @@ class Utils{
     final bytes = utf8.encode(stringToHash);
     return sha256.convert(bytes).toString();
   }
+
+  static String getInitials(String name) {
+    List<String> names = name.split(' ');
+    String initials = '';
+    for (var n in names) {
+      if (n.isNotEmpty) {
+        initials += n[0].toUpperCase();
+      }
+    }
+    return initials;
+  }
+
 }

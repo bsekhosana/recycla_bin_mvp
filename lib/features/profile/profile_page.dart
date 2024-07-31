@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,6 +16,8 @@ import 'package:recycla_bin/features/profile/provider/user_provider.dart';
 
 import '../../core/utilities/error_handler.dart';
 import '../../core/utilities/utils.dart';
+
+import 'package:http/http.dart' as http;
 
 
 class ProfilePage extends StatefulWidget {
@@ -44,39 +47,96 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await ImagePicker().pickImage(source: source);
+    try {
+      final pickedFile = await ImagePicker().pickImage(source: source);
 
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-      _uploadImageToFirebase();
+      if (pickedFile != null) {
+        setState(() {
+          _image = File(pickedFile.path);
+        });
+        await _uploadImageToCloudinary();
+      }
+    } catch (e) {
+      print('Error picking image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to pick image: $e')));
     }
   }
 
-  Future<void> _uploadImageToFirebase() async {
+  Future<void> _uploadImageToCloudinary() async {
     if (_image == null) return;
 
+    final cloudName = 'dq6hot9jq'; // Replace with your Cloudinary cloud name
+    final apiKey = '772976592556395'; // Replace with your Cloudinary API key
+    final apiSecret = '__5cXqUxkAsY5qtVNgYWCxrfB1k'; // Replace with your Cloudinary API secret
+
+    final url = Uri.parse('https://api.cloudinary.com/v1_1/$cloudName/image/upload');
+    final bytes = await _image!.readAsBytes();
+    final base64Image = base64Encode(bytes);
+
     try {
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      final userId = userProvider.user?.id;
+      showLoadingDialog(context);
+      final response = await http.post(
+        url,
+        body: {
+          'file': 'data:image/jpeg;base64,$base64Image',
+          'upload_preset': 'ml_default', // You can set up an upload preset in Cloudinary dashboard
+        },
+        headers: {
+          'Authorization': 'Basic ${base64Encode(utf8.encode('$apiKey:$apiSecret'))}',
+        },
+      );
 
-      if (userId == null) {
-        // Handle the case where user is not authenticated or user ID is null
-        return;
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final imageUrl = data['secure_url'];
+        final userProvider = Provider.of<UserProvider>(context, listen: false);
+        final userId = userProvider.user?.id;
+
+        if (userId == null) {
+          // Handle the case where user is not authenticated or user ID is null
+          hideLoadingDialog(context);
+          showCustomSnackbar(context, 'User is not authenticated', backgroundColor: Colors.red);
+          return;
+        }
+
+        await userProvider.user!.copyWith(profilePicture: imageUrl,);
+        showCustomSnackbar(context, 'Profile picture updated successfully', backgroundColor: Colors.green);
+        hideLoadingDialog(context);
+      } else {
+        hideLoadingDialog(context);
+        showCustomSnackbar(context, 'Failed to upload image', backgroundColor: Colors.red);
+        throw Exception('Failed to upload image');
       }
-
-      final storageRef = FirebaseStorage.instance.ref().child('profile_pictures').child('$userId.jpg');
-      await storageRef.putFile(_image!);
-
-      final imageUrl = await storageRef.getDownloadURL();
-      await userProvider.updateUserDetails(userId, userProvider.user!.copyWith(profilePicture: imageUrl));
-
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Profile picture updated successfully')));
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to update profile picture')));
+      hideLoadingDialog(context);
+      print('Error uploading image: $e');
+      showCustomSnackbar(context, 'Failed to update profile picture with error: ${e.toString()}', backgroundColor: Colors.red);
     }
   }
+  // Future<void> _uploadImageToFirebase() async {
+  //   if (_image == null) return;
+  //
+  //   try {
+  //     final userProvider = Provider.of<UserProvider>(context, listen: false);
+  //     final userId = userProvider.user?.id;
+  //
+  //     if (userId == null) {
+  //       // Handle the case where user is not authenticated or user ID is null
+  //       return;
+  //     }
+  //
+  //     final storageRef = FirebaseStorage.instance.ref().child('profile_pictures').child('$userId.jpg');
+  //     await storageRef.putFile(_image!);
+  //
+  //     final imageUrl = await storageRef.getDownloadURL();
+  //     await userProvider.updateUserDetails(userId, userProvider.user!.copyWith(profilePicture: imageUrl));
+  //
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Profile picture updated successfully')));
+  //   } catch (e) {
+  //     print('_uploadImageToFirebase error: ${e.toString()}');
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to update profile picture')));
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +217,13 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                                     radius: width * 0.065,
                                     backgroundImage: user?.profilePicture != null
                                         ? NetworkImage(user!.profilePicture!)
-                                        : AssetImage('assets/images/profile_pic.jpg') as ImageProvider,
+                                        : null,
+                                    child: user?.profilePicture == null
+                                        ? Text(
+                                      Utils.getInitials(user!.fullName),
+                                      style: TextStyle(fontSize: width * 0.06, color: Colors.green),
+                                    )
+                                        : null,
                                   ),
                                 ),
                                 if (isEditing)

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../widgets/loading_indicator.dart';
 
 void showLoadingDialog(BuildContext context) {
+  // Remove focus from all text fields and close the keyboard
+  FocusScope.of(context).unfocus();
+
   showDialog(
     context: context,
     barrierDismissible: false,
