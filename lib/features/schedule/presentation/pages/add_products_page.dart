@@ -3,11 +3,13 @@ import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:provider/provider.dart';
 import 'package:recycla_bin/core/utilities/utils.dart';
 import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
+import 'package:recycla_bin/features/schedule/data/models/rb_product.dart';
 
 import '../../../../core/constants/strings.dart';
 import '../../../../core/widgets/user_scaffold.dart';
 import '../providers/rb_collection_provider.dart';
 import '../widgets/add_product_modal.dart';
+import '../widgets/product_options_sheet.dart';
 import '../widgets/search_product_modal.dart';
 
 class AddProductsPage extends StatefulWidget {
@@ -19,8 +21,6 @@ class AddProductsPage extends StatefulWidget {
 
 class _AddProductsPageState extends State<AddProductsPage> {
   int selectedIndex = -1;
-  List<Product> products = [];
-
   final User user = User(
     userId: AppStrings.openFoodAPIClientUsername,
     password: AppStrings.openFoodAPIClientPassword,
@@ -28,9 +28,16 @@ class _AddProductsPageState extends State<AddProductsPage> {
   );
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    final provider = Provider.of<RBCollectionProvider>(context, listen: false);
+    provider.loadCollection(); // Load initial data if available
+  }
 
+  @override
+  Widget build(BuildContext context) {
     final provider = Provider.of<RBCollectionProvider>(context);
+    final products = provider.collection?.products ?? [];
 
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -42,56 +49,65 @@ class _AddProductsPageState extends State<AddProductsPage> {
           ),
           if (products.isNotEmpty)
             Container(
+              padding: EdgeInsets.symmetric(horizontal: width * 0.04),
               decoration: BoxDecoration(
                 color: Utils.hexToColor("#f3ffdc"),
                 borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
-              height: height * 0.25,
-              width: double.infinity,
-              child: Padding(
-                padding: EdgeInsets.only(left: width * 0.04, right: width * 0.04),
-                child: GridView.builder(
-                  itemCount: products.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                  ),
-                  itemBuilder: (context, index) {
-                    final product = products[index];
-                    final imageUrl = product.imageFrontSmallUrl;
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedIndex = index;
-                        });
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: selectedIndex == index ? Colors.green : Colors.transparent,
-                            width: 2,
+              child: Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: products.map((product) {
+                  final imageUrl = product.imgUrl;
+                  return GestureDetector(
+                    onTap: () {
+                      _showProductOptions(context, product);
+                    },
+                    child: Container(
+                      width: (width) / 4, // Adjust the width based on spacing and padding
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: Colors.transparent,
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: imageUrl != null
-                              ? Image.network(imageUrl)
-                              : Icon(Icons.image, size: 50),
-                        ),
+                        ],
                       ),
-                    );
-                  },
-                ),
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: imageUrl != null
+                                ? Image.network(imageUrl)
+                                : Icon(Icons.image, size: 50),
+                          ),
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: CircleAvatar(
+                              radius: 12,
+                              backgroundColor: Colors.red,
+                              child: Text(
+                                '${product.quantity}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
             ),
           SizedBox(
@@ -165,6 +181,15 @@ class _AddProductsPageState extends State<AddProductsPage> {
     );
   }
 
+  void _showProductOptions(BuildContext context, RBProduct product) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return ProductOptionsSheet(product: product);
+      },
+    );
+  }
+
   void _showAddProductModal() {
     showModalBottomSheet(
       context: context,
@@ -174,7 +199,13 @@ class _AddProductsPageState extends State<AddProductsPage> {
           user: user,
           onProductAdded: (product) {
             setState(() {
-              products.add(product);
+              Provider.of<RBCollectionProvider>(context, listen: false).addProduct(RBProduct(
+                id: product.barcode,
+                name: product.productName,
+                quantity: 1,
+                imgUrl: product.imageFrontSmallUrl,
+                size: product.servingSize,
+              ));
             });
           },
         );
@@ -189,9 +220,15 @@ class _AddProductsPageState extends State<AddProductsPage> {
       builder: (BuildContext context) {
         return SearchProductModal(
           user: user,
-          onProductSelected: (product) {
+          onProductSelected: (product) async {
             setState(() {
-              products.add(product);
+              Provider.of<RBCollectionProvider>(context, listen: false).addProduct(RBProduct(
+                id: product.barcode,
+                name: product.productName,
+                quantity: 1,
+                imgUrl: product.imageFrontSmallUrl,
+                size: product.servingSize,
+              ));
             });
           },
         );

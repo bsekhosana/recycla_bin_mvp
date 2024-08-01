@@ -48,6 +48,8 @@ class _ScheduleCollectionPageState extends State<ScheduleCollectionPage> {
           ),
           Consumer<RBCollectionProvider>(
             builder: (context, provider, child) {
+              final numberOfProducts = provider.getNumberOfProducts();
+              final totalQuantity = provider.getTotalQuantity();
               return SingleChildScrollView(
                 child: Column(
                   children: [
@@ -85,7 +87,9 @@ class _ScheduleCollectionPageState extends State<ScheduleCollectionPage> {
                         SizedBox(height: height * 0.023),
                         schedule_collection_list_item(
                           title: 'Add Products',
-                          value: provider.collection?.products?.length.toString() ?? '',
+                          value: numberOfProducts == 0
+                              ? ''
+                              : '$numberOfProducts Products, $totalQuantity Quantity',
                           callback: () {
                             // Handle button press
                             Navigator.pushNamed(context, 'addproductspage');

@@ -1,7 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
+import 'package:provider/provider.dart';
 import 'package:recycla_bin/core/widgets/custom_snackbar.dart';
 import 'dart:convert';
+
+import '../providers/rb_collection_provider.dart';
 
 class SearchProductModal extends StatefulWidget {
   final User user;
@@ -17,6 +21,63 @@ class _SearchProductModalState extends State<SearchProductModal> {
   final _searchController = TextEditingController();
   List<Product> _searchResults = [];
   bool _isLoading = false;
+  Timer? _searchDelayTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchTextChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchDelayTimer?.cancel();
+    _searchController.removeListener(_onSearchTextChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchTextChanged() {
+    if (_searchDelayTimer?.isActive ?? false) _searchDelayTimer?.cancel();
+    _searchDelayTimer = Timer(Duration(seconds: 2), _searchProduct);
+  }
+
+  void _searchProduct() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final provider = Provider.of<RBCollectionProvider>(context, listen: false);
+      final existingProductIds = provider.collection?.products?.map((p) => p.id).toSet() ?? {};
+
+      ProductSearchQueryConfiguration configuration = ProductSearchQueryConfiguration(
+        parametersList: [SearchTerms(terms: _searchController.text.split(' '))],
+        fields: [ProductField.ALL],
+        version: ProductQueryVersion.v3,
+      );
+
+      SearchResult result = await OpenFoodAPIClient.searchProducts(widget.user, configuration);
+
+      // Log the result
+      print('search results: ${jsonEncode(result)}');
+
+      setState(() {
+        _isLoading = false;
+        _searchResults = result.products?.where((product) => !existingProductIds.contains(product.barcode)).toList() ?? [];
+      });
+
+      print('search product ended...');
+    } catch (error) {
+      setState(() {
+        _isLoading = false;
+      });
+      print('search product failed with error: ${error.toString()}');
+      showCustomSnackbar(context, 'An error occurred while searching for the product', backgroundColor: Colors.red);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,18 +112,18 @@ class _SearchProductModalState extends State<SearchProductModal> {
                   final productName = product.productName ?? 'Unknown';
                   final productBarCode = product.barcode ?? 'Unknown BarCode';
                   final productBrand = product.brands ?? 'Unknown Brand';
-                  final productSize = product.servingSize ?? 'Unknown Brand';
+                  final productSize = product.servingSize ?? 'Unknown Size';
                   return ListTile(
                     leading: imageUrl != null
                         ? Image.network(imageUrl)
                         : Icon(Icons.image),
-                    title: Text("$productName - $productBarCode",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold
-                      ),
+                    title: Text(
+                      "$productName - $productBarCode",
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    subtitle: Text("$productBrand($productSize)"),
+                    subtitle: Text("$productBrand ($productSize)"),
                     onTap: () {
+                      print('list tile on tapped product:$imageUrl');
                       widget.onProductSelected(product);
                       Navigator.pop(context);
                     },
@@ -74,45 +135,5 @@ class _SearchProductModalState extends State<SearchProductModal> {
         ),
       ),
     );
-  }
-
-  void _searchProduct() async {
-    print('search product started...');
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      ProductSearchQueryConfiguration configuration = ProductSearchQueryConfiguration(
-        parametersList: [SearchTerms(terms: _searchController.text.split(' '))],
-        fields: [ProductField.ALL],
-        version: ProductQueryVersion.v3,
-      );
-
-      SearchResult result = await OpenFoodAPIClient.searchProducts(widget.user, configuration);
-
-      // Log the result
-      print('search results: ${jsonEncode(result)}');
-
-      setState(() {
-        _isLoading = false;
-        _searchResults = result.products ?? [];
-      });
-
-      print('search product ended...');
-    } catch (error) {
-      setState(() {
-        _isLoading = false;
-      });
-      print('search product failed with error: ${error.toString()}');
-      showCustomSnackbar(context, 'An error occurred while searching for the product', backgroundColor: Colors.red);
-    }
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
   }
 }

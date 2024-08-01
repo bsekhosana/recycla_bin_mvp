@@ -3,8 +3,9 @@ class RBProduct {
   String? name;
   String? size;
   int? quantity;
+  String? imgUrl;
 
-  RBProduct({this.id, this.name, this.size, this.quantity});
+  RBProduct({this.id, this.name, this.size, this.quantity, this.imgUrl});
 
   factory RBProduct.fromJson(Map<String, dynamic> json) {
     return RBProduct(
@@ -12,6 +13,7 @@ class RBProduct {
       name: json['name'],
       size: json['size'],
       quantity: json['quantity'],
+      imgUrl: json['imgUrl'],
     );
   }
 
@@ -21,6 +23,7 @@ class RBProduct {
       'name': name,
       'size': size,
       'quantity': quantity,
+      'imgUrl': imgUrl,
     };
   }
 }
