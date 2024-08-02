@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:recycla_bin/core/utilities/dialogs_utils.dart';
 import 'package:recycla_bin/core/utilities/utils.dart';
 import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
 import 'package:recycla_bin/core/widgets/custom_snackbar.dart';
@@ -9,6 +10,7 @@ import 'package:recycla_bin/features/schedule/presentation/providers/rb_collecti
 
 import '../../core/constants/strings.dart';
 import '../../core/widgets/custom_icon_button.dart';
+import '../profile/provider/user_provider.dart';
 
 class ScheduleCollectionPage extends StatefulWidget {
   const ScheduleCollectionPage({super.key});
@@ -20,9 +22,7 @@ class ScheduleCollectionPage extends StatefulWidget {
 class _ScheduleCollectionPageState extends State<ScheduleCollectionPage> {
   @override
   Widget build(BuildContext context) {
-
-    final provider = Provider.of<RBCollectionProvider>(context);
-
+    final userProvider = Provider.of<UserProvider>(context);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return UserScaffold(
@@ -89,7 +89,7 @@ class _ScheduleCollectionPageState extends State<ScheduleCollectionPage> {
                           title: 'Add Products',
                           value: numberOfProducts == 0
                               ? ''
-                              : '$numberOfProducts Products, $totalQuantity Quantity',
+                              : '$numberOfProducts Products, Quantity($totalQuantity)',
                           callback: () {
                             // Handle button press
                             Navigator.pushNamed(context, 'addproductspage');
@@ -101,12 +101,26 @@ class _ScheduleCollectionPageState extends State<ScheduleCollectionPage> {
                     SizedBox(height: height * 0.1),
                     CustomElevatedButton(
                       text: 'Schedule Collection',
-                      onPressed: () {
+                      onPressed: () async {
                         if(provider.collection == null || !provider.areAllFieldsFilled()){
                           showCustomSnackbar(context, 'Please make sure all collection details are captured before scheduling a collection.',
                               backgroundColor: Colors.orange);
                         }else{
-                          Navigator.pushNamed(context, 'collectionsummary');
+                          try{
+                            showLoadingDialog(context);
+                            await provider.saveCollectionToFirestore(userProvider.user!.id!);
+                            provider.removeCollection();
+                            hideLoadingDialog(context);
+                            showCustomSnackbar(
+                                context,
+                                'Collection synced to ro server successfully.',
+                                backgroundColor: Colors.green);
+                            Navigator.pushNamed(context, 'collectionsummary');
+                          }catch(e){
+                            hideLoadingDialog(context);
+                            showCustomSnackbar(context, e.toString(), backgroundColor: Colors.red);
+                          }
+
                         }
                       },
                       primaryButton: true,

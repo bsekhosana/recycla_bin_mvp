@@ -54,64 +54,73 @@ class _AddProductsPageState extends State<AddProductsPage> {
                 color: Utils.hexToColor("#f3ffdc"),
                 borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
-              child: Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: products.map((product) {
-                  final imageUrl = product.imgUrl;
-                  return GestureDetector(
-                    onTap: () {
-                      _showProductOptions(context, product);
-                    },
-                    child: Container(
-                      width: (width) / 4, // Adjust the width based on spacing and padding
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: Colors.transparent,
-                          width: 2,
+              child: SizedBox(
+                height: (products.length <= 3 ? height * 0.2 : height * 0.3),
+                child: GridView.builder(
+                  physics: BouncingScrollPhysics(),
+                  itemCount: products.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 1,
+                  ),
+                  itemBuilder: (context, index) {
+                    final product = products[index];
+                    final imageUrl = product.imgUrl;
+                    return GestureDetector(
+                      onTap: () {
+                        _showProductOptions(context, product);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.transparent,
+                            width: 2,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 4,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Stack(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: imageUrl != null
-                                ? Image.network(imageUrl)
-                                : Icon(Icons.image, size: 50),
-                          ),
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: CircleAvatar(
-                              radius: 12,
-                              backgroundColor: Colors.red,
-                              child: Text(
-                                '${product.quantity}',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
+                        child: Stack(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: imageUrl != null
+                                  ? Image.network(imageUrl, fit: BoxFit.contain)
+                                  : Icon(Icons.image, size: 50),
+                            ),
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: CircleAvatar(
+                                radius: 12,
+                                backgroundColor: Colors.red,
+                                child: Text(
+                                  '${product.quantity}',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                }).toList(),
+                    );
+                  },
+                ),
               ),
             ),
           SizedBox(
-            height: height * 0.13,
+            height: height * 0.04,
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

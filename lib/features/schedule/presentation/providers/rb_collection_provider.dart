@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
+import '../../../../core/services/connectivity_service.dart';
 import '../../data/models/rb_product.dart';
 import '../../domain/repositories/rb_collection_repository.dart';
 import '../../data/models/rb_collection.dart';
@@ -7,6 +8,8 @@ import '../../data/models/rb_collection.dart';
 class RBCollectionProvider with ChangeNotifier {
   final RBCollectionRepository repository;
   RBCollection? _collection;
+
+  final ConnectivityService _connectivityService = ConnectivityService();
 
   RBCollectionProvider({required this.repository}) {
     loadCollection();
@@ -125,5 +128,26 @@ class RBCollectionProvider with ChangeNotifier {
       return _collection!.products!.length;
     }
     return 0;
+  }
+
+  Future<void> saveCollectionToFirestore(String userId) async {
+    try{
+      if (await _connectivityService.checkConnectivity()) {
+        if(_collection == null) {
+          throw Exception('Unable to save empty collection to firebase');
+        }
+        await repository.saveCollectionToFirestore(_collection!, userId);
+      }else{
+        throw Exception("No internet connection");
+      }
+    }catch (e){
+      rethrow;
+    }
+  }
+
+  Future<void> removeCollectionFromCache() async {
+    await repository.removeCollection();
+    _collection = null;
+    notifyListeners();
   }
 }
