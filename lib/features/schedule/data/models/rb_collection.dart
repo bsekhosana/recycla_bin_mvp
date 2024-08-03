@@ -105,4 +105,11 @@ class RBCollection {
     }
     return 0;
   }
+
+  String? getFirstProductImage() {
+    if (products != null) {
+      return products!.first.imgUrl!;
+    }
+    return null;
+  }
 }

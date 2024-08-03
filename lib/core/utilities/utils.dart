@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 
 import 'package:crypto/crypto.dart';
+import 'package:intl/intl.dart';
 
 class Utils{
 
@@ -61,6 +62,12 @@ class Utils{
       }
     }
     return initials;
+  }
+
+  static String formatDateString(String dateString) {
+    DateTime dateTime = DateTime.parse(dateString);
+    DateFormat formatter = DateFormat('EEEE, MMMM d, yyyy h:mm a');
+    return formatter.format(dateTime);
   }
 
 }

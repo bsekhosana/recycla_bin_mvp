@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:recycla_bin/core/constants/strings.dart';
 import 'package:recycla_bin/features/schedule/data/models/rb_product.dart';
 
+import '../../../../core/utilities/utils.dart';
 import '../../data/models/rb_collection.dart';
 
 class RBCollectionCard extends StatelessWidget {
@@ -14,7 +18,18 @@ class RBCollectionCard extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     final numberOfProducts = collection.getNumberOfProducts();
     final totalQuantity = collection.getTotalQuantity();
-    print('current collection: ${collection.products}');
+    final firstImage = collection.getFirstProductImage();
+    // print('current collection: ${collection.products}');
+    final List<Color> colors = [
+      Colors.blue,
+      Colors.pink,
+      Colors.purple,
+      Colors.green,
+      Colors.orange,
+      Colors.yellow,
+    ];
+    final random = Random();
+    final backgroundColor = colors[random.nextInt(colors.length)];
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -39,11 +54,24 @@ class RBCollectionCard extends StatelessWidget {
               Center(
                 child: ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(15)),
-                  child: Image.network(
-                    'https://via.placeholder.com/400', // Replace with your image URL
-                    height: height * 0.2,
-                    width: width * 0.75,
-                    fit: BoxFit.cover,
+                  child: Container(
+                    width: double.infinity,
+                    height: height*0.2,
+                    color: Utils.hexToColor(AppStrings.kRBThirdColor),
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          Utils.formatDateString(collection.date!),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: width*0.06,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
