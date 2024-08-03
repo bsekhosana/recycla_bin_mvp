@@ -43,24 +43,45 @@ class RBCollectionCard extends StatelessWidget {
               Center(
                 child: ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(15)),
-                  child: Container(
-                    width: double.infinity,
-                    height: height*0.2,
-                    color: Utils.hexToColor(AppStrings.kRBThirdColor),
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          '${Utils.formatDateString(collection.date!)} ${collection.time}',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: width*0.06,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: Opacity(
+                            opacity: 0.1,
+                            child: Image.asset(
+                              'assets/images/splash/logo.png', // Replace with your image URL
+                              fit: BoxFit.cover,
+                              width: width * 0.5,
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                      Container(
+                        width: double.infinity,
+                        height: height * 0.2,
+                        // color: Colors.white.withOpacity(0), // Transparent background
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Utils.hexToColor(AppStrings.kRBPrimaryColor), width: 0.4),
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              '${Utils.formatDateString(collection.date!)} ${collection.time}',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: width * 0.06,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
