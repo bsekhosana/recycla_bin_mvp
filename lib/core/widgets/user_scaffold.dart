@@ -16,12 +16,15 @@ class UserScaffold extends StatefulWidget {
 
   final int selectedIndex;
 
+  final double bodySidePadding;
+
   final VoidCallback? onCalendarTodayButtonPressed;
 
   const UserScaffold({super.key,
     required this.body,
     required this.title,
     this.selectedIndex = 0,
+    this.bodySidePadding = 30,
     this.showMenu = true,
     this.isDateCollectionPage = false,
     this.onCalendarTodayButtonPressed
@@ -70,7 +73,7 @@ class _UserScaffoldState extends State<UserScaffold> with SingleTickerProviderSt
                       // color: Colors.white,
                       child: Container(
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 30, right: 30, top: 0),
+                          padding: EdgeInsets.only(left: widget.bodySidePadding, right: widget.bodySidePadding, top: 0),
                           child: SizedBox(
                               height: height*0.77,
                               child: Padding(

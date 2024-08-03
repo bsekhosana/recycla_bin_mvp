@@ -4,6 +4,7 @@ import 'package:recycla_bin/core/utilities/utils.dart';
 import 'package:recycla_bin/core/utilities/validators.dart';
 import '../../../core/services/connectivity_service.dart';
 import '../../../core/utilities/error_handler.dart';
+import '../../../core/utilities/shared_pref_util.dart';
 import '../../authentication/data/models/rb_user_model.dart';
 import '../../authentication/provider/rb_auth_provider.dart';
 import 'package:provider/provider.dart';
@@ -68,6 +69,19 @@ class UserProvider with ChangeNotifier {
     } else {
       // Handle no internet connection
       throw Exception("No internet connection");
+    }
+  }
+
+  Future<void> _loadUser() async {
+    _user = await SharedPrefUtil().get<RBUserModel>('user', fromJson: (json) => RBUserModel.fromJson(json));
+    notifyListeners();
+  }
+
+  Future<void> _saveUser(RBUserModel? user) async {
+    if (user != null) {
+      await SharedPrefUtil().save('user', user.toJson());
+    } else {
+      await SharedPrefUtil().remove('user');
     }
   }
 }

@@ -20,9 +20,8 @@ class RBCollection {
         ? productList.map((product) => RBProduct.fromJson(product)).toList()
         : null;
 
-    // List<String>? productIds = productList != null ? List<String>.from(productList) : null;
-
-    List<String>? productIds = productList != null ? List<String>.from(productList.map((e) => e.toString())) : null;
+    var productListIds = json['productIds'] as List?;
+    List<String>? productIds = productListIds != null ? List<String>.from(productListIds.map((e) => e.toString())) : null;
 
     return RBCollection(
       id: json['id'],
@@ -78,7 +77,8 @@ class RBCollection {
         ? productList.map((product) => RBProduct.fromJson(product)).toList()
         : null;
 
-    List<String>? productIds = productList != null ? List<String>.from(productList) : null;
+    var productListIds = data['productIds'] as List?;
+    List<String>? productIds = productListIds != null ? List<String>.from(productListIds.map((e) => e.toString())) : null;
 
     return RBCollection(
       id: data['id'],
@@ -90,5 +90,19 @@ class RBCollection {
       products: products,
       productIds: productIds
     );
+  }
+
+  int getTotalQuantity() {
+    if (products != null) {
+      return products!.fold(0, (sum, item) => sum + (item.quantity ?? 0));
+    }
+    return 0;
+  }
+
+  int getNumberOfProducts() {
+    if (products != null) {
+      return products!.length;
+    }
+    return 0;
   }
 }

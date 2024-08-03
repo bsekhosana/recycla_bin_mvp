@@ -34,6 +34,7 @@ class _CollectionsPageState extends State<CollectionsPage> {
     final collectionsProvider = Provider.of<RBCollectionsProvider>(context, listen: false);
     // showLoadingDialog(context);
     return UserScaffold(
+      bodySidePadding: 20,
       selectedIndex: 1,
         body: Consumer<RBCollectionsProvider>(
           builder: (context, collectionsProvider, child) {
