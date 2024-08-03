@@ -34,6 +34,13 @@ class RBCollectionsRepository {
         }
       }
 
+      // Sort collections by date
+      collections.sort((a, b) {
+        DateTime dateA = DateTime.parse(a.date!);
+        DateTime dateB = DateTime.parse(b.date!);
+        return dateB.compareTo(dateA); // For latest date first
+      });
+
       return collections;
     } catch (e) {
       throw "Fetching collections for user id:$userId failed with error: ${e.toString()}";

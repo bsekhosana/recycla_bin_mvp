@@ -39,7 +39,7 @@ class _SearchProductModalState extends State<SearchProductModal> {
 
   void _onSearchTextChanged() {
     if (_searchDelayTimer?.isActive ?? false) _searchDelayTimer?.cancel();
-    _searchDelayTimer = Timer(Duration(seconds: 2), _searchProduct);
+    if(_searchController.text.length > 3) _searchDelayTimer = Timer(Duration(seconds: 2), _searchProduct);
   }
 
   void _searchProduct() async {

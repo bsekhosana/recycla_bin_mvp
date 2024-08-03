@@ -26,4 +26,15 @@ class RBProduct {
       'imgUrl': imgUrl,
     };
   }
+
+  // Override toString to print user object
+  @override
+  String toString() {
+    return 'RBProduct{id: $id, '
+        'name: $name, '
+        'size: $size, '
+        'quantity: $quantity, '
+        'imgUrl: $imgUrl '
+        '}';
+  }
 }

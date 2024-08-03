@@ -163,7 +163,8 @@ class _LoginPageState extends State<LoginPage> {
                                 await context.read<RBAuthProvider>().login(
                                     email: emailController.text,
                                     password: passwordController.text,
-                                    context: context
+                                    context: context,
+                                    shouldPersist: _isSelected
                                 );
                                 hideLoadingDialog(
                                     context); // Hide loading indicator

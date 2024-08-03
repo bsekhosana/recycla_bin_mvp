@@ -115,7 +115,7 @@ class _ScheduleCollectionPageState extends State<ScheduleCollectionPage> {
                                 context,
                                 'Collection synced to ro server successfully.',
                                 backgroundColor: Colors.green);
-                            Navigator.pushNamed(context, 'collectionsummary');
+                            Navigator.pushNamed(context, 'collectionsummary', arguments: provider.collection);
                           }catch(e){
                             hideLoadingDialog(context);
                             showCustomSnackbar(context, e.toString(), backgroundColor: Colors.red);

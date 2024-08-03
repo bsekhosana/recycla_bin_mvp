@@ -5,6 +5,7 @@ import 'package:recycla_bin/core/constants/strings.dart';
 import 'package:recycla_bin/features/schedule/data/models/rb_product.dart';
 
 import '../../../../core/utilities/utils.dart';
+import '../../../../core/widgets/custom_icon_button.dart';
 import '../../data/models/rb_collection.dart';
 
 class RBCollectionCard extends StatelessWidget {
@@ -18,18 +19,6 @@ class RBCollectionCard extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     final numberOfProducts = collection.getNumberOfProducts();
     final totalQuantity = collection.getTotalQuantity();
-    final firstImage = collection.getFirstProductImage();
-    // print('current collection: ${collection.products}');
-    final List<Color> colors = [
-      Colors.blue,
-      Colors.pink,
-      Colors.purple,
-      Colors.green,
-      Colors.orange,
-      Colors.yellow,
-    ];
-    final random = Random();
-    final backgroundColor = colors[random.nextInt(colors.length)];
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -62,7 +51,7 @@ class RBCollectionCard extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          Utils.formatDateString(collection.date!),
+                          '${Utils.formatDateString(collection.date!)} ${collection.time}',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: width*0.06,
@@ -75,22 +64,47 @@ class RBCollectionCard extends StatelessWidget {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10.0),
-                child: Text(
-                  collection.address ?? 'No Address',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: width*0.6,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Text(
+                            collection.address ?? 'No Address',
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Text(
+                            numberOfProducts == 0
+                                ? ''
+                                : '$numberOfProducts Products, Quantity($totalQuantity)',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    width: width * 0.1,
+                    height: height * 0.05,
+                    child: CustomIconButton(
+                      icon: Icons.receipt_long_outlined,
+                      onPressed: (){
+                        Navigator.pushNamed(context, 'collectionsummary', arguments: collection);
+                      },
+                    ),
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10.0),
-                child: Text(
-                  numberOfProducts == 0
-                      ? ''
-                      : '$numberOfProducts Products, Quantity($totalQuantity)',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ),
+
             ],
           ),
         ),

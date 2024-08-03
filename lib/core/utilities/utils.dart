@@ -64,9 +64,13 @@ class Utils{
     return initials;
   }
 
-  static String formatDateString(String dateString) {
+  static String formatDateString(String dateString, {bool dateOnly = false}) {
     DateTime dateTime = DateTime.parse(dateString);
-    DateFormat formatter = DateFormat('EEEE, MMMM d, yyyy h:mm a');
+    DateFormat formatter = DateFormat('EEEE, MMMM d, yyyy');
+    if(dateOnly){
+      formatter = DateFormat('yyyy/MM/d');
+    }
+
     return formatter.format(dateTime);
   }
 

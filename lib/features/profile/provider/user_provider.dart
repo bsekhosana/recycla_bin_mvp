@@ -21,13 +21,23 @@ class UserProvider with ChangeNotifier {
 
   RBUserModel? get user => _user;
 
-  void setUser(RBUserModel? user) {
+  UserProvider() {
+    _loadUser();
+  }
+
+  void setUser(RBUserModel? user, {bool shouldPersist = false}) {
     _user = user;
+    if(shouldPersist){
+      _saveUser(user);
+    }else{
+      _saveUser(null);
+    }
     notifyListeners();
   }
 
   void clearUser() {
     _user = null;
+    _saveUser(null);
     notifyListeners();
   }
 

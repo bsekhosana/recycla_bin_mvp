@@ -29,6 +29,7 @@ class _LandingPageState extends State<LandingPage> with WidgetsBindingObserver {
 
   Future<void> _checkUserStatus() async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
+    print('checking user status from landing page: ${userProvider.user}');
     if (userProvider.user != null) {
       Navigator.pushReplacementNamed(context, 'schedulecollection');
     }

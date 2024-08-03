@@ -49,13 +49,14 @@ class RBAuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> login({required String email, required String password, required BuildContext context}) async {
+  Future<void> login({required String email, required String password, required BuildContext context, bool shouldPersist = false}) async {
     if (await _connectivityService.checkConnectivity()) {
       _currentUser = await _authRepository.loginUser(email: email, password: password);
       print('login context.mounted: ${context.mounted}');
       if(context.mounted){
-        Provider.of<UserProvider>(context, listen: false).setUser(_currentUser);
+        Provider.of<UserProvider>(context, listen: false).setUser(_currentUser, shouldPersist: shouldPersist);
         print('login _currentUser: $_currentUser');
+        print('is login persisted: $shouldPersist');
       }
       notifyListeners();
     } else {
