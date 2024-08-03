@@ -18,7 +18,7 @@ import 'package:recycla_bin/features/settings/settings_page.dart';
 import 'features/authentication/presentation/pages/login_page.dart';
 import 'features/authentication/presentation/pages/register_page.dart';
 import 'features/authentication/presentation/pages/landing_page.dart';
-import 'features/collections/collections_page.dart';
+import 'features/schedule/collections_page.dart';
 import 'features/protected_page.dart';
 
 class Routes {

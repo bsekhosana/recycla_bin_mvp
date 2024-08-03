@@ -8,7 +8,7 @@ import '../../../../core/widgets/custom_snackbar.dart';
 import '../../../../core/widgets/user_scaffold.dart';
 import '../../../../core/widgets/time_selectior_dropdown.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../providers/rb_collection_provider.dart';
+import '../../providers/rb_collection_provider.dart';
 import '../../../../features/schedule/data/models/rb_collection.dart';
 
 class CollectionDatePage extends StatefulWidget {

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:recycla_bin/core/widgets/custom_snackbar.dart';
 import 'dart:convert';
 
-import '../providers/rb_collection_provider.dart';
+import '../../providers/rb_collection_provider.dart';
 
 class SearchProductModal extends StatefulWidget {
   final User user;

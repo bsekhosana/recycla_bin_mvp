@@ -7,7 +7,7 @@ import 'package:recycla_bin/features/schedule/data/models/rb_product.dart';
 
 import '../../../../core/constants/strings.dart';
 import '../../../../core/widgets/user_scaffold.dart';
-import '../providers/rb_collection_provider.dart';
+import '../../providers/rb_collection_provider.dart';
 import '../widgets/add_product_modal.dart';
 import '../widgets/product_options_sheet.dart';
 import '../widgets/search_product_modal.dart';

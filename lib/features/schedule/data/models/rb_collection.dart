@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'rb_product.dart';
 
 class RBCollection {
@@ -7,15 +9,20 @@ class RBCollection {
   String? address;
   String? lat;
   String? lon;
+  List<String>? productIds;
   List<RBProduct>? products;
 
-  RBCollection({this.id, this.date, this.time, this.address, this.products, this.lat, this.lon});
+  RBCollection({this.id, this.date, this.time, this.productIds, this.address, this.products, this.lat, this.lon});
 
   factory RBCollection.fromJson(Map<String, dynamic> json) {
     var productList = json['products'] as List?;
     List<RBProduct>? products = productList != null
         ? productList.map((product) => RBProduct.fromJson(product)).toList()
         : null;
+
+    // List<String>? productIds = productList != null ? List<String>.from(productList) : null;
+
+    List<String>? productIds = productList != null ? List<String>.from(productList.map((e) => e.toString())) : null;
 
     return RBCollection(
       id: json['id'],
@@ -24,6 +31,7 @@ class RBCollection {
       address: json['address'],
       lat: json['lat'],
       lon: json['lon'],
+      productIds: productIds,
       products: products,
     );
   }
@@ -37,6 +45,7 @@ class RBCollection {
       'lat': lat,
       'lon': lon,
       'products': products?.map((product) => product.toJson()).toList(),
+      'productIds': productIds,
     };
   }
 
@@ -48,6 +57,7 @@ class RBCollection {
     String? lat,
     String? lon,
     List<RBProduct>? products,
+    List<String>? productIds
   }) {
     return RBCollection(
       id: id ?? this.id,
@@ -57,6 +67,28 @@ class RBCollection {
       lat: lat ?? this.lat,
       lon: lon ?? this.lon,
       products: products ?? this.products,
+      productIds: productIds ?? this.productIds,
+    );
+  }
+
+  factory RBCollection.fromDocument(DocumentSnapshot doc) {
+    var data = doc.data() as Map<String, dynamic>;
+    var productList = data['products'] as List?;
+    List<RBProduct>? products = productList != null
+        ? productList.map((product) => RBProduct.fromJson(product)).toList()
+        : null;
+
+    List<String>? productIds = productList != null ? List<String>.from(productList) : null;
+
+    return RBCollection(
+      id: data['id'],
+      date: data['date'],
+      time: data['time'],
+      address: data['address'],
+      lat: data['lat'],
+      lon: data['lon'],
+      products: products,
+      productIds: productIds
     );
   }
 }

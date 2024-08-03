@@ -6,7 +6,7 @@ import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
 import 'package:recycla_bin/core/widgets/custom_snackbar.dart';
 import 'package:recycla_bin/core/widgets/user_scaffold.dart';
 import 'package:recycla_bin/features/schedule/data/models/rb_collection.dart';
-import 'package:recycla_bin/features/schedule/presentation/providers/rb_collection_provider.dart';
+import 'package:recycla_bin/features/schedule/providers/rb_collection_provider.dart';
 
 import '../../core/constants/strings.dart';
 import '../../core/widgets/custom_icon_button.dart';

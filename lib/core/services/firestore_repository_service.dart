@@ -29,4 +29,11 @@ class FirestoreRepository<T> {
   Future<void> deleteDocument(String id) async {
     await _firestore.collection(collectionPath).doc(id).delete();
   }
+
+  Future<List<T>> fetchAllDocumentsWithId(String name, String value, T Function(Map<String, dynamic> data) fromMap) async {
+    QuerySnapshot querySnapshot = await _firestore.collection(collectionPath).where(name, isEqualTo: value).get();
+    return querySnapshot.docs.map((doc) {
+      return fromMap(doc.data() as Map<String, dynamic>);
+    }).toList();
+  }
 }

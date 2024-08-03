@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/rb_collection_provider.dart';
+import '../../providers/rb_collection_provider.dart';
 import 'package:recycla_bin/features/schedule/data/models/rb_product.dart';
 
 class ProductOptionsSheet extends StatefulWidget {

@@ -20,7 +20,7 @@ import '../../../../core/utilities/utils.dart';
 import 'package:location/location.dart' as loc;
 
 import '../../data/models/rb_collection.dart';
-import '../providers/rb_collection_provider.dart';
+import '../../providers/rb_collection_provider.dart';
 
 class LocationPage extends StatefulWidget {
   const LocationPage({super.key});

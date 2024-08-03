@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
-import '../../../../core/services/connectivity_service.dart';
-import '../../data/models/rb_product.dart';
-import '../../domain/repositories/rb_collection_repository.dart';
-import '../../data/models/rb_collection.dart';
+import '../../../core/services/connectivity_service.dart';
+import '../data/models/rb_product.dart';
+import '../data/repositories/rb_collection_repository.dart';
+import '../data/models/rb_collection.dart';
 
 class RBCollectionProvider with ChangeNotifier {
   final RBCollectionRepository repository;
