@@ -136,7 +136,7 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
           CustomElevatedButton(
             text: 'Confirm Collect',
             onPressed: () {
-              Navigator.pushNamed(context, 'collectiondetails');
+              Navigator.pushNamed(context, 'collectiondetails', arguments: collection);
             },
             primaryButton: true,
           ),

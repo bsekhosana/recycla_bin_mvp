@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:recycla_bin/core/utilities/dialogs_utils.dart';
 import 'package:recycla_bin/core/widgets/user_scaffold.dart';
 import 'package:recycla_bin/features/profile/provider/user_provider.dart';
 import 'package:recycla_bin/features/schedule/presentation/widgets/rb_collections_list_view.dart';
-import 'package:recycla_bin/features/schedule/providers/rb_collection_provider.dart';
 import 'package:recycla_bin/features/schedule/providers/rb_collections_provider.dart';
 
 class CollectionsPage extends StatefulWidget {
@@ -15,6 +13,7 @@ class CollectionsPage extends StatefulWidget {
 }
 
 class _CollectionsPageState extends State<CollectionsPage> {
+
   @override
   void initState() {
     super.initState();
@@ -29,30 +28,30 @@ class _CollectionsPageState extends State<CollectionsPage> {
       collectionsProvider.fetchCollections(userProvider.user!.id!);
     }
   }
+
   @override
   Widget build(BuildContext context) {
-    final collectionsProvider = Provider.of<RBCollectionsProvider>(context, listen: false);
-    // showLoadingDialog(context);
     return UserScaffold(
       bodySidePadding: 20,
       selectedIndex: 1,
-        body: Consumer<RBCollectionsProvider>(
-          builder: (context, collectionsProvider, child) {
-            if(collectionsProvider.collections.isEmpty){
-              return Center(child: Text('No collections found'));
-            }else{
-              // hideLoadingDialog(context);
-              return Container(
-                height: MediaQuery.of(context).size.height*0.7,
-                  width: double.infinity,
-                  child: RBCollectionListView(
-                      collections: collectionsProvider.collections
-                  ),
-              );
-            }
-          },
-        ),
-        title: 'Collections',
+      body: Consumer<RBCollectionsProvider>(
+        builder: (context, collectionsProvider, child) {
+          if (collectionsProvider.isLoading) {
+            return Center(child: CircularProgressIndicator(backgroundColor: Colors.green,));
+          } else if (collectionsProvider.collections.isEmpty) {
+            return Center(child: Text('No collections found'));
+          } else {
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.7,
+              width: double.infinity,
+              child: RBCollectionListView(
+                collections: collectionsProvider.collections,
+              ),
+            );
+          }
+        },
+      ),
+      title: 'Collections',
     );
   }
 }

@@ -13,9 +13,15 @@ class RBCollectionsProvider with ChangeNotifier{
 
   List<RBCollection> get collections => _collections;
 
+  bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
+
   final ConnectivityService _connectivityService = ConnectivityService();
 
   Future<void> fetchCollections(String userId) async {
+    _isLoading = true;
+    notifyListeners();
     try {
       if (await _connectivityService.checkConnectivity()) {
         _collections = await repository.fetchCollections(userId);
@@ -24,10 +30,14 @@ class RBCollectionsProvider with ChangeNotifier{
           throw Exception("No collections found");
         }
       }else{
+        notifyListeners();
         throw Exception("No internet connection");
       }
     } catch (e) {
       rethrow;
+    }finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 }

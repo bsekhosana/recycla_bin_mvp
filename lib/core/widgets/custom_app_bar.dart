@@ -145,7 +145,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                       child: Image.asset(
                         showMenuIcon ? 'assets/images/icon/burger.png' : 'assets/images/icon/back.png',
-                        width: width * 0.05, // Set the width of the image
+                        width:showMenuIcon ? width * 0.05 : width * 0.035, // Set the width of the image
                       ),
                     ),
                     SizedBox(

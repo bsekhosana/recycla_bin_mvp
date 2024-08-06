@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
 import 'package:recycla_bin/core/widgets/user_scaffold.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
+
+import '../../../authentication/data/models/rb_user_model.dart';
+import '../../../profile/provider/user_provider.dart';
+import '../../data/models/rb_collection.dart';
+import '../../data/models/rb_product.dart';
 
 class ConfirmPaymentPage extends StatefulWidget {
   const ConfirmPaymentPage({super.key});
@@ -37,10 +43,34 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
     });
   }
 
+  List<RBProduct> products = [];
+  int totalQuantity = 0;
+  String date = "2021/05/18";
+  String time = "13:00 PM - 14:00 PM";
+  double cost = 47.45;
+  RBCollection? _collection;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final RBCollection? collection = ModalRoute.of(context)!.settings.arguments as RBCollection?;
+      if (collection != null) {
+        setState(() {
+          products = List.from(collection.products ?? []);
+          totalQuantity = collection.getTotalQuantity();
+          _collection = collection;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    final userProvider = Provider.of<UserProvider>(context);
+    final RBUserModel? user = userProvider.user;
     return UserScaffold(
       body: Column(
         children: [
