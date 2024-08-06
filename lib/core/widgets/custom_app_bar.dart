@@ -8,6 +8,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showMenuIcon;
   final bool isDateCollectionPage;
   final VoidCallback? onCalendarTodayButtonPressed;
+  final bool hidePrefixIcon;
 
   const CustomAppBar({
     super.key,
@@ -15,7 +16,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.height = kToolbarHeight,
     required this.showMenuIcon,
     this.isDateCollectionPage = false,
-    this.onCalendarTodayButtonPressed
+    this.onCalendarTodayButtonPressed,
+    required this.hidePrefixIcon
   });
 
   @override
@@ -127,7 +129,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ],
                     ) :
 
-                    TextButton(
+                    hidePrefixIcon ? SizedBox(width: width*0.12,) : TextButton(
                       onPressed: () {
                         // Handle button press
                         if(!showMenuIcon) {

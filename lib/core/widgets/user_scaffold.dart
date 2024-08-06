@@ -12,6 +12,8 @@ class UserScaffold extends StatefulWidget {
 
   final bool showMenu;
 
+  final bool hidePrefixIcon;
+
   final bool isDateCollectionPage;
 
   final int selectedIndex;
@@ -26,6 +28,7 @@ class UserScaffold extends StatefulWidget {
     this.selectedIndex = 0,
     this.bodySidePadding = 30,
     this.showMenu = true,
+    this.hidePrefixIcon = false,
     this.isDateCollectionPage = false,
     this.onCalendarTodayButtonPressed
   });
@@ -53,6 +56,7 @@ class _UserScaffoldState extends State<UserScaffold> with SingleTickerProviderSt
             height: height*0.14,
             isDateCollectionPage: widget.isDateCollectionPage,
             onCalendarTodayButtonPressed: widget.onCalendarTodayButtonPressed,
+            hidePrefixIcon: widget.hidePrefixIcon
           ),
           Container(
               width: width,

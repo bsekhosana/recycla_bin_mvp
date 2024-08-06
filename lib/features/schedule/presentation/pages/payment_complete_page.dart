@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:recycla_bin/core/utilities/utils.dart';
 import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
 import 'package:recycla_bin/core/widgets/user_scaffold.dart';
+
+import '../../../../core/constants/strings.dart';
+import '../../data/models/rb_collection.dart';
 
 class PaymentCompletePage extends StatefulWidget {
   const PaymentCompletePage({super.key});
@@ -10,11 +14,28 @@ class PaymentCompletePage extends StatefulWidget {
 }
 
 class _PaymentCompletePageState extends State<PaymentCompletePage> {
+
+  RBCollection? _collection;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final RBCollection? collection = ModalRoute.of(context)!.settings.arguments as RBCollection?;
+      if (collection != null) {
+        setState(() {
+          _collection = collection;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return UserScaffold(
+      hidePrefixIcon: true,
         body: Container(
           height: height*0.7,
           child: Column(
@@ -41,14 +62,14 @@ class _PaymentCompletePageState extends State<PaymentCompletePage> {
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Colors.green,
+                              color: Utils.hexToColor(AppStrings.kRBPrimaryColor),
                             ),
                           ),
                           Text(
-                            'Your Collection is scheduled 18 May 2021',
+                            'Your Collection is scheduled for ${Utils.formatDateString(_collection!.date!)} at ${_collection!.time}',
                             style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
+                              fontSize: width*0.06,
+                              color: Colors.grey,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -77,7 +98,11 @@ class _PaymentCompletePageState extends State<PaymentCompletePage> {
                     height: height*0.08,
                     child: CustomElevatedButton(
                       text: 'New Collection',
-                      onPressed:(){},
+                      onPressed:(){
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, 'schedulecollection', (
+                            Route<dynamic> route) => false);
+                      },
                       primaryButton: true,
                     ),
                   ),
