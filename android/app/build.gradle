@@ -41,8 +41,8 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdk = 23 //flutter.minSdkVersion
         targetSdk = 34//flutter.targetSdkVersion
-        versionCode = flutterVersionCode.toInteger()
-        versionName = flutterVersionName
+        versionCode = 2// flutterVersionCode.toInteger()
+        versionName "1.0.1"//versionName = flutterVersionName
         multiDexEnabled true
 //        manifestPlaceholders = [applicationName: "lean.recyclea.bin.recycla_bin.MainApplication"]
     }
