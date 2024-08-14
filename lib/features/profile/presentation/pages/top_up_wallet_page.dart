@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:recycla_bin/core/utilities/dialogs_utils.dart';
 import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
+import 'package:recycla_bin/core/widgets/custom_snackbar.dart';
 import 'package:recycla_bin/core/widgets/user_scaffold.dart';
+
+import '../../data/models/rb_transaction_model.dart';
+import '../../provider/rb_transaction_provider.dart';
+import '../../provider/user_provider.dart';
 
 class TopUpWalletPage extends StatefulWidget {
   @override
@@ -13,129 +19,154 @@ class _TopUpWalletPageState extends State<TopUpWalletPage> {
   bool _isLoading = false;
   final List<int> amounts = List<int>.generate(200, (index) => (index + 2) * 50);
   int selectedAmount = 100;
+
+  void _resetState() {
+    setState(() {
+      _isToppingUp = true;
+      _isLoading = false;
+      selectedAmount = 100;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final transactionProvider = Provider.of<RBTransactionProvider>(context, listen: false);
+
+
     return UserScaffold(
       title: 'Wallet Top Up',
       showMenu: false,
       body: _isToppingUp ?
-        Container(
-          height: height*0.6,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: height*0.03,),
-              DropdownButtonFormField<int>(
-                value: selectedAmount,
-                decoration: InputDecoration(
-                  labelText: 'Amount',
-                  border: OutlineInputBorder(),
-                  prefix: Text('R '),
+      Container(
+        height: height * 0.6,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: height * 0.03,),
+            DropdownButtonFormField<int>(
+              value: selectedAmount,
+              decoration: InputDecoration(
+                labelText: 'Amount',
+                border: OutlineInputBorder(),
+                prefix: Text('R '),
+              ),
+              items: amounts.map<DropdownMenuItem<int>>((int value) {
+                return DropdownMenuItem<int>(
+                  value: value,
+                  child: Text('$value'),
+                );
+              }).toList(),
+              onChanged: (int? newValue) {
+                setState(() {
+                  selectedAmount = newValue!;
+                });
+              },
+            ),
+            Column(
+              children: [
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'R',
+                        style: TextStyle(
+                          fontSize: width * 0.2,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      TextSpan(
+                        text: '$selectedAmount',
+                        style: TextStyle(
+                          fontSize: width * 0.2,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                items: amounts.map<DropdownMenuItem<int>>((int value) {
-                  return DropdownMenuItem<int>(
-                    value: value,
-                    child: Text('$value'),
-                  );
-                }).toList(),
-                onChanged: (int? newValue) {
+                Text.rich(
+                  textAlign: TextAlign.center,
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Which translates to ',
+                        style: TextStyle(
+                          fontSize: width * 0.04,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'Tk$selectedAmount',
+                        style: TextStyle(
+                          fontSize: width * 0.04,
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextSpan(
+                        text: ', that would be added to your REBPay wallet',
+                        style: TextStyle(
+                          fontSize: width * 0.04,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            _isLoading
+                ? CircularProgressIndicator(backgroundColor: Colors.green,)
+                : CustomElevatedButton(
+              text: 'Send Amount',
+              onPressed: () async {
+                try{
                   setState(() {
-                    selectedAmount = newValue!;
+                    _isLoading = true;
                   });
-                },
-              ),
-              // SizedBox(height: height),
-              Column(
-                children: [
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'R', // The smaller suffix text
-                          style: TextStyle(
-                            fontSize: width*0.2, // Smaller font size for the suffix
-                            color: Colors.grey,
-                          ),
-                        ),
-                        TextSpan(
-                          text: '$selectedAmount',
-                          style: TextStyle(
-                            fontSize: width*0.2,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Text.rich(
-                    textAlign: TextAlign.center,
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text:'Which translates to ',
-                          style: TextStyle(
-                              fontSize: width*0.04,
-                              color: Colors.grey
-                          ),
-                        ),
-                        TextSpan(
-                          text:'Tk$selectedAmount',
-                          style: TextStyle(
-                              fontSize: width*0.04,
-                              color: Colors.green,
-                            fontWeight: FontWeight.bold
-                          ),
-                        ),
-                        TextSpan(
-                          text:', that would be added to your RBWallet',
-                          style: TextStyle(
-                              fontSize: width*0.04,
-                              color: Colors.grey
-                          ),
-                        )
-                      ]
-                    )
-                  ),
 
-                ],
-              ),
-              // SizedBox(height: 40),
-              // Card(
-              //   shape: RoundedRectangleBorder(
-              //     borderRadius: BorderRadius.circular(12.0),
-              //   ),
-              //   color: Colors.greenAccent,
-              //   child: ListTile(
-              //     leading: CircleAvatar(
-              //       backgroundImage: NetworkImage('https://example.com/avatar.jpg'),
-              //     ),
-              //     title: Text('Joey Climb'),
-              //     subtitle: Text('ID: #78451695'),
-              //   ),
-              // ),
-              // SizedBox(height: 40),
-              CustomElevatedButton(
-                  text: 'Send Amount',
-                  onPressed: (){
-                    showLoadingDialog(context);
-                    Future.delayed(Duration(seconds: 3), (){
-                      setState(() {
-                        _isToppingUp = false;
-                      });
-                    });
+                  await transactionProvider.createTransaction(
+                    icon: Icons.money,
+                    title: 'Top Up Wallet',
+                    details: 'Topping up wallet with Tk$selectedAmount(R$selectedAmount)',
+                    amount: selectedAmount.toDouble(),
+                    type: RBTransactionType.TopUp,
+                    status: RBTransactionStatus.Paid,
+                    userProvider: userProvider,
+                  );
+                  setState(() {
+                    _isLoading = false;
+                    _isToppingUp = false;
+                    showCustomSnackbar(
+                        context, 'REBPay Wallet topped up by Tk$selectedAmount successfully',
+                        backgroundColor: Colors.green);
+                  });
+                }catch (e){
+                  setState(() {
+                    _isLoading = false;
+                    _isToppingUp = true;
+                    showCustomSnackbar(
+                        context, e.toString(),
+                        backgroundColor: Colors.red);
+                  });
+                }
 
-                    hideLoadingDialog(context);
-                  },
-                primaryButton: true,
-              ),
-            ],
-          ),
-        )
-      : Center(
+                //
+                // Future.delayed(Duration(seconds: 3), () {
+                //
+                // });
+              },
+              primaryButton: true,
+            ),
+          ],
+        ),
+      )
+          : Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -276,45 +307,16 @@ class _TopUpWalletPageState extends State<TopUpWalletPage> {
                   ],
                 ),
               ),
-              // SizedBox(height: height * 0.03),
-              // GestureDetector(
-              //   onTap: () {
-              //     // Handle swipe to send action
-              //   },
-              //   child: Container(
-              //     width: double.infinity,
-              //     padding: EdgeInsets.symmetric(vertical: 15),
-              //     decoration: BoxDecoration(
-              //       color: Colors.black,
-              //       borderRadius: BorderRadius.circular(10),
-              //     ),
-              //     child: Row(
-              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //       children: [
-              //         Padding(
-              //           padding: const EdgeInsets.only(left: 20.0),
-              //           child: Icon(Icons.arrow_forward, color: Colors.white),
-              //         ),
-              //         Text(
-              //           'Swipe to send',
-              //           style: TextStyle(
-              //             color: Colors.white,
-              //             fontSize: width * 0.05,
-              //             fontWeight: FontWeight.bold,
-              //           ),
-              //         ),
-              //         Padding(
-              //           padding: const EdgeInsets.only(right: 20.0),
-              //           child: Icon(Icons.arrow_forward_ios, color: Colors.white),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
+              SizedBox(height: height * 0.05,),
+              CustomElevatedButton(
+                text: 'New Top Up',
+                onPressed: _resetState,
+                primaryButton: false,
+              ),
             ],
           ),
         ),
-      )
+      ),
     );
   }
 }

@@ -9,7 +9,7 @@ import '../../authentication/data/models/rb_user_model.dart';
 import '../../authentication/provider/rb_auth_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../data/user_repository.dart';
+import '../data/repositories/user_repository.dart';
 
 class UserProvider with ChangeNotifier {
 

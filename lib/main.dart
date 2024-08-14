@@ -13,6 +13,7 @@ import 'core/provider/app_provider.dart';
 import 'features/authentication/presentation/pages/phone_verification_page.dart';
 import 'features/authentication/provider/rb_auth_provider.dart';
 import 'features/authentication/provider/forgot_password_provider.dart';
+import 'features/profile/provider/rb_transaction_provider.dart';
 import 'features/schedule/data/data_provider/shared_pref_provider.dart';
 import 'features/schedule/data/repositories/rb_collection_repository.dart';
 import 'features/schedule/providers/rb_collection_provider.dart';
@@ -36,6 +37,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => RBCollectionsProvider()),
         ChangeNotifierProvider(create: (_) => RBCollectionProvider(repository: rbCollectionRepository)),
+        ChangeNotifierProvider(create: (_) => RBTransactionProvider()),
         // Add more providers here as needed
       ],
       child: MyApp(),

@@ -573,9 +573,9 @@ class _WalletTabState extends State<WalletTab> {
             balance: 45,
             accountNumber: _userProvider.user!.id!,
             transactions: [
-              RBTransactionModel(icon: Icons.home, title: 'Home Internet', details: '**** **** 3749', amount: 15.00),
-              RBTransactionModel(icon: Icons.electrical_services, title: 'Electricity Bill', details: '**** **** 1258', amount: 100.00),
-              RBTransactionModel(icon: Icons.credit_card, title: 'Credit Pay', details: '**** **** 3749', amount: 5.00),
+              // RBTransactionModel(icon: Icons.home, title: 'Home Internet', details: '**** **** 3749', amount: 15.00),
+              // RBTransactionModel(icon: Icons.electrical_services, title: 'Electricity Bill', details: '**** **** 1258', amount: 100.00),
+              // RBTransactionModel(icon: Icons.credit_card, title: 'Credit Pay', details: '**** **** 3749', amount: 5.00),
 
             ],
           )

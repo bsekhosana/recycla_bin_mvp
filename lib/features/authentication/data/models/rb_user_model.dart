@@ -7,6 +7,7 @@ class RBUserModel {
   final String hashedPassword;
   final String? hashedPin;
   final String? profilePicture;
+  final String? rbTokenz;
 
   RBUserModel({
     this.id,
@@ -16,7 +17,8 @@ class RBUserModel {
     required this.hashedPassword,
     this.hashedPin,
     required this.fullName,
-    this.profilePicture
+    this.profilePicture,
+    this.rbTokenz
   });
 
   factory RBUserModel.fromMap(Map<String, dynamic> data) {
@@ -29,6 +31,7 @@ class RBUserModel {
       hashedPassword: data['hashedPassword'],
       hashedPin: data['hashedPin'],
       profilePicture: data['profilePicture'],
+      rbTokenz: data['rbTokenz'],
     );
   }
 
@@ -43,6 +46,7 @@ class RBUserModel {
         'hashedPin: $hashedPin '
         'hashedPassword: $hashedPassword '
         'profilePicture: $profilePicture '
+        'rbTokenz: $rbTokenz '
         '}';
   }
 
@@ -56,6 +60,7 @@ class RBUserModel {
       hashedPassword: json['hashedPassword'],
       hashedPin: json['hashedPin'] ?? '',
       profilePicture: json['profilePicture'],
+      rbTokenz: json['rbTokenz'],
     );
   }
 
@@ -69,6 +74,7 @@ class RBUserModel {
       'hashedPassword': hashedPassword,
       'hashedPin': hashedPin,
       'profilePicture': profilePicture,
+      'rbTokenz': rbTokenz
     };
   }
 
@@ -81,6 +87,7 @@ class RBUserModel {
     String? hashedPassword,
     String? hashedPin,
     String? profilePicture,
+    String? rbTokenz,
   }) {
     return RBUserModel(
       id: id,
@@ -91,6 +98,7 @@ class RBUserModel {
       hashedPassword: hashedPassword ?? this.hashedPassword,
       hashedPin: hashedPin ?? this.hashedPin,
       profilePicture: profilePicture ?? this.profilePicture,
+      rbTokenz: rbTokenz ?? this.rbTokenz,
     );
   }
 }

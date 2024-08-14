@@ -2,7 +2,7 @@
 
 import 'package:recycla_bin/features/authentication/data/models/rb_user_model.dart';
 
-import '../../../core/services/firestore_repository_service.dart';
+import '../../../../core/services/firestore_repository_service.dart';
 
 class UserRepository{
 
