@@ -48,6 +48,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
+    var shortestSide = MediaQuery.of(context).size.shortestSide;
+    var useMobileLayout = shortestSide < 600; // or any breakpoint you choose
+
+    if (!useMobileLayout) {
+      return Scaffold(
+        body: Center(
+          child: Text('This app is not supported on tablets or iPads.'),
+        ),
+      );
+    }
     return MaterialApp(
       routes: Routes.routes,
       initialRoute: '/landing',

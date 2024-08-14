@@ -95,14 +95,14 @@ class _CustomUserDrawerState extends State<CustomUserDrawer> {
                             width: 2.0),
                       ),
                       child: CircleAvatar(
-                        radius: width * 0.15,
+                        radius: width * 0.1,
                         backgroundImage: user?.profilePicture != null
                             ? NetworkImage(user!.profilePicture!)
                             : null,
                         child: user?.profilePicture == null
                             ? Text(
                           Utils.getInitials(user!.fullName),
-                          style: TextStyle(fontSize: width * 0.16, color: Colors.green),
+                          style: TextStyle(fontSize: width * 0.1, color: Colors.green),
                         )
                             : null,
                       ),
@@ -112,7 +112,7 @@ class _CustomUserDrawerState extends State<CustomUserDrawer> {
                       user != null ? user.fullName : 'Test User',
                       style: TextStyle(
                           color: Utils.hexToColor(AppStrings.kRBSecondaryColor),
-                          fontSize: width*0.05,
+                          fontSize: width*0.045,
                           fontWeight: FontWeight.bold
                       ),
                     ),
@@ -121,16 +121,16 @@ class _CustomUserDrawerState extends State<CustomUserDrawer> {
                       user != null ? user.email : 'test@email.com',
                       style: TextStyle(
                           color: Utils.hexToColor(AppStrings.kRBSecondaryColor),
-                          fontSize: width*0.05,
+                          fontSize: width*0.045,
                           fontWeight: FontWeight.bold
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: height * 0.03),
-              Divider(),
               SizedBox(height: height * 0.02),
+              Divider(),
+              // SizedBox(height: height * 0.01),
               CustomDrawerListTile(
                 icon: Icons.home,
                 title: 'Home',

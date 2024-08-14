@@ -12,12 +12,15 @@ import 'package:recycla_bin/core/widgets/custom_snackbar.dart';
 import 'package:recycla_bin/core/widgets/custom_user_drawer.dart';
 import 'package:recycla_bin/core/widgets/user_scaffold.dart';
 import 'package:recycla_bin/features/authentication/data/models/rb_user_model.dart';
+import 'package:recycla_bin/features/profile/presentation/widgets/rb_credit_card_widget.dart';
 import 'package:recycla_bin/features/profile/provider/user_provider.dart';
 
 import '../../core/utilities/error_handler.dart';
 import '../../core/utilities/utils.dart';
 
 import 'package:http/http.dart' as http;
+
+import 'data/models/rb_transaction_model.dart';
 
 
 class ProfilePage extends StatefulWidget {
@@ -332,7 +335,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                                 ),
                                 Tab(
                                   child: Container(
-                                    child: Center(child: Text('Bank')),
+                                    child: Center(child: Text('Wallet')),
                                   ),
                                 ),
                                 Tab(
@@ -380,7 +383,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                                 controller: _tabController,
                                 children: [
                                   Center(child: DetailsTab(isEditing: isEditing)),
-                                  Center(child: BankTab(isEditing: isEditing)),
+                                  Center(child: WalletTab(isEditing: isEditing)),
                                   Center(child: PasswordTab(isEditing: isEditing)),
                                 ],
                               ),
@@ -547,85 +550,35 @@ class _DetailsTabState extends State<DetailsTab> {
   }
 }
 
-class BankTab extends StatefulWidget {
+class WalletTab extends StatefulWidget {
   final bool isEditing;
 
-  BankTab({required this.isEditing});
+  WalletTab({required this.isEditing});
 
   @override
-  State<BankTab> createState() => _BankTabState();
+  State<WalletTab> createState() => _WalletTabState();
 }
 
-class _BankTabState extends State<BankTab> {
+class _WalletTabState extends State<WalletTab> {
   @override
   Widget build(BuildContext context) {
 
     final _userProvider = Provider.of<UserProvider>(context);
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(0.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextField(
-            enabled: widget.isEditing,
-            decoration: InputDecoration(labelText: 'Card Holder’s Name', hintText: 'Banu Elson'),
-          ),
-          SizedBox(height: 10),
-          TextField(
-            enabled: widget.isEditing,
-            decoration: InputDecoration(labelText: 'Card Number', hintText: '5470 0004 0003 0002', suffixIcon: Icon(Icons.credit_card)),
-          ),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  enabled: widget.isEditing,
-                  decoration: InputDecoration(labelText: 'Expire Date', hintText: 'Month'),
-                ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: TextField(
-                  enabled: widget.isEditing,
-                  decoration: InputDecoration(labelText: 'Year', hintText: 'Year'),
-                ),
-              ),
+          RBCreditCardWidget(
+            balance: 45,
+            accountNumber: _userProvider.user!.id!,
+            transactions: [
+              RBTransactionModel(icon: Icons.home, title: 'Home Internet', details: '**** **** 3749', amount: 15.00),
+              RBTransactionModel(icon: Icons.electrical_services, title: 'Electricity Bill', details: '**** **** 1258', amount: 100.00),
+              RBTransactionModel(icon: Icons.credit_card, title: 'Credit Pay', details: '**** **** 3749', amount: 5.00),
+
             ],
-          ),
-          SizedBox(height: 10),
-          TextField(
-            enabled: widget.isEditing,
-            decoration: InputDecoration(labelText: 'Security Code', hintText: '574', suffixIcon: Icon(Icons.info_outline)),
-          ),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Checkbox(value: false, onChanged: widget.isEditing ? (value) {} : null),
-              Text('Remember my card for next purchases.'),
-            ],
-          ),
-          SizedBox(height: 20),
-          ProfilePageCustomElevatedButton(
-              text: 'Update Card',
-              onPressed: () {},
-              primaryButton: true,
-              isEditing: widget.isEditing,
-          ),
-          // ElevatedButton(
-          //   onPressed: widget.isEditing ? () {} : null,
-          //   style: ElevatedButton.styleFrom(
-          //     foregroundColor: Colors.white, backgroundColor: Colors.green,
-          //     padding: EdgeInsets.symmetric(vertical: 16),
-          //   ),
-          //   child: Center(
-          //     child: Text(
-          //       'Update',
-          //       style: TextStyle(fontSize: 18),
-          //     ),
-          //   ),
-          // ),
+          )
         ],
       ),
     );
