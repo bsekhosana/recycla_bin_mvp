@@ -13,6 +13,7 @@ import 'package:recycla_bin/core/widgets/custom_user_drawer.dart';
 import 'package:recycla_bin/core/widgets/user_scaffold.dart';
 import 'package:recycla_bin/features/authentication/data/models/rb_user_model.dart';
 import 'package:recycla_bin/features/profile/presentation/widgets/rb_credit_card_widget.dart';
+import 'package:recycla_bin/features/profile/provider/rb_transaction_provider.dart';
 import 'package:recycla_bin/features/profile/provider/user_provider.dart';
 
 import '../../core/utilities/error_handler.dart';
@@ -257,11 +258,11 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '1.208',
+                                  'Tk${user!.rbTokenz}',
                                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: width * 0.04, color: Colors.white),
                                 ),
                                 Text(
-                                  'Green Credit',
+                                  'Available Tokenz',
                                   style: TextStyle(fontSize: width * 0.03, color: Colors.white),
                                 )
                               ],
@@ -560,24 +561,30 @@ class WalletTab extends StatefulWidget {
 }
 
 class _WalletTabState extends State<WalletTab> {
+
+  @override
+  void initState() {
+    super.initState();
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final transactionProvider = Provider.of<RBTransactionProvider>(context, listen: false);
+    transactionProvider.fetchTransactionsByUserId(userProvider.user!.id!);
+  }
+
   @override
   Widget build(BuildContext context) {
 
     final _userProvider = Provider.of<UserProvider>(context);
+    final transactionProvider = Provider.of<RBTransactionProvider>(context);
+    final transactions = transactionProvider.transactions;
 
     return Padding(
       padding: const EdgeInsets.all(0.0),
       child: Column(
         children: [
           RBCreditCardWidget(
-            balance: 45,
+            balance: double.tryParse(_userProvider.user!.rbTokenz! ?? '0.0')! ,
             accountNumber: _userProvider.user!.id!,
-            transactions: [
-              // RBTransactionModel(icon: Icons.home, title: 'Home Internet', details: '**** **** 3749', amount: 15.00),
-              // RBTransactionModel(icon: Icons.electrical_services, title: 'Electricity Bill', details: '**** **** 1258', amount: 100.00),
-              // RBTransactionModel(icon: Icons.credit_card, title: 'Credit Pay', details: '**** **** 3749', amount: 5.00),
-
-            ],
+            transactions: transactions,
           )
         ],
       ),

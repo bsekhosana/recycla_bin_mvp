@@ -4,7 +4,12 @@ import '../data/models/rb_transaction_model.dart';
 import '../data/repositories/rb_transaction_repository.dart';
 
 class RBTransactionProvider with ChangeNotifier {
+
   final RBTransactionRepository _transactionRepository = RBTransactionRepository();
+
+  List<RBTransactionModel> _transactions = [];
+
+  List<RBTransactionModel> get transactions => _transactions;
 
   Future<void> createTransaction({
     required IconData icon,
@@ -68,7 +73,12 @@ class RBTransactionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<RBTransactionModel>> fetchTransactionsByUserId(String userId) async {
-    return await _transactionRepository.fetchTransactionsByUserId(userId);
+  Future<void> fetchTransactionsByUserId(String userId) async {
+    try {
+      _transactions = await _transactionRepository.fetchTransactionsByUserId(userId);
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
 }

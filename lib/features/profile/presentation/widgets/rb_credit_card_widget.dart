@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:recycla_bin/features/profile/data/models/rb_transaction_model.dart';
 
-class RBCreditCardWidget extends StatelessWidget {
+class RBCreditCardWidget extends StatefulWidget {
   final double balance;
   final String accountNumber;
   final List<RBTransactionModel> transactions;
@@ -11,6 +12,33 @@ class RBCreditCardWidget extends StatelessWidget {
     required this.accountNumber,
     required this.transactions,
   });
+
+  @override
+  State<RBCreditCardWidget> createState() => _RBCreditCardWidgetState();
+}
+
+class _RBCreditCardWidgetState extends State<RBCreditCardWidget> {
+  late List<RBTransactionModel> sortedTransactions;
+
+  @override
+  void initState() {
+    super.initState();
+    // Sort transactions by createdAt date in descending order
+    sortedTransactions = widget.transactions
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+  }
+
+  @override
+  void didUpdateWidget(covariant RBCreditCardWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.transactions != widget.transactions) {
+      // Update the sorted transactions list when new transactions are added
+      setState(() {
+        sortedTransactions = widget.transactions
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +76,7 @@ class RBCreditCardWidget extends StatelessWidget {
                 top: height * 0.05,
                 left: left,
                 child: Text(
-                  'Tk${balance.toStringAsFixed(2)}',
+                  'Tk${widget.balance.toStringAsFixed(2)}',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: width * 0.05,
@@ -74,7 +102,7 @@ class RBCreditCardWidget extends StatelessWidget {
                 child: Container(
                   width: width * 0.8, // Adjust the width to wrap text appropriately
                   child: Text(
-                    accountNumber.length > 15 ? '${accountNumber.substring(0, 15)}...' : accountNumber,
+                    widget.accountNumber.length > 15 ? '${widget.accountNumber.substring(0, 15)}...' : widget.accountNumber,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: width * 0.05,
@@ -102,23 +130,6 @@ class RBCreditCardWidget extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(context, 'topupwallet');
-                    // showDialog(
-                    //   context: context,
-                    //   builder: (BuildContext context) {
-                    //     return AlertDialog(
-                    //       title: Text('Scan to Pay'),
-                    //       content: Text('Simulating payment gateway...'),
-                    //       actions: <Widget>[
-                    //         TextButton(
-                    //           child: Text('Close'),
-                    //           onPressed: () {
-                    //             Navigator.of(context).pop();
-                    //           },
-                    //         ),
-                    //       ],
-                    //     );
-                    //   },
-                    // );
                   },
                   child: Icon(
                     Icons.add_box_outlined,
@@ -162,9 +173,10 @@ class RBCreditCardWidget extends StatelessWidget {
           child: ListView.builder(
             padding: EdgeInsets.zero,
             scrollDirection: Axis.vertical,
-            itemCount: transactions.length,
+            itemCount: sortedTransactions.length,
             itemBuilder: (context, index) {
-              var transaction = transactions[index];
+              var transaction = sortedTransactions[index];
+              String formattedDate = DateFormat('dd/MM/yy hh:mm a').format(transaction.createdAt);
               return Card(
                 color: Color(0xFF2A2A2A),
                 margin: EdgeInsets.symmetric(vertical: 8, horizontal: 0),
@@ -180,22 +192,37 @@ class RBCreditCardWidget extends StatelessWidget {
                     transaction.title,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 18,
+                      fontSize: width*0.04,
                     ),
                   ),
                   subtitle: Text(
                     transaction.details,
                     style: TextStyle(
                       color: Colors.grey.shade400,
-                      fontSize: 14,
+                      fontSize: width*0.03,
                     ),
                   ),
-                  trailing: Text(
-                    '\$${transaction.amount.toStringAsFixed(2)}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  trailing: SizedBox(
+                    width: width*0.24,
+                    // height: height*0.05,
+                    child: Column(
+                      children: [
+                        Text(
+                          'Tk${transaction.amount.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          formattedDate,
+                          style: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: width*0.025,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

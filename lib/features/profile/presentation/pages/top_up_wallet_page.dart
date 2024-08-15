@@ -131,7 +131,7 @@ class _TopUpWalletPageState extends State<TopUpWalletPage> {
                   });
 
                   await transactionProvider.createTransaction(
-                    icon: Icons.money,
+                    icon: Icons.input_outlined,
                     title: 'Top Up Wallet',
                     details: 'Topping up wallet with Tk$selectedAmount(R$selectedAmount)',
                     amount: selectedAmount.toDouble(),

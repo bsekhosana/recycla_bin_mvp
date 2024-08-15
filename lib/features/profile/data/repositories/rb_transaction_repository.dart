@@ -21,6 +21,10 @@ class RBTransactionRepository {
   }
 
   Future<List<RBTransactionModel>> fetchTransactionsByUserId(String userId) async {
-    return await _firestoreRepository.fetchAllDocumentsWithId('userId', userId, (data) => RBTransactionModel.fromJson(data));
+    try {
+      return await _firestoreRepository.fetchAllDocumentsWithId('userId', userId, (data) => RBTransactionModel.fromJson(data));
+    }catch (e){
+      throw 'Failed to fetch transactions for user id: $userId with error: ${e.toString()}';
+    }
   }
 }
