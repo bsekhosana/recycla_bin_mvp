@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:recycla_bin/features/profile/data/models/rb_transaction_model.dart';
+import 'package:recycla_bin/features/profile/provider/rb_transaction_provider.dart';
 
 class RBCreditCardWidget extends StatefulWidget {
   final double balance;
@@ -145,91 +147,108 @@ class _RBCreditCardWidgetState extends State<RBCreditCardWidget> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'Transactions',
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                // Handle view all transactions
+            Consumer<RBTransactionProvider>(
+              builder: (context, provider, child) {
+                int numberOfTransactions = provider.transactionCount;
+                return Text('Transactions ($numberOfTransactions)',
+                  style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),);
               },
-              child: Text(
-                'View all',
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontSize: 16,
-                ),
-              ),
             ),
+            // Text(
+            //   'Transactions',
+            //   style: TextStyle(
+            //     color: Colors.grey,
+            //     fontSize: 20,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
+            // GestureDetector(
+            //   onTap: () {
+            //     // Handle view all transactions
+            //   },
+            //   child: Text(
+            //     'View all',
+            //     style: TextStyle(
+            //       color: Colors.blue,
+            //       fontSize: 16,
+            //     ),
+            //   ),
+            // ),
           ],
         ),
-        Container(
-          height: height * 0.25,
-          width: double.infinity,
-          child: ListView.builder(
-            padding: EdgeInsets.zero,
-            scrollDirection: Axis.vertical,
-            itemCount: sortedTransactions.length,
-            itemBuilder: (context, index) {
-              var transaction = sortedTransactions[index];
-              String formattedDate = DateFormat('dd/MM/yy hh:mm a').format(transaction.createdAt);
-              return Card(
-                color: Color(0xFF2A2A2A),
-                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: ListTile(
-                  leading: Icon(
-                    transaction.icon,
-                    color: Colors.white,
-                  ),
-                  title: Text(
-                    transaction.title,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: width*0.04,
+        Consumer<RBTransactionProvider>(
+          builder: (context, provider, child) {
+            final transactions = provider.transactions;
+            return Container(
+              height: height * 0.25,
+              width: double.infinity,
+              child: ListView.builder(
+                padding: EdgeInsets.zero,
+                scrollDirection: Axis.vertical,
+                itemCount: transactions.length,
+                itemBuilder: (context, index) {
+                  var transaction = transactions[index];
+                  String formattedDate = DateFormat('dd/MM/yy hh:mm a').format(transaction.createdAt);
+                  return Card(
+                    color: Color(0xFF2A2A2A),
+                    margin: EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
                     ),
-                  ),
-                  subtitle: Text(
-                    transaction.details,
-                    style: TextStyle(
-                      color: Colors.grey.shade400,
-                      fontSize: width*0.03,
-                    ),
-                  ),
-                  trailing: SizedBox(
-                    width: width*0.24,
-                    // height: height*0.05,
-                    child: Column(
-                      children: [
-                        Text(
-                          'Tk${transaction.amount.toStringAsFixed(2)}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    child: ListTile(
+                      leading: Icon(
+                        transaction.icon,
+                        color: Colors.white,
+                      ),
+                      title: Text(
+                        transaction.title,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: width*0.04,
                         ),
-                        Text(
-                          formattedDate,
-                          style: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontSize: width*0.025,
-                          ),
+                      ),
+                      subtitle: Text(
+                        transaction.details,
+                        style: TextStyle(
+                          color: Colors.grey.shade400,
+                          fontSize: width*0.03,
                         ),
-                      ],
+                      ),
+                      trailing: SizedBox(
+                        width: width*0.24,
+                        // height: height*0.05,
+                        child: Column(
+                          children: [
+                            Text(
+                              'Tk${transaction.amount.toStringAsFixed(2)}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              formattedDate,
+                              style: TextStyle(
+                                color: Colors.grey.shade400,
+                                fontSize: width*0.025,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              );
-            },
-          ),
+                  );
+                },
+              ),
+            );
+          },
         ),
+
       ],
     );
   }

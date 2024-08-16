@@ -11,7 +11,10 @@ class RBTransactionProvider with ChangeNotifier {
 
   List<RBTransactionModel> get transactions => _transactions;
 
-  Future<void> createTransaction({
+  // Add this getter to return the number of transactions
+  int get transactionCount => _transactions.length;
+
+  Future<RBTransactionModel> createTransaction({
     required IconData icon,
     required String title,
     required String details,
@@ -62,10 +65,20 @@ class RBTransactionProvider with ChangeNotifier {
       final updatedUser = user.copyWith(rbTokenz: newAmount.toString());
       await userProvider.updateUserDetails(user.id!, updatedUser);
 
+      addTransaction(transaction);
+
       notifyListeners();
+
+      return transaction;
     }catch (e){
       rethrow;
     }
+  }
+
+  void addTransaction(RBTransactionModel transaction) {
+    _transactions.add(transaction);
+    _transactions.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    notifyListeners();
   }
 
   Future<void> updateTransaction(RBTransactionModel transaction) async {
