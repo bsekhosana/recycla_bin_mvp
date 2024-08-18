@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../data_provider/shared_pref_provider.dart';
 import '../models/rb_collection.dart';
+import '../models/rb_collection_product.dart';
+import '../models/rb_product.dart';
 
 class RBCollectionRepository {
   final SharedPrefProvider sharedPrefProvider;
-
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   RBCollectionRepository({required this.sharedPrefProvider});
@@ -23,33 +24,33 @@ class RBCollectionRepository {
   }
 
   Future<void> saveCollectionToFirestore(RBCollection collection, String userId) async {
-    if (collection == null) return;
-    try{
+    try {
       final collectionDoc = _firestore.collection('collections').doc();
       final batch = _firestore.batch();
 
       // Update the collection instance with the document ID
       final collectionId = collectionDoc.id;
-      print('new collection id: ${collectionId}');
+      print('new collection id: $collectionId');
       collection = collection.copyWith(id: collectionId);
 
-      final products = collection!.products!;
-      for (final product in products) {
-        final productDoc = _firestore.collection('products').doc(product.id);
-        final productSnapshot = await productDoc.get();
-        if (!productSnapshot.exists) {
-          batch.set(productDoc, product.toJson());
-        }
-      }
-
-      final collectionData = collection!.toJson();
+      // Convert collectionProducts to a JSON-compatible format
+      final collectionProducts = collection.collectionProducts!;
+      List<Map<String, dynamic>> serializedCollectionProducts = collectionProducts.map((cp) => cp.toJson()).toList();
+      print('new collection serializedCollectionProducts: $serializedCollectionProducts');
+      // Prepare collection data with the collectionProducts included
+      final collectionData = collection.toJson();
       collectionData['userId'] = userId; // Link collection to user
-      collectionData['products'] = products.map((p) => p.id).toList();
+      collectionData['collectionProducts'] = serializedCollectionProducts; // Embed serialized collectionProducts
+
+      // Save the collection document with all related products
       batch.set(collectionDoc, collectionData);
 
+      // Commit the batch operation
       await batch.commit();
-    }catch (e){
+    } catch (e) {
+      print('Save collection to firestore failed with error: ${e.toString()}');
       throw 'Save collection to firestore failed with error: ${e.toString()}';
     }
   }
+
 }

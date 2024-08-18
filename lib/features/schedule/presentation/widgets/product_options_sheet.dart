@@ -5,8 +5,9 @@ import 'package:recycla_bin/features/schedule/data/models/rb_product.dart';
 
 class ProductOptionsSheet extends StatefulWidget {
   final RBProduct product;
+  final int quantity;
 
-  ProductOptionsSheet({required this.product});
+  ProductOptionsSheet({required this.product, required this.quantity});
 
   @override
   _ProductOptionsSheetState createState() => _ProductOptionsSheetState();
@@ -14,11 +15,13 @@ class ProductOptionsSheet extends StatefulWidget {
 
 class _ProductOptionsSheetState extends State<ProductOptionsSheet> {
   late RBProduct product;
+  late int quantity;
 
   @override
   void initState() {
     super.initState();
     product = widget.product;
+    quantity = widget.quantity;
   }
 
   @override
@@ -41,21 +44,21 @@ class _ProductOptionsSheetState extends State<ProductOptionsSheet> {
           ),
           SizedBox(height: 8.0),
           Text(
-            'Quantity: ${product.quantity}',
+            'Quantity: $quantity',
             style: TextStyle(fontSize: 16),
           ),
           SizedBox(height: 16.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              if (product.quantity! > 1)
+              if (quantity > 1)
                 ElevatedButton(
                   onPressed: () {
                     provider.decrementProductCount(product);
                     setState(() {
-                      // product.quantity = product.quantity! - 1;
+                      quantity--;
                     });
-                    if (product.quantity == 0) {
+                    if (quantity == 0) {
                       provider.removeProduct(product);
                       Navigator.pop(context);
                     }
@@ -66,7 +69,7 @@ class _ProductOptionsSheetState extends State<ProductOptionsSheet> {
                 onPressed: () {
                   provider.incrementProductCount(product);
                   setState(() {
-                    // product.quantity = product.quantity! + 1;
+                    quantity++;
                   });
                 },
                 child: Text('Increment'),

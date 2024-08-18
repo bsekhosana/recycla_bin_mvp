@@ -6,8 +6,9 @@ import '../utilities/utils.dart';
 class CustomIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
+  final Color iconColor;
 
-  const CustomIconButton({super.key, required this.icon, required this.onPressed});
+  const CustomIconButton({super.key, required this.icon, required this.onPressed, this.iconColor = Colors.white});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class CustomIconButton extends StatelessWidget {
         // padding: EdgeInsets.all(16.0), // Adjust padding as needed
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Utils.hexToColor(AppStrings.kRBPrimaryColor), Utils.hexToColor(AppStrings.kRBSecondaryColor)],
+            colors: [Utils.hexToColor(AppStrings.kRBPrimaryColor), iconColor],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),

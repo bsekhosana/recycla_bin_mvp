@@ -1,17 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
+import 'package:recycla_bin/features/schedule/data/repositories/rb_product_repository.dart';
 import '../../../core/services/connectivity_service.dart';
 import '../data/models/rb_product.dart';
 import '../data/repositories/rb_collection_repository.dart';
 import '../data/models/rb_collection.dart';
+import '../data/models/rb_collection_product.dart';
 
 class RBCollectionProvider with ChangeNotifier {
   final RBCollectionRepository repository;
   RBCollection? _collection;
-
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final ConnectivityService _connectivityService = ConnectivityService();
 
-  RBCollectionProvider({required this.repository}) {
+  RBProductRepository _productRepository;  // Initialized in the constructor
+
+  RBCollectionProvider({required this.repository})
+      : _productRepository = RBProductRepository() {
     loadCollection();
   }
 
@@ -34,7 +40,7 @@ class RBCollectionProvider with ChangeNotifier {
     String? address,
     String? lat,
     String? lon,
-    List<RBProduct>? products,
+    List<RBCollectionProduct>? collectionProducts,
   }) async {
     if (_collection != null) {
       _collection = _collection!.copyWith(
@@ -43,7 +49,7 @@ class RBCollectionProvider with ChangeNotifier {
         address: address ?? _collection!.address,
         lat: lat ?? _collection!.lat,
         lon: lon ?? _collection!.lon,
-        products: products ?? _collection!.products,
+        collectionProducts: collectionProducts ?? _collection!.collectionProducts,
       );
       await repository.saveCollection(_collection!);
       notifyListeners();
@@ -56,27 +62,83 @@ class RBCollectionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void addProduct(RBProduct product) {
-    if (_collection != null) {
-      if (_collection!.products == null) {
-        _collection = _collection!.copyWith(products: [product]);
-      } else {
-        // Check if the product already exists
-        final existingProductIndex = _collection!.products!.indexWhere((p) => p.id == product.id);
+  void addProduct(RBProduct product, int quantity) async {
+    try {
 
-        if (existingProductIndex != -1) {
-          _collection!.products![existingProductIndex].quantity = (_collection!.products![existingProductIndex].quantity ?? 0) + 1;
+    final productDoc = await _productRepository.getProductById(
+      product.id!,
+    );
+
+    // Check if the product already exists in Firestore
+    if (productDoc == null) {
+      // If the product doesn't exist in Firestore, add it
+      await _productRepository.saveProduct(product);
+      print('Product added to Firestore');
+    } else {
+      print('Product already exists in Firestore');
+    }
+
+    if (_collection != null) {
+        // Proceed with adding/updating the product in the collection
+        if (_collection!.collectionProducts == null) {
+          print('collection products equals to null');
+          _collection = _collection!.copyWith(collectionProducts: [
+            RBCollectionProduct(
+              productId: product.id!,
+              quantity: quantity,
+            )], products: [
+              product
+          ]);
         } else {
-          product.quantity = 1;
-          _collection!.products!.add(product);
+          // Check if the product already exists in the collection
+          final existingProductIndex =
+          _collection!.collectionProducts!.indexWhere((p) => p.productId == product.id);
+          print('collection products equals not null, existingProductIndex: $existingProductIndex');
+          if (existingProductIndex != -1) {
+            // If it exists, update the quantity
+            _collection!.collectionProducts![existingProductIndex].quantity =
+                (_collection!.collectionProducts![existingProductIndex].quantity ?? 0) + quantity;
+          } else {
+            // If it doesn't exist, add it to the collection
+            _collection!.collectionProducts!.add(RBCollectionProduct(
+              productId: product.id!,
+              quantity: quantity,
+            ));
+
+            _collection!.products!.add(product);
+          }
         }
+
+        // Save the updated collection
+        saveCollection(_collection!);
+
+        print('saveCollection: ${_collection!.toJson()}');
+
+      }else{
+
+        _collection = RBCollection(collectionProducts: [
+          RBCollectionProduct(
+            productId: product.id!,
+            quantity: quantity,
+          )],
+          products: [product]
+        );
+
+        // Save the updated collection
+        saveCollection(_collection!);
+
+        print('created new collection: ${_collection!.toJson()}');
+
       }
-      saveCollection(_collection!);
+    } catch (e) {
+      throw 'Failed to add product to collection, with error: ${e.toString()}';
     }
   }
 
+
   void removeProduct(RBProduct product) {
-    if (_collection != null && _collection!.products != null) {
+    if (_collection != null && _collection!.collectionProducts != null) {
+      _collection!.collectionProducts!.removeWhere((p) => p.productId == product.id);
       _collection!.products!.removeWhere((p) => p.id == product.id);
       saveCollection(_collection!);
     }
@@ -84,9 +146,9 @@ class RBCollectionProvider with ChangeNotifier {
 
   void incrementProductCount(RBProduct product) {
     if (_collection != null) {
-      final existingProductIndex = _collection!.products!.indexWhere((p) => p.id == product.id);
+      final existingProductIndex = _collection!.collectionProducts!.indexWhere((p) => p.productId == product.id);
       if (existingProductIndex != -1) {
-        _collection!.products![existingProductIndex].quantity = (_collection!.products![existingProductIndex].quantity ?? 0) + 1;
+        _collection!.collectionProducts![existingProductIndex].quantity = (_collection!.collectionProducts![existingProductIndex].quantity ?? 0) + 1;
         saveCollection(_collection!);
       }
     }
@@ -94,11 +156,11 @@ class RBCollectionProvider with ChangeNotifier {
 
   void decrementProductCount(RBProduct product) {
     if (_collection != null) {
-      final existingProductIndex = _collection!.products!.indexWhere((p) => p.id == product.id);
-      if (existingProductIndex != -1 && (_collection!.products![existingProductIndex].quantity ?? 0) > 0) {
-        _collection!.products![existingProductIndex].quantity = (_collection!.products![existingProductIndex].quantity ?? 0) - 1;
-        if (_collection!.products![existingProductIndex].quantity == 0) {
-          _collection!.products!.removeAt(existingProductIndex);
+      final existingProductIndex = _collection!.collectionProducts!.indexWhere((p) => p.productId == product.id);
+      if (existingProductIndex != -1 && (_collection!.collectionProducts![existingProductIndex].quantity ?? 0) > 0) {
+        _collection!.collectionProducts![existingProductIndex].quantity = (_collection!.collectionProducts![existingProductIndex].quantity ?? 0) - 1;
+        if (_collection!.collectionProducts![existingProductIndex].quantity == 0) {
+          _collection!.collectionProducts!.removeAt(existingProductIndex);
         }
         saveCollection(_collection!);
       }
@@ -112,35 +174,35 @@ class RBCollectionProvider with ChangeNotifier {
         _collection!.address != null &&
         _collection!.lat != null &&
         _collection!.lon != null &&
-        _collection!.products != null &&
-        _collection!.products!.isNotEmpty;
+        _collection!.collectionProducts != null &&
+        _collection!.collectionProducts!.isNotEmpty;
   }
 
   int getTotalQuantity() {
-    if (_collection != null && _collection!.products != null) {
-      return _collection!.products!.fold(0, (sum, item) => sum + (item.quantity ?? 0));
+    if (_collection != null && _collection!.collectionProducts != null) {
+      return _collection!.collectionProducts!.fold(0, (sum, item) => sum + (item.quantity ?? 0));
     }
     return 0;
   }
 
   int getNumberOfProducts() {
-    if (_collection != null && _collection!.products != null) {
-      return _collection!.products!.length;
+    if (_collection != null && _collection!.collectionProducts != null) {
+      return _collection!.collectionProducts!.length;
     }
     return 0;
   }
 
   Future<void> saveCollectionToFirestore(String userId) async {
-    try{
+    try {
       if (await _connectivityService.checkConnectivity()) {
-        if(_collection == null) {
+        if (_collection == null) {
           throw Exception('Unable to save empty collection to firebase');
         }
         await repository.saveCollectionToFirestore(_collection!, userId);
-      }else{
+      } else {
         throw Exception("No internet connection");
       }
-    }catch (e){
+    } catch (e) {
       rethrow;
     }
   }
@@ -149,5 +211,26 @@ class RBCollectionProvider with ChangeNotifier {
     await repository.removeCollection();
     _collection = null;
     notifyListeners();
+  }
+
+  Future<RBProduct?> fetchProductById(String productId) async {
+    try {
+      final productDoc = await _firestore.collection('products').doc(productId).get();
+      if (productDoc.exists) {
+        return RBProduct.fromJson(productDoc.data()!);
+      }
+      return null;
+    } catch (e) {
+      throw 'Error fetching product by ID: ${e.toString()}';
+    }
+  }
+
+  Future<void> saveProduct(RBProduct product) async {
+    try {
+      await _productRepository.saveProduct(product);
+      print('saveProduct in collection provider');
+    } catch (e) {
+      throw 'Error saving product: ${e.toString()}';
+    }
   }
 }

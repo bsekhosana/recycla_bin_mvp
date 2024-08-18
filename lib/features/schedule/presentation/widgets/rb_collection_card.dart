@@ -117,6 +117,7 @@ class RBCollectionCard extends StatelessWidget {
                     width: width * 0.1,
                     height: height * 0.05,
                     child: CustomIconButton(
+                      iconColor: collection.getStatusColor()!,
                       icon: Icons.receipt_long_outlined,
                       onPressed: (){
                         Navigator.pushNamed(context, 'collectionsummary', arguments: collection);

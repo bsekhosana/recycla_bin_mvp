@@ -7,7 +7,12 @@ class FirestoreRepository<T> {
   FirestoreRepository({required this.collectionPath});
 
   Future<void> createDocument(String id, Map<String, dynamic> data) async {
-    await _firestore.collection(collectionPath).doc(id).set(data);
+    try{
+      await _firestore.collection(collectionPath).doc(id).set(data);
+    }catch (e){
+      throw 'Failed to create document with error: ${e.toString()}';
+    }
+
   }
 
   Future<T?> readDocument(String id, T Function(Map<String, dynamic> data) fromMap) async {

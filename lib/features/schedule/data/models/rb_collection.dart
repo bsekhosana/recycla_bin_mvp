@@ -1,6 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:recycla_bin/features/schedule/data/models/rb_product.dart';
 
-import 'rb_product.dart';
+import 'rb_collection_product.dart';
+
+enum CollectionStatus {
+  Pending,
+  Paid,
+  Collected,
+  Canceled,
+}
+
 
 class RBCollection {
   String? id;
@@ -9,19 +19,31 @@ class RBCollection {
   String? address;
   String? lat;
   String? lon;
-  List<String>? productIds;
+  List<RBCollectionProduct>? collectionProducts;
+  CollectionStatus status;
   List<RBProduct>? products;
 
-  RBCollection({this.id, this.date, this.time, this.productIds, this.address, this.products, this.lat, this.lon});
+  RBCollection({
+    this.id,
+    this.date,
+    this.time,
+    this.address,
+    this.lat,
+    this.lon,
+    this.collectionProducts,
+    this.products,
+    this.status = CollectionStatus.Pending,});
 
   factory RBCollection.fromJson(Map<String, dynamic> json) {
-    var productList = json['products'] as List?;
-    List<RBProduct>? products = productList != null
-        ? productList.map((product) => RBProduct.fromJson(product)).toList()
+    var productList = json['collectionProducts'] as List?;
+    List<RBCollectionProduct>? collectionProducts = productList != null
+        ? productList.map((product) => RBCollectionProduct.fromJson(product)).toList()
         : null;
 
-    var productListIds = json['productIds'] as List?;
-    List<String>? productIds = productListIds != null ? List<String>.from(productListIds.map((e) => e.toString())) : null;
+    var productsList = json['products'] as List?;
+    List<RBProduct>? products = productsList != null
+        ? productsList.map((product) => RBProduct.fromJson(product)).toList()
+        : null;
 
     return RBCollection(
       id: json['id'],
@@ -30,8 +52,9 @@ class RBCollection {
       address: json['address'],
       lat: json['lat'],
       lon: json['lon'],
-      productIds: productIds,
       products: products,
+      collectionProducts: collectionProducts,
+      status: CollectionStatus.values[json['status']], // Deserialize enum
     );
   }
 
@@ -43,8 +66,9 @@ class RBCollection {
       'address': address,
       'lat': lat,
       'lon': lon,
-      'products': products?.map((product) => product.toJson()).toList(),
-      'productIds': productIds,
+      'status': status.index, // Serialize enum as an integer
+      // 'products': products,
+      'collectionProducts': collectionProducts?.map((product) => product.toJson()).toList(),
     };
   }
 
@@ -55,8 +79,9 @@ class RBCollection {
     String? address,
     String? lat,
     String? lon,
+    List<RBCollectionProduct>? collectionProducts,
     List<RBProduct>? products,
-    List<String>? productIds
+    CollectionStatus? status,
   }) {
     return RBCollection(
       id: id ?? this.id,
@@ -65,20 +90,23 @@ class RBCollection {
       address: address ?? this.address,
       lat: lat ?? this.lat,
       lon: lon ?? this.lon,
+      status: status ?? this.status,
       products: products ?? this.products,
-      productIds: productIds ?? this.productIds,
+      collectionProducts: collectionProducts ?? this.collectionProducts,
     );
   }
 
   factory RBCollection.fromDocument(DocumentSnapshot doc) {
     var data = doc.data() as Map<String, dynamic>;
-    var productList = data['products'] as List?;
-    List<RBProduct>? products = productList != null
-        ? productList.map((product) => RBProduct.fromJson(product)).toList()
+    var productList = data['collectionProducts'] as List?;
+    List<RBCollectionProduct>? collectionProducts = productList != null
+        ? productList.map((product) => RBCollectionProduct.fromJson(product)).toList()
         : null;
 
-    var productListIds = data['productIds'] as List?;
-    List<String>? productIds = productListIds != null ? List<String>.from(productListIds.map((e) => e.toString())) : null;
+    // var productsList = data['products'] as List?;
+    // List<RBProduct>? products = productsList != null
+    //     ? productsList.map((product) => RBProduct.fromJson(product)).toList()
+    //     : null;
 
     return RBCollection(
       id: data['id'],
@@ -87,29 +115,48 @@ class RBCollection {
       address: data['address'],
       lat: data['lat'],
       lon: data['lon'],
-      products: products,
-      productIds: productIds
+      // products: products,
+      status: CollectionStatus.values[data['status']],
+      collectionProducts: collectionProducts,
     );
   }
 
   int getTotalQuantity() {
-    if (products != null) {
-      return products!.fold(0, (sum, item) => sum + (item.quantity ?? 0));
+    if (collectionProducts != null) {
+      return collectionProducts!.fold(0, (sum, item) => sum + (item.quantity ?? 0));
     }
     return 0;
   }
 
   int getNumberOfProducts() {
-    if (products != null) {
-      return products!.length;
+    if (collectionProducts != null) {
+      return collectionProducts!.length;
     }
     return 0;
   }
 
   String? getFirstProductImage() {
-    if (products != null) {
-      return products!.first.imgUrl!;
+    // Assuming the first product in the collection is the first product in the list
+    if (collectionProducts != null && collectionProducts!.isNotEmpty) {
+      // Add logic here to fetch the image URL of the first product
+      // This would typically require accessing the product information by productId
+      return null; // Replace with actual logic
     }
     return null;
+  }
+
+  Color? getStatusColor() {
+    switch (status) {
+      case CollectionStatus.Pending:
+        return Colors.orange.shade400;
+      case CollectionStatus.Paid:
+        return Colors.blue;
+      case CollectionStatus.Collected:
+        return Colors.green;
+      case CollectionStatus.Canceled:
+        return Colors.red.shade200; // Light Red
+      default:
+        return Colors.white; // Default color if status is not recognized
+    }
   }
 }

@@ -3,10 +3,12 @@ import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:provider/provider.dart';
 import 'package:recycla_bin/core/utilities/utils.dart';
 import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
+import 'package:recycla_bin/core/widgets/custom_snackbar.dart';
 import 'package:recycla_bin/features/schedule/data/models/rb_product.dart';
 
 import '../../../../core/constants/strings.dart';
 import '../../../../core/widgets/user_scaffold.dart';
+import '../../data/models/rb_collection_product.dart';
 import '../../providers/rb_collection_provider.dart';
 import '../widgets/add_product_modal.dart';
 import '../widgets/product_options_sheet.dart';
@@ -37,10 +39,14 @@ class _AddProductsPageState extends State<AddProductsPage> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<RBCollectionProvider>(context);
-    final products = provider.collection?.products ?? [];
+    final collectionProducts = provider.collection?.collectionProducts ?? [];
 
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+
+    // Assuming that provider.collection.products is available and populated
+    final products = provider.collection?.products ?? [];
+
     return UserScaffold(
       body: Column(
         children: [
@@ -68,9 +74,12 @@ class _AddProductsPageState extends State<AddProductsPage> {
                   itemBuilder: (context, index) {
                     final product = products[index];
                     final imageUrl = product.imgUrl;
+
                     return GestureDetector(
                       onTap: () {
-                        _showProductOptions(context, product);
+                        final quantity = collectionProducts[index].quantity;
+                        _showProductOptions(context, product, quantity);
+                        // _showProductOptions(context, product);
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -103,7 +112,7 @@ class _AddProductsPageState extends State<AddProductsPage> {
                                 radius: 12,
                                 backgroundColor: Colors.red,
                                 child: Text(
-                                  '${product.quantity}',
+                                  '${collectionProducts[index].quantity}',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 12,
@@ -190,11 +199,13 @@ class _AddProductsPageState extends State<AddProductsPage> {
     );
   }
 
-  void _showProductOptions(BuildContext context, RBProduct product) {
+
+
+  void _showProductOptions(BuildContext context, RBProduct product, int quantity) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return ProductOptionsSheet(product: product);
+        return ProductOptionsSheet(product: product, quantity: quantity,);
       },
     );
   }
@@ -211,10 +222,9 @@ class _AddProductsPageState extends State<AddProductsPage> {
               Provider.of<RBCollectionProvider>(context, listen: false).addProduct(RBProduct(
                 id: product.barcode,
                 name: product.productName,
-                quantity: 1,
                 imgUrl: product.imageFrontSmallUrl,
                 size: product.servingSize,
-              ));
+              ), 1);
             });
           },
         );
@@ -230,18 +240,33 @@ class _AddProductsPageState extends State<AddProductsPage> {
         return SearchProductModal(
           user: user,
           onProductSelected: (product) async {
+            print('on product selected ${product.toString()}');
             setState(() {
-              Provider.of<RBCollectionProvider>(context, listen: false).addProduct(RBProduct(
-                id: product.barcode,
-                name: product.productName,
-                quantity: 1,
-                imgUrl: product.imageFrontSmallUrl,
-                size: product.servingSize,
-              ));
+              try{
+                Provider.of<RBCollectionProvider>(context, listen: false).addProduct(RBProduct(
+                  id: product.barcode,
+                  name: product.productName,
+                  imgUrl: product.imageFrontSmallUrl,
+                  size: product.servingSize,
+                ), 1);
+              }catch (e){
+                showCustomSnackbar(context, e.toString());
+              }
             });
           },
         );
       },
     );
+  }
+
+  Future<List<RBProduct>?> _fetchProducts(RBCollectionProvider provider, List<RBCollectionProduct> collectionProducts) async {
+    // List<RBProduct> products = [];
+    // for (var collectionProduct in collectionProducts) {
+    //   final product = await provider.fetchProductById(collectionProduct.productId);
+    //   if (product != null) {
+    //     products.add(product);
+    //   }
+    // }
+    return provider.collection?.products;
   }
 }
