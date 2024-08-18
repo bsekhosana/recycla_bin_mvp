@@ -159,4 +159,46 @@ class RBCollection {
         return Colors.white; // Default color if status is not recognized
     }
   }
+
+  double calculateCost() {
+    double totalCost = 0.0;
+    if (products != null) {
+      for (var product in products!) {
+        double sizeInLiters = _parseSizeToLiters(product.size ?? '');
+        totalCost += sizeInLiters * 24 * (product.quantity ?? 1);
+      }
+    }
+    return double.parse(totalCost.toStringAsFixed(2));
+  }
+
+  double _parseSizeToLiters(String size) {
+    double value = 0.0;
+    if (size.isEmpty) return value;
+
+    final regex = RegExp(r'(\d+\.?\d*)\s*(ml|l|g|kg)', caseSensitive: false);
+    final match = regex.firstMatch(size);
+
+    if (match != null) {
+      value = double.parse(match.group(1) ?? '0');
+      String unit = match.group(2)?.toLowerCase() ?? '';
+
+      switch (unit) {
+        case 'ml':
+          value /= 1000; // Convert ml to liters
+          break;
+        case 'l':
+        // value is already in liters
+          break;
+        case 'g':
+          value /= 1000; // Convert grams to kilograms
+          break;
+        case 'kg':
+        // 1 kg is considered equivalent to 1 liter for the sake of pricing
+          break;
+        default:
+          value = 0.0; // Default to 0 if the unit is not recognized
+      }
+    }
+    return value;
+  }
 }

@@ -21,7 +21,7 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
   int totalQuantity = 0;
   String date = "2021/05/18";
   String time = "13:00 PM - 14:00 PM";
-  double cost = 47.45;
+  double cost = 0.0;  // Initialize cost to 0.0
 
   @override
   void initState() {
@@ -32,6 +32,7 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
         setState(() {
           products = List.from(collection.products ?? []);
           totalQuantity = collection.getTotalQuantity();
+          cost = collection.calculateCost(); // Calculate initial cost
         });
       }
     });
@@ -66,6 +67,10 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
       }).toList();
 
       final updatedCollection = collection.copyWith(collectionProducts: updatedCollectionProducts);
+
+      setState(() {
+        cost = updatedCollection.calculateCost();  // Recalculate the cost
+      });
 
       provider.updateCollection(updatedCollection);
     }
@@ -150,7 +155,7 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
               SizedBox(height: 20),
               buildInfoRow(Icons.calendar_today, "${Utils.formatDateString(collection!.date!, dateOnly: true)}   ${collection.time}", "Date + Time"),
               SizedBox(height: 20),
-              buildInfoRow(Icons.attach_money, cost.toString(), "Cost"),
+              buildInfoRow(Icons.wallet, 'Tz${cost.toStringAsFixed(2)}', "Cost"),
             ],
           ),
           SizedBox(height: height * 0.045),
