@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:recycla_bin/core/constants/strings.dart';
+import 'package:recycla_bin/core/utilities/dialogs_utils.dart';
 import 'package:recycla_bin/core/utilities/utils.dart';
 import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
+import 'package:recycla_bin/core/widgets/custom_snackbar.dart';
 import 'package:recycla_bin/core/widgets/user_scaffold.dart';
 
 import '../../../authentication/data/models/rb_user_model.dart';
+import '../../../profile/data/models/rb_transaction_model.dart';
+import '../../../profile/provider/rb_transaction_provider.dart';
 import '../../../profile/provider/user_provider.dart';
 import '../../data/models/rb_collection.dart';
 import '../../data/models/rb_product.dart';
+import '../../providers/rb_collections_provider.dart';
 
 class CollectionDetailsPage extends StatefulWidget {
   const CollectionDetailsPage({super.key});
@@ -23,7 +28,7 @@ class _CollectionDetailsPageState extends State<CollectionDetailsPage> {
   int totalQuantity = 0;
   String date = "2021/05/18";
   String time = "13:00 PM - 14:00 PM";
-  double cost = 47.45;
+  double cost = 0.0;  // Initialize cost to 0.0
   RBCollection? _collection;
 
   @override
@@ -36,6 +41,7 @@ class _CollectionDetailsPageState extends State<CollectionDetailsPage> {
           products = List.from(collection.products ?? []);
           totalQuantity = collection.getTotalQuantity();
           _collection = collection;
+          cost = collection.calculateCost(); // Calculate initial cost
         });
       }
     });
@@ -47,8 +53,8 @@ class _CollectionDetailsPageState extends State<CollectionDetailsPage> {
     double height = MediaQuery.of(context).size.height;
     final userProvider = Provider.of<UserProvider>(context);
     final RBUserModel? user = userProvider.user;
-    double fontSizeMultiplier = width / 414; // Assuming 414 is the base width
-    double paddingMultiplier = width / 414; // Assuming 414 is the base width
+    final collectionProvider = Provider.of<RBCollectionsProvider>(context);
+    final transactionProvider = Provider.of<RBTransactionProvider>(context, listen: false);
     return UserScaffold(
       body: Container(
         height: height * 0.7,
@@ -112,7 +118,7 @@ class _CollectionDetailsPageState extends State<CollectionDetailsPage> {
                         ),
                         SizedBox(height: width * 0.02),
                         Text(
-                          'Weight: 20 kg',
+                          'Weight: ${_collection!.calculateTotalWight()}l',
                           style: TextStyle(
                             fontSize: width * 0.04,
                             color: Colors.black54,
@@ -210,9 +216,57 @@ class _CollectionDetailsPageState extends State<CollectionDetailsPage> {
               ],
             ),
             CustomElevatedButton(
-              text: 'Confirm Payment',
-              onPressed: () {
-                Navigator.pushNamed(context, 'confirmpayment', arguments: _collection);
+              text: 'Confirm Payment: Tz${cost.toStringAsFixed(2)}',
+              onPressed: () async {
+                if (user.rbTokenz != null) {
+                  double userRbTokenz = double.tryParse(user.rbTokenz!) ?? 0.0;
+                  if (userRbTokenz >= cost) {
+                    // Subtract the cost from user's rbTokenz
+                    double newBalance = userRbTokenz - cost;
+
+                    showLoadingDialog(context);
+                    try{
+                      // Update the user in the provider and Firestore
+                      final updatedUser = user.copyWith(rbTokenz: newBalance.toStringAsFixed(2));
+                      await userProvider.updateUserDetails(user.id!, updatedUser);
+
+                      // Update the collection status to Paid
+                      final updatedCollection = _collection!.copyWith(status: CollectionStatus.Paid);
+                      await collectionProvider.updateCollection(updatedCollection);
+
+                      await transactionProvider.createTransaction(
+                        icon: Icons.keyboard_double_arrow_left_rounded,
+                        title: 'Collection Payment',
+                        details: 'Payment for collection -Tk${cost.toStringAsFixed(2)}',
+                        amount: cost.toDouble(),
+                        type: RBTransactionType.PaidOut,
+                        status: RBTransactionStatus.Paid,
+                        userProvider: userProvider,
+                        collectionId: _collection!.id
+                      );
+
+                      showCustomSnackbar(context, 'Payment completed successfully.', backgroundColor: Colors.green);
+
+                      hideLoadingDialog(context);
+                      // Navigate to the payment complete page
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        'paymentcomplete',
+                            (Route<dynamic> route) => false,
+                        arguments: _collection,
+                      );
+                    }catch(e){
+                      hideLoadingDialog(context);
+                      showCustomSnackbar(context, e.toString(), backgroundColor: Colors.red);
+                    }
+
+                  } else {
+                    // Show error if not enough rbTokenz
+                    showCustomSnackbar(context, 'Insufficient rbTokenz. Please top up your wallet', backgroundColor: Colors.red);
+                  }
+                }else{
+                  showCustomSnackbar(context, 'Insufficient rbTokenz to Confirm Payment', backgroundColor: Colors.red);
+                }
               },
               primaryButton: true,
             ),

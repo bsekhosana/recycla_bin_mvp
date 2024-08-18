@@ -17,9 +17,11 @@ class RBTransactionModel {
   final RBTransactionStatus status;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? collectionId;
 
   RBTransactionModel({
     this.id,
+    this.collectionId,
     required this.icon,
     required this.title,
     required this.details,
@@ -43,6 +45,7 @@ class RBTransactionModel {
       oldAmount: json['oldAmount'],
       newAmount: json['newAmount'],
       userId: json['userId'],
+      collectionId: json['collectionId'],
       type: RBTransactionType.values[json['type']],
       status: RBTransactionStatus.values[json['status']],
       createdAt: (json['createdAt'] as Timestamp).toDate(),
@@ -60,6 +63,7 @@ class RBTransactionModel {
       'oldAmount': oldAmount,
       'newAmount': newAmount,
       'userId': userId,
+      'collectionId': collectionId,
       'type': type.index,
       'status': status.index,
       'createdAt': createdAt,
@@ -76,6 +80,7 @@ class RBTransactionModel {
     double? oldAmount,
     double? newAmount,
     String? userId,
+    String? collectionId,
     RBTransactionType? type,
     RBTransactionStatus? status,
     DateTime? createdAt,
@@ -90,6 +95,7 @@ class RBTransactionModel {
       oldAmount: oldAmount ?? this.oldAmount,
       newAmount: newAmount ?? this.newAmount,
       userId: userId ?? this.userId,
+      collectionId: collectionId ?? this.collectionId,
       type: type ?? this.type,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,

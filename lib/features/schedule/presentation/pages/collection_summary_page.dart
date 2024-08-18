@@ -85,6 +85,7 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
     final userProvider = Provider.of<UserProvider>(context);
     final RBCollection? collection = ModalRoute.of(context)!.settings.arguments as RBCollection?;
     final double userRbTokenz = double.tryParse(userProvider.user?.rbTokenz ?? '0') ?? 0;
+    String collectionStatusString = collection != null ? collection.getCollectionStatusString() : 'Pending';
     return UserScaffold(
       body: Column(
         children: [
@@ -120,7 +121,7 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
                           ),
                           Row(
                             children: [
-                              IconButton(
+                              collectionStatusString == 'Pending' ? IconButton(
                                 icon: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -129,9 +130,9 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
                                   child: Icon(Icons.remove, color: Colors.white),
                                 ),
                                 onPressed: () => decrementQuantity(index),
-                              ),
+                              ) : SizedBox(width: width*0.06,),
                               Text(product.quantity.toString(), style: TextStyle(fontSize: 16)),
-                              IconButton(
+                              collectionStatusString == 'Pending' ? IconButton(
                                 icon: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -140,7 +141,7 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
                                   child: Icon(Icons.add, color: Colors.white),
                                 ),
                                 onPressed: () => incrementQuantity(index),
-                              ),
+                              ) : SizedBox(width: width*0.06,),
                             ],
                           ),
                         ],
@@ -160,6 +161,9 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
             ],
           ),
           SizedBox(height: height * 0.045),
+
+          collectionStatusString == 'Pending'
+              ?
           userRbTokenz >= cost
               ? CustomElevatedButton(
             text: 'Confirm Collect',
@@ -174,11 +178,11 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
               Navigator.pushNamed(context, 'topupwallet');
             },
             primaryButton: false,
-          ),
+          ) : SizedBox() ,
           SizedBox(height: height * 0.045),
         ],
       ),
-      title: 'Summary',
+      title: 'Summary - $collectionStatusString',
       showMenu: false,
     );
   }

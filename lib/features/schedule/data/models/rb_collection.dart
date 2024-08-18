@@ -171,6 +171,17 @@ class RBCollection {
     return double.parse(totalCost.toStringAsFixed(2));
   }
 
+  double calculateTotalWight() {
+    double totalLitres = 0.0;
+    if (products != null) {
+      for (var product in products!) {
+        totalLitres += _parseSizeToLiters(product.size ?? '');
+        // totalCost += sizeInLiters * 24 * (product.quantity ?? 1);
+      }
+    }
+    return double.parse(totalLitres.toStringAsFixed(2));
+  }
+
   double _parseSizeToLiters(String size) {
     double value = 0.0;
     if (size.isEmpty) return value;
@@ -200,5 +211,9 @@ class RBCollection {
       }
     }
     return value;
+  }
+
+  String getCollectionStatusString(){
+    return status.toString().split('.').last;
   }
 }

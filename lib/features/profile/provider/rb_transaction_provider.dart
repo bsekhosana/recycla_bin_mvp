@@ -21,6 +21,7 @@ class RBTransactionProvider with ChangeNotifier {
     required IconData icon,
     required String title,
     required String details,
+    String? collectionId,
     required double amount,
     required RBTransactionType type,
     required RBTransactionStatus status,

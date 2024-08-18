@@ -258,7 +258,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Tk${double.tryParse(user!.rbTokenz.toString())}',
+                                  'Tk${double.tryParse(user!.rbTokenz ?? '0')?.toStringAsFixed(2) ?? '0.00'}',
                                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: width * 0.04, color: Colors.white),
                                 ),
                                 Text(
