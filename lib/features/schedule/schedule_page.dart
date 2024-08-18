@@ -195,6 +195,7 @@ class schedule_collection_list_item extends StatelessWidget {
               width: width * 0.095,
               height: height * 0.04,
               child: CustomIconButton(
+                useCustomBottomGradientColor: false,
                 icon: iconData,
                 onPressed: callback,
               ),

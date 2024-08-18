@@ -103,30 +103,48 @@ class RBCollectionCard extends StatelessWidget {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 10.0),
-                          child: Text(
-                            numberOfProducts == 0
-                                ? ''
-                                : '$numberOfProducts Products, Quantity($totalQuantity)',
-                            style: TextStyle(color: Colors.grey),
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: numberOfProducts == 0
+                                      ? ''
+                                      : '$numberOfProducts Products, Quantity($totalQuantity) -',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                if (collection.status != null) // Check if status is not null
+                                  TextSpan(
+                                    text: ' ${collection.status.toString().split('.').last}',
+                                    style: TextStyle(
+                                      color: collection.getStatusColor(), // Get the color based on status
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                              ]
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(
-                    width: width * 0.1,
-                    height: height * 0.05,
-                    child: CustomIconButton(
-                      iconColor: collection.getStatusColor()!,
-                      icon: Icons.receipt_long_outlined,
-                      onPressed: (){
-                        Navigator.pushNamed(context, 'collectionsummary', arguments: collection);
-                      },
-                    ),
+                  Column(
+                    children: [
+                      SizedBox(
+                        width: width * 0.1,
+                        height: height * 0.05,
+                        child: CustomIconButton(
+                          useCustomBottomGradientColor: true,
+                          iconColor: collection.getStatusColor()!,
+                          icon: Icons.receipt_long_outlined,
+                          onPressed: (){
+                            Navigator.pushNamed(context, 'collectionsummary', arguments: collection);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-
             ],
           ),
         ),

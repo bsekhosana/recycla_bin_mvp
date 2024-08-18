@@ -165,7 +165,7 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
           child: Row(
             children: [
               Container(
-                child: CustomIconButton(icon: icon, onPressed: () {}),
+                child: CustomIconButton(icon: icon, onPressed: () {}, useCustomBottomGradientColor: false,),
                 width: width * 0.07,
                 height: height * 0.035,
               ),
