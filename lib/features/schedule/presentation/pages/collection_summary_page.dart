@@ -5,6 +5,7 @@ import 'package:recycla_bin/core/utilities/utils.dart';
 import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
 import 'package:recycla_bin/core/widgets/custom_icon_button.dart';
 import '../../../../core/widgets/user_scaffold.dart';
+import '../../../profile/provider/user_provider.dart';
 import '../../data/models/rb_collection.dart';
 import '../../data/models/rb_product.dart';
 import '../../providers/rb_collections_provider.dart';
@@ -81,9 +82,9 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     final provider = Provider.of<RBCollectionsProvider>(context);
-
+    final userProvider = Provider.of<UserProvider>(context);
     final RBCollection? collection = ModalRoute.of(context)!.settings.arguments as RBCollection?;
-
+    final double userRbTokenz = double.tryParse(userProvider.user?.rbTokenz ?? '0') ?? 0;
     return UserScaffold(
       body: Column(
         children: [
@@ -155,16 +156,24 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
               SizedBox(height: 20),
               buildInfoRow(Icons.calendar_today, "${Utils.formatDateString(collection!.date!, dateOnly: true)}   ${collection.time}", "Date + Time"),
               SizedBox(height: 20),
-              buildInfoRow(Icons.wallet, 'Tz${cost.toStringAsFixed(2)}', "Cost"),
+              buildInfoRow(Icons.wallet, 'Tz${cost.toStringAsFixed(2)} - Available: Tz${userRbTokenz.toStringAsFixed(2)}', "Cost"),
             ],
           ),
           SizedBox(height: height * 0.045),
-          CustomElevatedButton(
+          userRbTokenz >= cost
+              ? CustomElevatedButton(
             text: 'Confirm Collect',
             onPressed: () {
               Navigator.pushNamed(context, 'collectiondetails', arguments: collection);
             },
             primaryButton: true,
+          )
+              : CustomElevatedButton(
+            text: 'Top Up Wallet',
+            onPressed: () {
+              Navigator.pushNamed(context, 'topupwallet');
+            },
+            primaryButton: false,
           ),
           SizedBox(height: height * 0.045),
         ],
