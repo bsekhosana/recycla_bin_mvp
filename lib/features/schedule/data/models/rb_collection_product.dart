@@ -24,4 +24,15 @@ class RBCollectionProduct {
         'productId: $productId, '
         'quantity: $quantity}';
   }
+
+  // Add the copyWith method here
+  RBCollectionProduct copyWith({
+    String? productId,
+    int? quantity,
+  }) {
+    return RBCollectionProduct(
+      productId: productId ?? this.productId,
+      quantity: quantity ?? this.quantity,
+    );
+  }
 }

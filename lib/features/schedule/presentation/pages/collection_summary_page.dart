@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:recycla_bin/core/constants/strings.dart';
 import 'package:recycla_bin/core/utilities/utils.dart';
 import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
@@ -6,6 +7,7 @@ import 'package:recycla_bin/core/widgets/custom_icon_button.dart';
 import '../../../../core/widgets/user_scaffold.dart';
 import '../../data/models/rb_collection.dart';
 import '../../data/models/rb_product.dart';
+import '../../providers/rb_collections_provider.dart';
 
 class CollectionSummaryPage extends StatefulWidget {
   const CollectionSummaryPage({super.key});
@@ -40,6 +42,7 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
       products[index].quantity = (products[index].quantity ?? 0) + 1;
       totalQuantity += 1;
     });
+    _updateCollection();
   }
 
   void decrementQuantity(int index) {
@@ -48,6 +51,23 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
         products[index].quantity = (products[index].quantity ?? 0) - 1;
         totalQuantity -= 1;
       });
+      _updateCollection();
+    }
+  }
+
+  void _updateCollection() {
+    final provider = Provider.of<RBCollectionsProvider>(context, listen: false);
+    final RBCollection? collection = ModalRoute.of(context)!.settings.arguments as RBCollection?;
+
+    if (collection != null) {
+      final updatedCollectionProducts = collection.collectionProducts!.map((cp) {
+        final updatedProduct = products.firstWhere((p) => p.id == cp.productId);
+        return cp.copyWith(quantity: updatedProduct.quantity);
+      }).toList();
+
+      final updatedCollection = collection.copyWith(collectionProducts: updatedCollectionProducts);
+
+      provider.updateCollection(updatedCollection);
     }
   }
 
@@ -55,6 +75,7 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    final provider = Provider.of<RBCollectionsProvider>(context);
 
     final RBCollection? collection = ModalRoute.of(context)!.settings.arguments as RBCollection?;
 
@@ -147,6 +168,7 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
       showMenu: false,
     );
   }
+
 
   Widget buildInfoRow(IconData icon, String text, String label) {
     double width = MediaQuery.of(context).size.width;
