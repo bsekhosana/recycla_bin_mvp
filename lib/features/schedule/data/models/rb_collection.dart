@@ -22,6 +22,8 @@ class RBCollection {
   List<RBCollectionProduct>? collectionProducts;
   CollectionStatus status;
   List<RBProduct>? products;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   RBCollection({
     this.id,
@@ -32,7 +34,10 @@ class RBCollection {
     this.lon,
     this.collectionProducts,
     this.products,
-    this.status = CollectionStatus.Pending,});
+    this.status = CollectionStatus.Pending,
+    this.createdAt,
+    this.updatedAt,
+  });
 
   factory RBCollection.fromJson(Map<String, dynamic> json) {
     var productList = json['collectionProducts'] as List?;
@@ -55,6 +60,8 @@ class RBCollection {
       products: products,
       collectionProducts: collectionProducts,
       status: CollectionStatus.values[json['status']], // Deserialize enum
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 
@@ -69,6 +76,8 @@ class RBCollection {
       'status': status.index, // Serialize enum as an integer
       // 'products': products,
       'collectionProducts': collectionProducts?.map((product) => product.toJson()).toList(),
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 
@@ -82,6 +91,8 @@ class RBCollection {
     List<RBCollectionProduct>? collectionProducts,
     List<RBProduct>? products,
     CollectionStatus? status,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return RBCollection(
       id: id ?? this.id,
@@ -93,6 +104,8 @@ class RBCollection {
       status: status ?? this.status,
       products: products ?? this.products,
       collectionProducts: collectionProducts ?? this.collectionProducts,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -103,10 +116,10 @@ class RBCollection {
         ? productList.map((product) => RBCollectionProduct.fromJson(product)).toList()
         : null;
 
-    // var productsList = data['products'] as List?;
-    // List<RBProduct>? products = productsList != null
-    //     ? productsList.map((product) => RBProduct.fromJson(product)).toList()
-    //     : null;
+    var productsList = data['products'] as List?;
+    List<RBProduct>? products = productsList != null
+        ? productsList.map((product) => RBProduct.fromJson(product)).toList()
+        : null;
 
     return RBCollection(
       id: data['id'],
@@ -115,9 +128,11 @@ class RBCollection {
       address: data['address'],
       lat: data['lat'],
       lon: data['lon'],
-      // products: products,
+      products: products,
       status: CollectionStatus.values[data['status']],
       collectionProducts: collectionProducts,
+      createdAt: data['createdAt'] != null ? DateTime.parse(data['createdAt']) : null,
+      updatedAt: data['updatedAt'] != null ? DateTime.parse(data['updatedAt']) : null,
     );
   }
 

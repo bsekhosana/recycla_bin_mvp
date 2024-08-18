@@ -101,6 +101,7 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
                 child: Column(
                   children: products.map((product) {
                     int index = products.indexOf(product);
+                    print(product.toJson());
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 1.0),
                       child: Row(

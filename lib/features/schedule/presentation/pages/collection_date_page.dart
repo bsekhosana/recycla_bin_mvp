@@ -276,6 +276,8 @@ class _CollectionDatePageState extends State<CollectionDatePage> {
                         RBCollection collection = RBCollection(
                           date: _selectedDay?.toIso8601String(),
                           time: _selectedTime ?? '12:00AM - 01:00AM',
+                          createdAt: DateTime.now(),
+                          updatedAt: DateTime.now(),
                         );
                         await provider.saveCollection(collection);
                         showCustomSnackbar(context, 'New collection created', backgroundColor: Colors.green);

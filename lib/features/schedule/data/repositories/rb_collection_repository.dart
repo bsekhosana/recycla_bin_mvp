@@ -23,7 +23,7 @@ class RBCollectionRepository {
     return sharedPrefProvider.removeRBCollection();
   }
 
-  Future<void> saveCollectionToFirestore(RBCollection collection, String userId) async {
+  Future<RBCollection> saveCollectionToFirestore(RBCollection collection, String userId) async {
     try {
       final collectionDoc = _firestore.collection('collections').doc();
       final batch = _firestore.batch();
@@ -47,6 +47,9 @@ class RBCollectionRepository {
 
       // Commit the batch operation
       await batch.commit();
+
+      return collection; // Return the updated collection with the new ID
+
     } catch (e) {
       print('Save collection to firestore failed with error: ${e.toString()}');
       throw 'Save collection to firestore failed with error: ${e.toString()}';

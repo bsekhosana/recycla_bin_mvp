@@ -108,14 +108,26 @@ class _ScheduleCollectionPageState extends State<ScheduleCollectionPage> {
                         }else{
                           try{
                             showLoadingDialog(context);
-                            await provider.saveCollectionToFirestore(userProvider.user!.id!);
+                            // Save collection to Firestore and update the collection in the provider
+                            RBCollection updatedCollection = await provider.saveCollectionToFirestore(userProvider.user!.id!);
+
+                            // Update the collection in the provider with the new ID
+                            // provider.updateCollection(
+                            //   date: updatedCollection.date,
+                            //   time: updatedCollection.time,
+                            //   address: updatedCollection.address,
+                            //   lat: updatedCollection.lat,
+                            //   lon: updatedCollection.lon,
+                            //   collectionProducts: updatedCollection.collectionProducts,
+                            //   products: updatedCollection.products,
+                            // );
                             provider.removeCollection();
                             hideLoadingDialog(context);
                             showCustomSnackbar(
                                 context,
                                 'Collection synced to ro server successfully.',
                                 backgroundColor: Colors.green);
-                            Navigator.pushNamed(context, 'collectionsummary', arguments: provider.collection);
+                            Navigator.pushNamed(context, 'collectionsummary', arguments: updatedCollection);
                           }catch(e){
                             hideLoadingDialog(context);
                             showCustomSnackbar(context, e.toString(), backgroundColor: Colors.red);

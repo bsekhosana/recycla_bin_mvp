@@ -37,4 +37,20 @@ class RBProduct {
         'imgUrl: $imgUrl '
         '}';
   }
+
+  RBProduct copyWith({
+    String? id,
+    String? name,
+    String? size,
+    int? quantity,
+    String? imgUrl,
+  }) {
+    return RBProduct(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      size: size ?? this.size,
+      quantity: quantity ?? this.quantity,
+      imgUrl: imgUrl ?? this.imgUrl,
+    );
+  }
 }

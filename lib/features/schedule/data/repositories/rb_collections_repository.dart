@@ -36,9 +36,9 @@ class RBCollectionsRepository {
 
       // Sort collections by date
       collections.sort((a, b) {
-        DateTime dateA = DateTime.parse(a.date!);
-        DateTime dateB = DateTime.parse(b.date!);
-        return dateB.compareTo(dateA); // For latest date first
+        // DateTime dateA = DateTime.parse(a.createdAt);
+        // DateTime dateB = DateTime.parse(b.date!);
+        return b.createdAt!.compareTo(a.createdAt!); // For latest date first
       });
 
       return collections;

@@ -66,7 +66,10 @@ class _SearchProductModalState extends State<SearchProductModal> {
 
       setState(() {
         _isLoading = false;
-        _searchResults = result.products?.where((product) => !existingProductIds.contains(product.barcode)).toList() ?? [];
+        // Filter out products that have a null servingSize and those that already exist in the collection
+        _searchResults = result.products
+            ?.where((product) => product.servingSize != null && !existingProductIds.contains(product.barcode))
+            .toList() ?? [];
       });
 
       print('search product ended...');

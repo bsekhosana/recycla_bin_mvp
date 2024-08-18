@@ -95,6 +95,7 @@ class RBAuthRepository {
           username: username,
           phoneNumber: phoneNumber,
           hashedPassword: hashedPassword,
+          rbTokenz: '0.00',
         );
        await _firestore.collection('users').doc(user.id).set(user.toJson());
 

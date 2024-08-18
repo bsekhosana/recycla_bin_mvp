@@ -138,6 +138,8 @@ class _LocationPageState extends State<LocationPage> {
           position: newPosition,
         ),
       );
+      // Close the keyboard
+      FocusScope.of(context).unfocus();
     });
 
     _mapController?.animateCamera(
@@ -253,14 +255,18 @@ class _LocationPageState extends State<LocationPage> {
                         await provider.updateCollection(
                           address: _locationAddressEditingController.text,
                           lat: _currentPosition.latitude.toString(),
-                          lon: _currentPosition.longitude.toString()
+                          lon: _currentPosition.longitude.toString(),
+                          createdAt: DateTime.now(),
+                          updatedAt: DateTime.now(),
                         );
                         showCustomSnackbar(context, 'Collection updated', backgroundColor: Colors.green);
                       } else {
                         RBCollection collection = RBCollection(
                             address: _locationAddressEditingController.text,
                             lat: _currentPosition.latitude.toString(),
-                            lon: _currentPosition.longitude.toString()
+                            lon: _currentPosition.longitude.toString(),
+                          createdAt: DateTime.now(),
+                          updatedAt: DateTime.now(),
                         );
                         await provider.saveCollection(collection);
                         showCustomSnackbar(context, 'New collection created', backgroundColor: Colors.green);
