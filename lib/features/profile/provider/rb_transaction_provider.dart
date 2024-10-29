@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:recycla_bin/features/profile/provider/user_provider.dart';
+import 'package:http/http.dart' as http;
 import '../../../core/services/connectivity_service.dart';
 import '../data/models/rb_transaction_model.dart';
 import '../data/repositories/rb_transaction_repository.dart';
@@ -16,6 +18,29 @@ class RBTransactionProvider with ChangeNotifier {
 
   // Add this getter to return the number of transactions
   int get transactionCount => _transactions.length;
+
+  Future<String?> initiatePayFastPayment(int amount) async {
+    final payFastUrl = 'https://sandbox.payfast.co.za/eng/process';
+    final payFastParams = {
+      'merchant_id': '10034195',
+      'merchant_key': 'aerjnrjqbqug0',
+      'amount': amount.toString(),
+      'item_name': 'Wallet Top-Up',
+      'item_description': 'Adding R$amount to wallet',
+    };
+    print('payFastParams: ${payFastParams}');
+    final response = await http.post(Uri.parse(payFastUrl), body: payFastParams);
+    print('response: ${json.decode(response.body)}');
+    if (response.statusCode == 200) {
+      // Parse the redirect URL from the response
+      return json.decode(response.body)['redirect_url'];
+    }
+    return null;
+  }
+
+  Future<void> completeTransaction(int amount) async {
+    // Update the balance or transaction status in your backend
+  }
 
   Future<RBTransactionModel> createTransaction({
     required IconData icon,
@@ -64,6 +89,7 @@ class RBTransactionProvider with ChangeNotifier {
           updatedAt: DateTime.now(),
         );
 
+        // Log transaction in the app's database
         await _transactionRepository.createTransaction(transaction);
 
         // Update user's rbTokenz
@@ -76,7 +102,8 @@ class RBTransactionProvider with ChangeNotifier {
 
         return transaction;
       }catch (e){
-        rethrow;
+        // Error handling
+        throw Exception("Payment failed. ${e.toString()}");
       }
     } else {
       // Handle no internet connection

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -5,10 +7,13 @@ import 'package:recycla_bin/core/utilities/dialogs_utils.dart';
 import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
 import 'package:recycla_bin/core/widgets/custom_snackbar.dart';
 import 'package:recycla_bin/core/widgets/user_scaffold.dart';
+import 'package:recycla_bin/features/profile/presentation/pages/pay_fast_payment_page.dart';
 
 import '../../data/models/rb_transaction_model.dart';
 import '../../provider/rb_transaction_provider.dart';
 import '../../provider/user_provider.dart';
+
+import 'package:uni_links/uni_links.dart';
 
 class TopUpWalletPage extends StatefulWidget {
   @override
@@ -16,6 +21,9 @@ class TopUpWalletPage extends StatefulWidget {
 }
 
 class _TopUpWalletPageState extends State<TopUpWalletPage> {
+  StreamSubscription? _sub;
+  bool _isProcessingPayment = false;
+  String _verscelUrl = 'https://recyclahub-lr2eo5x2r-bsekhosanas-projects.vercel.app/api';
   bool _isToppingUp = true;
   bool _isLoading = false;
   final List<int> amounts = List<int>.generate(200, (index) => (index + 2) * 50);
@@ -23,12 +31,102 @@ class _TopUpWalletPageState extends State<TopUpWalletPage> {
 
   RBTransactionModel? _transaction;
 
+  @override
+  void initState() {
+    super.initState();
+    _initUniLinks();
+  }
+
+  Future<void> _initUniLinks() async {
+    _sub = linkStream.listen((String? link) {
+      if (link != null) {
+        if (link.contains('payment/success')) {
+          _handlePaymentResult('Payment was successful!', Colors.green);
+        } else if (link.contains('payment/cancel')) {
+          _handlePaymentResult('Payment was canceled.', Colors.red);
+        }
+      }
+    }, onError: (err) {
+      // Handle any error here
+      print('Error: $err');
+    });
+  }
+
+  void _handlePaymentResult(String message, Color color) {
+    setState(() {
+      _isProcessingPayment = false;
+    });
+
+    showCustomSnackbar(context, message, backgroundColor: color);
+
+    // Optionally, perform any additional actions such as reloading data
+  }
+
+  Future<void> _startPaymentProcess() async {
+    setState(() {
+      _isProcessingPayment = true;
+    });
+
+    // Open the WebView with PayFast URL
+    // You could use the WebView as shown in previous examples
+    // Make sure to set `return_url` and `cancel_url` in PayFast to point to `myapp://payment/success` and `myapp://payment/cancel`
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
+  }
+
   void _resetState() {
     setState(() {
       _isToppingUp = true;
       _isLoading = false;
       selectedAmount = 100;
     });
+  }
+
+
+  String generatePayFastUrl(String baseUrl, Map<String, String> params) {
+    final uri = Uri.parse(baseUrl).replace(queryParameters: params);
+    return uri.toString();
+  }
+
+  Future<void> _startPayment(BuildContext context, String paymentUrl) async {
+    print('paymentUrl: $paymentUrl');
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => PayFastPaymentPage(paymentUrl: paymentUrl)),
+    );
+
+    if (result == 'success') {
+      // Handle successful payment, update the transaction in the provider
+      Provider.of<RBTransactionProvider>(context, listen: false)
+          .completeTransaction(selectedAmount);
+      setState(() {
+        _isLoading = false;
+        _isToppingUp = false;
+        showCustomSnackbar(
+            context, 'REBPay Wallet topped up with Tk$selectedAmount successfully',
+            backgroundColor: Colors.green);
+      });
+    } else if (result == 'cancel') {
+      setState(() {
+        _isLoading = false;
+        _isToppingUp = true;
+        showCustomSnackbar(
+            context, "Payment was canceled.",
+            backgroundColor: Colors.red);
+      });
+    } else if (result == 'error') {
+      setState(() {
+        _isLoading = false;
+        _isToppingUp = true;
+        showCustomSnackbar(
+            context, "Payment failed. Please try again.",
+            backgroundColor: Colors.red);
+      });
+    }
   }
 
   @override
@@ -133,22 +231,45 @@ class _TopUpWalletPageState extends State<TopUpWalletPage> {
                     _isLoading = true;
                   });
 
-                   _transaction = await transactionProvider.createTransaction(
-                                    icon: Icons.keyboard_double_arrow_right_rounded,
-                                    title: 'Top Up Wallet',
-                                    details: 'Topping up wallet with Tk$selectedAmount(R$selectedAmount)',
-                                    amount: selectedAmount.toDouble(),
-                                    type: RBTransactionType.TopUp,
-                                    status: RBTransactionStatus.Paid,
-                                    userProvider: userProvider,
-                                  );
-                  setState(() {
-                    _isLoading = false;
-                    _isToppingUp = false;
-                    showCustomSnackbar(
-                        context, 'REBPay Wallet topped up with Tk$selectedAmount successfully',
-                        backgroundColor: Colors.green);
-                  });
+                  final payFastParams = {
+                    'merchant_id': '10034195',
+                    'merchant_key': 'aerjnrjqbqug0',
+                    "amount": selectedAmount.toString(),
+                    "item_name": "Top Up Wallet",
+                    "return_url": "${_verscelUrl}/success",
+                    "cancel_url": "${_verscelUrl}/cancel",
+                    "notify_url": "https://recyclabin.com/payment/notify",
+                    // other necessary parameters
+                  };
+
+                  final payFastUrl = generatePayFastUrl("https://sandbox.payfast.co.za/eng/process", payFastParams);
+
+                  // Navigate to the WebView screen to handle the payment
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PayFastPaymentPage(paymentUrl: payFastUrl),
+                    ),
+                  );
+
+                  if (result == 'success') {
+                    setState(() {
+                      _isLoading = false;
+                      _isToppingUp = false;
+                      showCustomSnackbar(context, 'Payment Successful', backgroundColor: Colors.green);
+                    });
+                  } else if (result == 'cancel') {
+                    setState(() {
+                      _isLoading = false;
+                      showCustomSnackbar(context, 'Payment Canceled', backgroundColor: Colors.red);
+                    });
+                  } else {
+                    setState(() {
+                      _isLoading = false;
+                      showCustomSnackbar(context, 'Payment Failed', backgroundColor: Colors.red);
+                    });
+                  }
+
                 }catch (e){
                   setState(() {
                     _isLoading = false;

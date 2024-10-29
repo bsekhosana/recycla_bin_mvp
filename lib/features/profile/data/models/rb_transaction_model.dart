@@ -4,6 +4,11 @@ import 'package:flutter/material.dart';
 enum RBTransactionStatus { Pending, Paid, Declined, Cancelled }
 enum RBTransactionType { TopUp, PaidOut, PaidIn, Refund }
 
+const IconData topUpIcon = Icons.arrow_upward;
+const IconData paidOutIcon = Icons.arrow_downward;
+const IconData paidInIcon = Icons.attach_money;
+const IconData refundIcon = Icons.refresh;
+
 class RBTransactionModel {
   final String? id;
   final IconData icon;
@@ -36,9 +41,27 @@ class RBTransactionModel {
   });
 
   factory RBTransactionModel.fromJson(Map<String, dynamic> json) {
+    IconData icon;
+    switch (json['icon']) {
+      case 'topUpIcon':
+        icon = topUpIcon;
+        break;
+      case 'paidOutIcon':
+        icon = paidOutIcon;
+        break;
+      case 'paidInIcon':
+        icon = paidInIcon;
+        break;
+      case 'refundIcon':
+        icon = refundIcon;
+        break;
+      default:
+        icon = Icons.error; // Fallback icon
+    }
+
     return RBTransactionModel(
       id: json['id'],
-      icon: IconData(json['icon'], fontFamily: 'MaterialIcons'),
+      icon: icon,
       title: json['title'],
       details: json['details'],
       amount: json['amount'],
@@ -54,9 +77,22 @@ class RBTransactionModel {
   }
 
   Map<String, dynamic> toJson() {
+    String iconString;
+    if (icon == topUpIcon) {
+      iconString = 'topUpIcon';
+    } else if (icon == paidOutIcon) {
+      iconString = 'paidOutIcon';
+    } else if (icon == paidInIcon) {
+      iconString = 'paidInIcon';
+    } else if (icon == refundIcon) {
+      iconString = 'refundIcon';
+    } else {
+      iconString = 'defaultIcon';
+    }
+
     return {
       'id': id,
-      'icon': icon.codePoint,
+      'icon': iconString,
       'title': title,
       'details': details,
       'amount': amount,
