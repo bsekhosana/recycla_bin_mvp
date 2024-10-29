@@ -253,6 +253,16 @@ class _TopUpWalletPageState extends State<TopUpWalletPage> {
                   );
 
                   if (result == 'success') {
+                    // Handle successful payment, update the transaction in the provider
+                    _transaction = await transactionProvider.createTransaction(
+                      icon: Icons.input_outlined,
+                      title: 'Top Up Wallet',
+                      details: 'Topping up wallet with Tk$selectedAmount(R$selectedAmount)',
+                      amount: selectedAmount.toDouble(),
+                      type: RBTransactionType.TopUp,
+                      status: RBTransactionStatus.Paid,
+                      userProvider: userProvider,
+                    );
                     setState(() {
                       _isLoading = false;
                       _isToppingUp = false;

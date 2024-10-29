@@ -10,6 +10,8 @@ import 'package:recycla_bin/core/widgets/user_scaffold.dart';
 // import 'package:google_maps_webservice/places.dart';
 // import 'package:provider/provider.dart';
 
+import 'dart:developer'; // Optional: for more structured logging
+
 import '../../../../core/services/location_manager.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -34,7 +36,8 @@ class _LocationPageState extends State<LocationPage> {
   TextEditingController _locationAddressEditingController = new TextEditingController();
   LatLng _currentPosition = LatLng(37.7749, -122.4194); // Default to San Francisco
   loc.Location location = loc.Location();
-  final places = GoogleMapsPlaces(apiKey: 'AIzaSyD3P8y3QEASTe_TfRfdS-7QtW3-enAeEfY');
+  // final places = GoogleMapsPlaces(apiKey: 'AIzaSyD3P8y3QEASTe_TfRfdS-7QtW3-enAeEfY');
+  final places = GoogleMapsPlaces(apiKey: 'AIzaSyArYjr_dsu3sPcRhwL8HTxjhI9qCnxHdoI');
   List<Prediction> _predictions = [];
   Set<Marker> _markers = {};
 
@@ -105,12 +108,38 @@ class _LocationPageState extends State<LocationPage> {
 
   Future<void> _searchPlaces(String query) async {
     if (query.isNotEmpty) {
-      final response = await places.autocomplete(query);
-      if (response.isOkay) {
-        setState(() {
-          _predictions = response.predictions;
-        });
-      } else {
+      try {
+        final response = await places.autocomplete(query);
+
+        if (response.isOkay) {
+          setState(() {
+            _predictions = response.predictions;
+          });
+        } else {
+          // Log error details when the response is not okay
+          log('Error fetching autocomplete predictions: ${response.status}');
+          log('Error message: ${response.errorMessage ?? "No error message provided"}');
+
+          setState(() {
+            _predictions = [];
+          });
+
+          // // Optional: Show error message to user
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //     SnackBar(content: Text('Failed to fetch predictions: ${response.errorMessage ?? "Unknown error"}'))
+          // );
+          //
+          print('Error message: ${response.errorMessage ?? "No error message provided"}');
+        }
+      } catch (e, stackTrace) {
+        // Log unexpected exceptions
+        log('Exception occurred in _searchPlaces: $e', error: e, stackTrace: stackTrace);
+
+        // // Optional: Show a generic error message
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //     SnackBar(content: Text('An error occurred while searching for places'))
+        // );
+
         setState(() {
           _predictions = [];
         });

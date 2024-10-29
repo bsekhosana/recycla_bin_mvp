@@ -1,14 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:recycla_bin/core/constants/strings.dart';
 import 'package:recycla_bin/core/utilities/utils.dart';
 import 'package:recycla_bin/core/widgets/custom_elevated_button.dart';
 import 'package:recycla_bin/core/widgets/custom_icon_button.dart';
+import 'package:recycla_bin/core/widgets/custom_snackbar.dart';
 import '../../../../core/widgets/user_scaffold.dart';
 import '../../../profile/provider/user_provider.dart';
 import '../../data/models/rb_collection.dart';
 import '../../data/models/rb_product.dart';
 import '../../providers/rb_collections_provider.dart';
+
+import 'package:uni_links/uni_links.dart';
 
 class CollectionSummaryPage extends StatefulWidget {
   const CollectionSummaryPage({super.key});
@@ -23,10 +28,13 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
   String date = "2021/05/18";
   String time = "13:00 PM - 14:00 PM";
   double cost = 0.0;  // Initialize cost to 0.0
+  StreamSubscription? _sub;
+  bool _isProcessingPayment = false;
 
   @override
   void initState() {
     super.initState();
+    _initUniLinks();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final RBCollection? collection = ModalRoute.of(context)!.settings.arguments as RBCollection?;
       if (collection != null) {
@@ -37,6 +45,31 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
         });
       }
     });
+  }
+
+  Future<void> _initUniLinks() async {
+    _sub = linkStream.listen((String? link) {
+      if (link != null) {
+        if (link.contains('payment/success')) {
+          _handlePaymentResult('Payment was successful!', Colors.green);
+        } else if (link.contains('payment/cancel')) {
+          _handlePaymentResult('Payment was canceled.', Colors.red);
+        }
+      }
+    }, onError: (err) {
+      // Handle any error here
+      print('Error: $err');
+    });
+  }
+
+  void _handlePaymentResult(String message, Color color) {
+    setState(() {
+      _isProcessingPayment = false;
+    });
+
+    showCustomSnackbar(context, message, backgroundColor: color);
+
+    // Optionally, perform any additional actions such as reloading data
   }
 
   void incrementQuantity(int index) {
@@ -75,6 +108,12 @@ class _CollectionSummaryPageState extends State<CollectionSummaryPage> {
 
       provider.updateCollection(updatedCollection);
     }
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
   }
 
   @override
