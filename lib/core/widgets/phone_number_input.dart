@@ -30,13 +30,17 @@ class PhoneNumberInputState extends State<PhoneNumberInput> {
   }
 
   void _onInputChanged(PhoneNumber number) {
+    print('_onInputChanged:${number} old number:${_number}');
     _number = number;
   }
 
   void _onInputValidated(bool value) {
-    setState(() {
-      _isValid = value;
-    });
+    if(value != _isValid){
+      print('_onInputValidated');
+      setState(() {
+        _isValid = value;
+      });
+    }
   }
 
   String getFormattedPhoneNumber() {
